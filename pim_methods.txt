@@ -1,0 +1,19 @@
+slot -- -1
+swapStacks -- function(from:number,to:number,fromDirection:string{DOWN,UP,NORTH,SOUTH,WEST,EAST,UNKNOWN}?,fromDirection:string{DOWN,UP,NORTH,SOUTH,WEST,EAST,UNKNOWN}?) -- Swap two slots in the inventory
+pullItem -- function(direction:string{DOWN,UP,NORTH,SOUTH,WEST,EAST,UNKNOWN},slot:number,maxAmount:number?,intoSlot:number?):number -- Pull an item from a slot in another inventory into a slot in this one. Returns the amount of items moved
+getAdvancedMethodsData -- function(method:string?):table -- Get a complete table of information about all available methods
+pushItemIntoSlot -- function(direction:string{DOWN,UP,NORTH,SOUTH,WEST,EAST,UNKNOWN},slot:number,maxAmount:number?,intoSlot:number?):number -- Push an item from the current inventory into pipe or slot on the other inventory. Returns the amount of items moved
+listMethods -- function(filterSource:string?):string -- List all the methods available
+getStackInSlot -- function(slotNumber:number,proxy:boolean?):object -- Get details of an item in a particular slot
+destroyStack -- function(slotNumber:number) -- Destroy a stack
+address -- 465d3d5f-a0e3-42f2-9d08-3c7ed156a282
+listSources -- function():table -- List all method sources
+pullItemIntoSlot -- function(direction:string{DOWN,UP,NORTH,SOUTH,WEST,EAST,UNKNOWN},slot:number,maxAmount:number?,intoSlot:number?):number -- Pull an item from a slot in another inventory into a slot in this one. Returns the amount of items moved
+getInventorySize -- function():number -- Get the size of this inventory
+expandStack -- function(stack:{id:string,dmg:number?,qty:number?,...}):table -- Get full stack information from id and/or damage
+condenseItems -- function() -- Condense and tidy the stacks in an inventory
+doc -- function(method:string):string -- Brief description of method
+getAllStacks -- function(proxy:boolean?):table -- Get a table with all the items of the chest
+getInventoryName -- function():string -- Get the name of this inventory
+type -- pim
+pushItem -- function(direction:string{DOWN,UP,NORTH,SOUTH,WEST,EAST,UNKNOWN},slot:number,maxAmount:number?,intoSlot:number?):number -- Push an item from the current inventory into pipe or slot on the other inventory. Returns the amount of items moved

@@ -8,6 +8,7 @@ local market={}
 --event trigger player_on {name, uuid?, id?}
 --scan player inventory
 --build itemlist
+
 function market.get_playeritemlist(inventory)--return table of current items in inventory
 	if not inventory then local inventory={} end
 	local index,id,item=1,'',''
@@ -47,6 +48,7 @@ function market.price_build(inventory,itemlist)
 			print('Введите цену покупки для '..itemlist[id].display_name..': ')
 			while 'number' ~=type(price) do price=io.read() end
 			itemlist[id].bye_price=price price='' 
+			itemlist.size=itemlist.size+1
 		end
 	end
 	price=nil
@@ -68,7 +70,7 @@ function market.load_fromFile(itemlist)
 			itemlist[id].bye_price=db:read('*line')
 			itemlist[id].raw_name=db:read('*line')
 		end
-	end
+	else itemlist.size=0 end
 	return itemlist
 end
 

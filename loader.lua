@@ -9,10 +9,9 @@ for address in component.list("filesy") do
             --return true
         end
 end
-
-    if not fs then
-        customError("Filesystem not found!")
-    end
+if not fs then
+  customError("Filesystem not found!")
+end
 
 
 --if not fs.exists("market.lua") then
@@ -39,3 +38,4 @@ local function builder(player,uuid,id)
 end
 
 event.listen('player_on',builder)
+print('starting up')

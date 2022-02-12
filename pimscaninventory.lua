@@ -46,6 +46,7 @@ function market.price_build(inventory,itemlist)
 			print('Введите цену покупки для '..itemlist[id].display_name..': ')
 			while 'number' ~=type(price) do price=io.read() end
 			itemlist[id].bye_price=price price='' 
+		end
 	end
 	price=nil
 end

@@ -1,5 +1,5 @@
 local inet=require('internet')
---local fs=require('filesystem')
+local fs=require('filesystem')
 local event=require('event')
 local component=require('component')
 
@@ -15,7 +15,7 @@ end
     end
 
 
---if not fs.exists("/market.lua") then
+--if not fs.exists("market.lua") then
 	local handle=inet.request('https://raw.githubusercontent.com/Zardar/pimmarket/master/pimscaninventory.lua')
 	local result=''
 	for chunk in handle do result=result..chunk end

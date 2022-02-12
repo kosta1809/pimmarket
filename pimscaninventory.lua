@@ -25,6 +25,7 @@ function market.get_playeritemlist(inventory)--return table of current items in 
 			id=item.id
 			inventory[id].qty=inventory[id].qty+item.qty
 			inventory[id].slots[#inventory[id].slots+1]=f
+			end
 		end
 	end
 	return inventory

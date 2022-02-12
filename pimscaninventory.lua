@@ -58,7 +58,7 @@ end
 --load itemlist from file by id
 function market.load_fromFile(itemlist)
     if 'table'~=type(itemlist) then itemlist={} end
-	local db=io.open('db','r')
+	local db=io.open('db.market','r')
 	if db then
 		local size=db:read('*line')
 		itemlist.size=size
@@ -76,7 +76,7 @@ end
 
 --save itemlist to file
 function market.save_toFile(itemlist)
-	db=io.open('db','w')
+	db=io.open('db.market','w')
 	db:write(itemlist.size..'\n')
 	local size=itemlist.size
 	itemlist.size=nil

@@ -120,7 +120,6 @@ market.screen={}
 --содержит все функции вызываемые кнопками
 --в том числе меняющие содержимое экрана
 market.screenActions={}
-
 market.screenActions.clear=function(background)
 		x,y=gpu.getViewport()
 		gpu.setBackground(background)

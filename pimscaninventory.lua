@@ -8,10 +8,9 @@ local market={}
 --event trigger player_on {name, uuid?, id?}
 --scan player inventory
 --build itemlist
-
 function market.get_playeritemlist(inventory)--return table of current items in inventory
-	if not inventory then local inventory={} end
-	local index,id,item=1,'',''
+	if not inventory then inventory={} end
+	index,id,item=1,'',''
 	for f=1,40 do item=pim.getStackInSlot(f) 
 		if item and not inventory[item.id] then
 			id=item.id
@@ -34,7 +33,7 @@ end
 
 --запрос цен от игрока на предоставленные предметы 
 function market.price_build(inventory,itemlist)
- 	local price=''
+ 	price=''
  	for id in pairs(inventory) do
  		if not itemlist[id] then
  			itemlist[id]={}
@@ -58,9 +57,9 @@ end
 --load itemlist from file by id
 function market.load_fromFile(itemlist)
     if 'table'~=type(itemlist) then itemlist={} end
-	local db=io.open('db.market','r')
+	db=io.open('db.market','r')
 	if db then
-		local size=db:read('*line')
+		size=db:read('*line')
 		itemlist.size=size
 		for f=1, size do 
 			id=db:read('*line')
@@ -78,7 +77,7 @@ end
 function market.save_toFile(itemlist)
 	db=io.open('db.market','w')
 	db:write(itemlist.size..'\n')
-	local size=itemlist.size
+	size=itemlist.size
 	itemlist.size=nil
 	for id in pairs(itemlist)do
 		db:write(id..'\n')
@@ -91,7 +90,59 @@ function market.save_toFile(itemlist)
 	return true
 end
 
-return market
+--2022.02.13-14
+--эта функция делает(будет делать)
+--разные штуки по касанию экрана
+--может быть вызывать какие-то методы
+function market.touch_handler(touch,address,x,y,z,player_name)
+for f in pairs(buttons) do
+	if x > f.x and x < (f.xs+f.x) then
+		if y > f.y and y < (f.ys+f.y) then
+			--здесь надо добавить проверку на соответствие
+			--имени игрока на пим имени присланном эвентом
+			if player_name == pim.getInventoryName()
+			market.screenActions[f.func](player_name)
+		end
+end
 
+--содержит используемые кнопки. Кнопки содержат поля:
+--координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
+market.buttons={
+	bye={x=10,xs=10,y=4,ys=3,text='Купить',tx=4,ty=1,func='bye',bg=777777,fg=111111}
+	sell={x=15,xs=10,y=8,ys=3,text='Продать',tx=4,ty=1,func='sell',bg=999999,fg=222222}
+
+}
+
+--здесь располагаются кнопки текщего экрана и их параметры:
+market.screen={}
+
+--это обработчик экрана.
+--содержит все функции вызываемые кнопками
+--в том числе меняющие содержимое экрана
+market.screenActions={}
+
+market.screenActions.clear=function(background)
+		x,y=gpu.getViewport()
+		gpu.setBackground(background)
+		gpu.fill(1,1,x,y,' ')
+	end
+}
+
+--размещает текущие одноцветные кнопки на экране
+market.screenActions.place=function()
+	for b in pairs(screen)do
+		bg,fg=gpu.getBackground(),gpu.getForeground()
+		gpu.setBackground(b.bg)
+		gpu.fill(b.x,b.y,b.x+b.xs,b.y+b.ys,' ')
+		gpu.setForeground(b.fg)
+		gpu.set(b.x+b.tx,b.y+b.ty,b.text)
+		gpu.setBackground(bg)
+		gpu.setForeground(fg)
+	end
+end
+
+
+
+return market
 
 

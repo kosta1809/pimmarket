@@ -95,20 +95,22 @@ end
 --разные штуки по касанию экрана
 --может быть вызывать какие-то методы
 function market.touch_handler(touch,address,x,y,z,player_name)
-for f in pairs(buttons) do
-	if x > f.x and x < (f.xs+f.x) then
-		if y > f.y and y < (f.ys+f.y) then
-			--здесь надо добавить проверку на соответствие
-			--имени игрока на пим имени присланном эвентом
-			if player_name == pim.getInventoryName() then
-			market.screenActions[f.func](player_name)
+	for f in pairs(buttons) do
+		if x > f.x and x < (f.xs+f.x) then
+			if y > f.y and y < (f.ys+f.y) then
+				--здесь надо добавить проверку на соответствие
+				--имени игрока на пим имени присланном эвентом
+				if player_name == pim.getInventoryName() then
+				market.screenActions[f.func](player_name)end
+			end
 		end
+	end
 end
 
 --содержит используемые кнопки. Кнопки содержат поля:
 --координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
 market.buttons={
-	bye={x=10,xs=10,y=4,ys=3,text='Купить',tx=4,ty=1,func='bye',bg=777777,fg=111111}
+	bye={x=10,xs=10,y=4,ys=3,text='Купить',tx=4,ty=1,func='bye',bg=777777,fg=111111},
 	sell={x=15,xs=10,y=8,ys=3,text='Продать',tx=4,ty=1,func='sell',bg=999999,fg=222222}
 
 }
@@ -125,7 +127,7 @@ market.screenActions.clear=function(background)
 		gpu.setBackground(background)
 		gpu.fill(1,1,x,y,' ')
 	end
-}
+
 
 --размещает текущие одноцветные кнопки на экране
 market.screenActions.place=function()
@@ -140,7 +142,7 @@ market.screenActions.place=function()
 	end
 end
 
-
+--позаимствованная у BrightYC таблица цветов. добавлен зелёный
 market.color = {
     pattern = "%[0x(%x%x%x%x%x%x)]",
     background = 0x000000,
@@ -150,6 +152,7 @@ market.color = {
     lightGray = 0x999999,
     blackGray = 0x1a1a1a,
     lime = 0x68f029,
+    green = 0x0bde31,
     blackLime = 0x4cb01e,
     orange = 0xf2b233,
     blackOrange = 0xc49029,

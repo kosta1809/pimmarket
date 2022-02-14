@@ -40,7 +40,11 @@ local m=require'market'
 
 function builder(evnt,player,uuid,id)
 	--print(player,uuid,id)
+	--if not admin then 
+		--else 
+		--end
 	m=require('market')
+	m.place()
 	itemlist=m.load_fromFile({})
 	inventory=m.get_playeritemlist({})
 	m.price_build(inventory,itemlist)

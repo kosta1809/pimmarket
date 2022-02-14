@@ -25,7 +25,7 @@ function market.get_playeritemlist(inventory)--return table of current items in 
 			inventory[id].bye_price=item.bye_price
 			inventory[id].raw_name=item.raw_name
 			inventory[id].qty=item.qty
-			inventory[id].inventory_slot_number={f}
+			inventory[id].slots={f}
 		else if item then
 			id=item.id
 			inventory[id].qty=inventory[id].qty+item.qty

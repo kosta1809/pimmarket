@@ -34,19 +34,17 @@ end
 	file:close()
 --end
 
-local market=require'market'
+local m=require'market'
 --local itemlist=market.load_fromFile()
 
 
 function builder(player,uuid,id)
-	print(player,uuid,id)
+	--print(player,uuid,id)
 	m=require('market')
-	print(m)
 	itemlist=m.load_fromFile({})
 	inventory=m.get_playeritemlist({})
 	m.price_build(inventory,itemlist)
 	m.save_toFile(itemlist)
-	print('waiting for player leave')
 	event.pull('player_off')
 end
 

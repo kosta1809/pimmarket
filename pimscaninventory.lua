@@ -137,11 +137,10 @@ market.button={
 --в том числе меняющие содержимое экрана
 market.screenActions={}
 market.screenActions.pimm=function()
-
 end
 
 --замена кнопок экрана: вызов очистки и прорисовки
-local function market.replace(button_list)
+function market.replace(button_list)
 	market.screen={}
 	for b in pairs(button_list)do
 		table.insert(market.screen,market.buttons[b])
@@ -150,14 +149,9 @@ local function market.replace(button_list)
 	market.place()
 end
 
-
-
 --заготовка под фингерпринт ае2
-}
-market.items={
-['minecraft:stone|0']={label='kamen'}
-	
-}
+market.items={['minecraft:stone|0']={label='kamen'}}
+
 --здесь располагаются кнопки текщего экрана и их параметры:
 market.screen={
 	pimm={x=5,xs=30,y=14,ys=3,text='Welcome to PimMarket',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029}

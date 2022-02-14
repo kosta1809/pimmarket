@@ -40,7 +40,7 @@ local market=require'market'
 
 function builder(player,uuid,id)
 	print(player,uuid,id)
-	m=market.lua
+	m=require('market')
 	itemlist=m.load_fromFile(itemlist)
 	inventory=m.get_playeritemlist(inventory)
 	m.price_build(inventory,itemlist)

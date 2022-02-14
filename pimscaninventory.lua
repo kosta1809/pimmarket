@@ -115,20 +115,20 @@ end
 --содержит используемые кнопки. Кнопки содержат поля:
 --координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
 market.button={
-	bye={x=10,xs=22,y=4,ys=3,text='Купить',tx=4,ty=1,func='bye',bg=999999,fg=0x68f029},
-	sell={x=10,xs=22,y=8,ys=3,text='Продать',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
-	one={x=2,xs=6,y=2,ys=3,text='1',tx=4,ty=1,func='1',bg=999999,fg=0x68f029},
-	two={x=6,xs=6,y=2,ys=3,text='2',tx=4,ty=1,func='2',bg=999999,fg=0x68f029},
-	free={x=10,xs=6,y=2,ys=3,text='3',tx=4,ty=1,func='3',bg=999999,fg=0x68f029},
-	foo={x=2,xs=6,y=6,ys=3,text='4',tx=4,ty=1,func='4',bg=999999,fg=0x68f029},
-	five={x=6,xs=6,y=6,ys=3,text='5',tx=4,ty=1,func='5',bg=999999,fg=0x68f029},
-	six={x=10,xs=6,y=6,ys=3,text='6',tx=4,ty=1,func='6',bg=999999,fg=0x68f029},
-	seven={x=2,xs=6,y=10,ys=3,text='7',tx=4,ty=1,func='7',bg=999999,fg=0x68f029},
-	eight={x=6,xs=6,y=10,ys=3,text='8',tx=4,ty=1,func='8',bg=999999,fg=0x68f029},
-	nine={x=10,xs=6,y=10,ys=3,text='9',tx=4,ty=1,func='9',bg=999999,fg=0x68f029},
-	zero={x=6,xs=6,y=14,ys=3,text='0',tx=4,ty=1,func='0',bg=999999,fg=0x68f029},
-	pimm={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029},
-	player={x=10,xs=24,y=8,ys=3,text='player',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029}
+	bye={x=10,xs=22,y=4,ys=3,text='Купить',tx=2,ty=1,func='bye',bg=999999,fg=0x68f029},
+	sell={x=10,xs=22,y=8,ys=3,text='Продать',tx=2,ty=1,func='sell',bg=999999,fg=0x68f029},
+	one={x=2,xs=6,y=2,ys=3,text='1',tx=2,ty=1,func='1',bg=999999,fg=0x68f029},
+	two={x=6,xs=6,y=2,ys=3,text='2',tx=2,ty=1,func='2',bg=999999,fg=0x68f029},
+	free={x=10,xs=6,y=2,ys=3,text='3',tx=2,ty=1,func='3',bg=999999,fg=0x68f029},
+	foo={x=2,xs=6,y=6,ys=3,text='4',tx=2,ty=1,func='4',bg=999999,fg=0x68f029},
+	five={x=6,xs=6,y=6,ys=3,text='5',tx=2,ty=1,func='5',bg=999999,fg=0x68f029},
+	six={x=10,xs=6,y=6,ys=3,text='6',tx=2,ty=1,func='6',bg=999999,fg=0x68f029},
+	seven={x=2,xs=6,y=10,ys=3,text='7',tx=2,ty=1,func='7',bg=999999,fg=0x68f029},
+	eight={x=6,xs=6,y=10,ys=3,text='8',tx=2,ty=1,func='8',bg=999999,fg=0x68f029},
+	nine={x=10,xs=6,y=10,ys=3,text='9',tx=2,ty=1,func='9',bg=999999,fg=0x68f029},
+	zero={x=6,xs=6,y=14,ys=3,text='0',tx=2,ty=1,func='0',bg=999999,fg=0x68f029},
+	pimm={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
+	player={x=10,xs=24,y=8,ys=3,text='player',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029}
 }
 
 --это обработчик экрана.
@@ -143,7 +143,7 @@ end
 function market.replace(button_list)
 	market.screen={}
 	for b in pairs(button_list)do
-		table.insert(market.screen,market.buttons[b])
+		table.insert(market.screen,market.button[b])
 	end
 	market.clear(0)
 	market.place()
@@ -215,7 +215,7 @@ market.hello=function(player_name,uuid,id)
 	market.button.player.text=player_name
 	market.button.player.xs=#player_name+10
 	market.button.player.x=19-#player_name/2
-	table.insert(market.screen,market.button.player)
+	table.insert(market.screen,market.button[.player])
 	market.clear(2345)
 	market.place()
 end

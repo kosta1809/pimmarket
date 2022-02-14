@@ -51,6 +51,7 @@ function builder(evnt,player_name,uuid,id)
 	event.pull('player_off')
 end
 gpu=require('component').gpu
-gpu.setResolution(48,16)
+--gpu.setResolution(48,16)
+gpu.setResolution(75,25)
 event.listen('player_on',builder)
 print('starting up')

@@ -15,7 +15,7 @@ function market.get_playeritemlist(inventory)--return table of current items in 
 	pim=require('component').pim
 	if not inventory then inventory={} end
 	local index,id,item=1,'',''
-	for f=1,40 do item=pim.getStackInSlot(f) 
+	for f=1,36 do item=pim.getStackInSlot(f) 
 
 		if item and not inventory[item.id] then
 			local id=item.id

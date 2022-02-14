@@ -1,5 +1,7 @@
 local market={}
-
+market.itemlist={}
+market.inventory={}
+}
 	
 
 --pim event player_on name address address
@@ -15,7 +17,8 @@ function market.get_playeritemlist(inventory)--return table of current items in 
 	pim=require('component').pim
 	if not inventory then inventory={} end
 	local index,id,item=1,'',''
-	for f=1,36 do item=pim.getStackInSlot(f) 
+	for f=1,36
+	 do item=pim.getStackInSlot(f) 
 
 		if item and not inventory[item.id] then
 			local id=item.id
@@ -114,29 +117,43 @@ end
 
 --содержит используемые кнопки. Кнопки содержат поля:
 --координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
-market.buttons={
-	bye={x=10,xs=22,y=4,ys=3,text='Купить',tx=4,ty=1,func='bye',bg=777777,fg=0x68f029},
+market.button={
+	bye={x=10,xs=22,y=4,ys=3,text='Купить',tx=4,ty=1,func='bye',bg=999999,fg=0x68f029},
 	sell={x=10,xs=22,y=8,ys=3,text='Продать',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
-	one={x=2,xs=3,y=2,ys=3,text='1',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
-	two={x=6,xs=3,y=2,ys=3,text='2',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
-	free={x=10,xs=3,y=2,ys=3,text='3',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
-	foo={x=2,xs=3,y=6,ys=3,text='4',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
-	five={x=6,xs=3,y=6,ys=3,text='5',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
-	six={x=10,xs=3,y=6,ys=3,text='6',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
-	seven={x=2,xs=3,y=10,ys=3,text='7',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
-	eight={x=6,xs=3,y=10,ys=3,text='8',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
-	nine={x=10,xs=3,y=10,ys=3,text='9',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
-	zero={x=6,xs=3,y=14,ys=3,text='0',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
-
+	one={x=2,xs=6,y=2,ys=3,text='1',tx=4,ty=1,func='1',bg=999999,fg=0x68f029},
+	two={x=6,xs=6,y=2,ys=3,text='2',tx=4,ty=1,func='2',bg=999999,fg=0x68f029},
+	free={x=10,xs=6,y=2,ys=3,text='3',tx=4,ty=1,func='3',bg=999999,fg=0x68f029},
+	foo={x=2,xs=6,y=6,ys=3,text='4',tx=4,ty=1,func='4',bg=999999,fg=0x68f029},
+	five={x=6,xs=6,y=6,ys=3,text='5',tx=4,ty=1,func='5',bg=999999,fg=0x68f029},
+	six={x=10,xs=6,y=6,ys=3,text='6',tx=4,ty=1,func='6',bg=999999,fg=0x68f029},
+	seven={x=2,xs=6,y=10,ys=3,text='7',tx=4,ty=1,func='7',bg=999999,fg=0x68f029},
+	eight={x=6,xs=6,y=10,ys=3,text='8',tx=4,ty=1,func='8',bg=999999,fg=0x68f029},
+	nine={x=10,xs=6,y=10,ys=3,text='9',tx=4,ty=1,func='9',bg=999999,fg=0x68f029},
+	zero={x=6,xs=6,y=14,ys=3,text='0',tx=4,ty=1,func='0',bg=999999,fg=0x68f029},
+	pimm={x=10,xs=40,y=14,ys=3,text='Welcome to PimMarket',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029}
 }
 
+--замена кнопок экрана: вызов очистки и прорисовки
+local function market.replace(button_list)
+	market.screen={}
+	for b in pairs(button_list)do
+		table.insert(market.screen,market.buttons[b])
+	end
+	market.clear(0)
+	market.place()
+end
+
+
+
+--заготовка под фингерпринт ае2
+}
 market.items={
 ['minecraft:stone|0']={label='kamen'}
 	
 }
 --здесь располагаются кнопки текщего экрана и их параметры:
 market.screen={
-	sell={x=15,xs=16,y=8,ys=3,text='Продать',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029}
+	pimm={x=5,xs=30,y=14,ys=3,text='Welcome to PimMarket',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029}
 }
 
 --это обработчик экрана.
@@ -166,7 +183,7 @@ market.place=function()
 	end
 end
 
---позаимствованная у BrightYC таблица цветов. добавлен зелёный
+--позаимствованная у BrightYC таблица цветов.добавлен мутно-зелёный
 market.color = {
     pattern = "%[0x(%x%x%x%x%x%x)]",
     background = 0x000000,
@@ -176,7 +193,7 @@ market.color = {
     lightGray = 0x999999,
     blackGray = 0x1a1a1a,
     lime = 0x68f029,
-    green = 0x0bde31,
+    greengray = 0x0bde31,
     blackLime = 0x4cb01e,
     orange = 0xf2b233,
     blackOrange = 0xc49029,

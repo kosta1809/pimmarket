@@ -46,11 +46,11 @@ function market.price_build(inventory,itemlist)
 			itemlist[id].raw_name=inventory[id].raw_name
 
 			print('Введите цену продажи для '..itemlist[id].display_name..': ')
-			while 'number' ~=type(price) do price=io.read() end
+			while not tonumber(price) do price=io.read() end
 			itemlist[id].sell_price=price price=''
 
 			print('Введите цену покупки для '..itemlist[id].display_name..': ')
-			while 'number' ~=type(price) do price=io.read() end
+			while not tonumber(price) do price=io.read() end
 			itemlist[id].bye_price=price price='' 
 			itemlist.size=itemlist.size+1
 		end

@@ -1,3 +1,4 @@
+local loader='0.5.0'
 local inet=require('internet')
 local fs=require('filesystem')
 local event=require('event')
@@ -17,6 +18,14 @@ end
 
 --download library
 --if not fs.exists("market.lua") then
+	local handle=inet.request('https://raw.githubusercontent.com/Zardar/pimmarket/master/loader.lua')
+	local result=''
+	for chunk in handle do result=result..chunk end
+	local file=io.open('loader.lua','w')
+	file:write(result)
+	file:close()
+
+
 	local handle=inet.request('https://raw.githubusercontent.com/Zardar/pimmarket/master/pimscaninventory.lua')
 	local result=''
 	for chunk in handle do result=result..chunk end
@@ -31,10 +40,11 @@ local market=require'market'
 
 function builder(player,uuid,id)
 	print(player,uuid,id)
-	itemlist=market.load_fromFile(itemlist)
-	inventory=market.get_playeritemlist(inventory)
-	market.price_build(inventory,itemlist)
-	market.save_toFile(itemlist)
+	m=market.lua
+	itemlist=m.load_fromFile(itemlist)
+	inventory=m.get_playeritemlist(inventory)
+	m.price_build(inventory,itemlist)
+	m.save_toFile(itemlist)
 	print('waiting for player leave')
 	event.pull('player_off')
 end

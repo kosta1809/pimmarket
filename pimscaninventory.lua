@@ -8,6 +8,10 @@ local market={}
 --event trigger player_on {name, uuid?, id?}
 --scan player inventory
 --build itemlist
+
+--initialize
+gpu=require('component').gpu
+
 function market.get_playeritemlist(inventory)--return table of current items in inventory
 	if not inventory then inventory={} end
 	index,id,item=1,'',''
@@ -116,29 +120,31 @@ market.buttons={
 }
 
 --здесь располагаются кнопки текщего экрана и их параметры:
-market.screen={}
+market.screen={
+	sell={x=15,xs=10,y=8,ys=3,text='Продать',tx=4,ty=1,func='sell',bg=999999,fg=222222}
+}
 
 --это обработчик экрана.
 --содержит все функции вызываемые кнопками
 --в том числе меняющие содержимое экрана
 market.screenActions={}
 market.screenActions.clear=function(background)
-		x,y=gpu.getViewport()
-		gpu.setBackground(background)
-		gpu.fill(1,1,x,y,' ')
+		x,y=self.gpu.getViewport()
+		self.gpu.setBackground(background)
+		self.gpu.fill(1,1,x,y,' ')
 	end
 
 
 --размещает текущие одноцветные кнопки на экране
 market.screenActions.place=function()
 	for b in pairs(screen)do
-		bg,fg=gpu.getBackground(),gpu.getForeground()
-		gpu.setBackground(b.bg)
-		gpu.fill(b.x,b.y,b.x+b.xs,b.y+b.ys,' ')
-		gpu.setForeground(b.fg)
-		gpu.set(b.x+b.tx,b.y+b.ty,b.text)
-		gpu.setBackground(bg)
-		gpu.setForeground(fg)
+		bg,fg=self.gpu.getBackground(),self.gpu.getForeground()
+		self.gpu.setBackground(b.bg)
+		self.gpu.fill(b.x,b.y,b.x+b.xs,b.y+b.ys,' ')
+		self.gpu.setForeground(b.fg)
+		self.gpu.set(b.x+b.tx,b.y+b.ty,b.text)
+		self.gpu.setBackground(bg)
+		self.gpu.setForeground(fg)
 	end
 end
 

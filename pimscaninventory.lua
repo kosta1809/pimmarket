@@ -129,7 +129,8 @@ market.button={
 	eight={x=6,xs=6,y=10,ys=3,text='8',tx=4,ty=1,func='8',bg=999999,fg=0x68f029},
 	nine={x=10,xs=6,y=10,ys=3,text='9',tx=4,ty=1,func='9',bg=999999,fg=0x68f029},
 	zero={x=6,xs=6,y=14,ys=3,text='0',tx=4,ty=1,func='0',bg=999999,fg=0x68f029},
-	pimm={x=10,xs=40,y=14,ys=3,text='Welcome to PimMarket',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029}
+	pimm={x=10,xs=40,y=12,ys=3,text='Welcome to PimMarket',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029}
+	player={x=10,xs=40,y=8,ys=3,text='player',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029}
 }
 
 --это обработчик экрана.
@@ -205,6 +206,10 @@ market.color = {
 market.hello=function(player_name,uuid,id)
 	market.screen={}
 	table.insert(market.screen,market.button.pim)
+	market.button.player.text=player_name
+	market.button.player.xs=#player_name+10
+	market.button.player.x=19-#player_name/2
+	table.insert(market.screen,market.button.player)
 	market.clear(777777)
 	market.place()
 end

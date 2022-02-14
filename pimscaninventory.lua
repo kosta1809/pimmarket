@@ -142,9 +142,7 @@ end
 --замена кнопок экрана: вызов очистки и прорисовки
 function market.replace(button_list)
 	market.screen={}
-	for b in pairs(button_list)do
-		table.insert(market.screen,market.button[b])
-	end
+	market.screen=button_list
 	market.clear(0)
 	market.place()
 end
@@ -216,7 +214,7 @@ market.hello=function(player_name,uuid,id)
 	market.button.player.xs=#player_name+10
 	market.button.player.x=19-#player_name/2
 	local btns={}
-	button_list.a=market.button.pim
+	button_list.a=market.button.pimm
 	button_list.b=market.button.player
 	market.replace(button_list)
 end

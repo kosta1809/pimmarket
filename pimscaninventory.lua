@@ -1,7 +1,6 @@
 local market={}
 market.itemlist={}
 market.inventory={}
-}
 	
 
 --pim event player_on name address address

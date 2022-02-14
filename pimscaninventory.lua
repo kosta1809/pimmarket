@@ -211,11 +211,11 @@ end
 
 market.hello=function(player_name,uuid,id)
 	market.screen={}
-	table.insert(market.screen,market.button.pim)
+	table.insert(market.screen,market.button['pim'])
 	market.button.player.text=player_name
 	market.button.player.xs=#player_name+10
 	market.button.player.x=19-#player_name/2
-	table.insert(market.screen,market.button[.player])
+	table.insert(market.screen,market.button['player'])
 	market.clear(2345)
 	market.place()
 end

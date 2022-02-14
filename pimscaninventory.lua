@@ -1,4 +1,7 @@
 local market={}
+
+	
+
 --pim event player_on name address address
 --pim event player_off name address address
 --pim getStackInSlot:table witch fields k+v: display_name,dmg,id,max_dmg,max_size,mod_id,name,ore_dict,qty,raw_name//whre qty is amount
@@ -8,16 +11,14 @@ local market={}
 --event trigger player_on {name, uuid?, id?}
 --scan player inventory
 --build itemlist
-
---initialize
-gpu=require('component').gpu
-
 function market.get_playeritemlist(inventory)--return table of current items in inventory
+	pim=require('component').pim
 	if not inventory then inventory={} end
-	index,id,item=1,'',''
+	local index,id,item=1,'',''
 	for f=1,40 do item=pim.getStackInSlot(f) 
+
 		if item and not inventory[item.id] then
-			id=item.id
+			local id=item.id
 			inventory[id]={}
 			inventory[id].display_name=item.display_name
 			inventory[id].sell_price=item.sell_price
@@ -114,37 +115,54 @@ end
 --содержит используемые кнопки. Кнопки содержат поля:
 --координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
 market.buttons={
-	bye={x=10,xs=10,y=4,ys=3,text='Купить',tx=4,ty=1,func='bye',bg=777777,fg=111111},
-	sell={x=15,xs=10,y=8,ys=3,text='Продать',tx=4,ty=1,func='sell',bg=999999,fg=222222}
+	bye={x=10,xs=22,y=4,ys=3,text='Купить',tx=4,ty=1,func='bye',bg=777777,fg=0x68f029},
+	sell={x=10,xs=22,y=8,ys=3,text='Продать',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
+	one={x=2,xs=3,y=2,ys=3,text='1',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
+	two={x=6,xs=3,y=2,ys=3,text='2',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
+	free={x=10,xs=3,y=2,ys=3,text='3',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
+	foo={x=2,xs=3,y=6,ys=3,text='4',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
+	five={x=6,xs=3,y=6,ys=3,text='5',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
+	six={x=10,xs=3,y=6,ys=3,text='6',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
+	seven={x=2,xs=3,y=10,ys=3,text='7',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
+	eight={x=6,xs=3,y=10,ys=3,text='8',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
+	nine={x=10,xs=3,y=10,ys=3,text='9',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
+	zero={x=6,xs=3,y=14,ys=3,text='0',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029},
 
 }
 
+market.items={
+['minecraft:stone|0']={label='kamen'}
+	
+}
 --здесь располагаются кнопки текщего экрана и их параметры:
 market.screen={
-	sell={x=15,xs=10,y=8,ys=3,text='Продать',tx=4,ty=1,func='sell',bg=999999,fg=222222}
+	sell={x=15,xs=16,y=8,ys=3,text='Продать',tx=4,ty=1,func='sell',bg=999999,fg=0x68f029}
 }
 
 --это обработчик экрана.
 --содержит все функции вызываемые кнопками
 --в том числе меняющие содержимое экрана
 market.screenActions={}
-market.screenActions.clear=function(background)
-		x,y=self.gpu.getViewport()
-		self.gpu.setBackground(background)
-		self.gpu.fill(1,1,x,y,' ')
+market.clear=function(background)
+		local gpu=require('component').gpu
+		if not background then background=0 end
+		local x,y=gpu.getViewport()
+		gpu.setBackground(background)
+		gpu.fill(1,1,x,y,' ')
 	end
 
 
 --размещает текущие одноцветные кнопки на экране
-market.screenActions.place=function()
-	for b in pairs(screen)do
-		bg,fg=self.gpu.getBackground(),self.gpu.getForeground()
-		self.gpu.setBackground(b.bg)
-		self.gpu.fill(b.x,b.y,b.x+b.xs,b.y+b.ys,' ')
-		self.gpu.setForeground(b.fg)
-		self.gpu.set(b.x+b.tx,b.y+b.ty,b.text)
-		self.gpu.setBackground(bg)
-		self.gpu.setForeground(fg)
+market.place=function()
+	local gpu=require('component').gpu
+	for k,b in pairs(market.screen)do
+		local bg,fg=gpu.getBackground(),gpu.getForeground()
+		gpu.setBackground(b.bg)
+		gpu.fill(b.x,b.y,b.xs,b.ys,' ')
+		gpu.setForeground(b.fg)
+		gpu.set(b.x+b.tx,b.y+b.ty,b.text)
+		gpu.setBackground(bg)
+		gpu.setForeground(fg)
 	end
 end
 
@@ -169,5 +187,4 @@ market.color = {
 
 
 return market
-
 

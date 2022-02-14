@@ -102,11 +102,9 @@ end
 --разные штуки по касанию экрана
 --может быть вызывать какие-то методы
 function market.touch_handler(touch,address,x,y,z,player_name)
-	for f in pairs(buttons) do
+	for f in pairs(market.screen) do
 		if x > f.x and x < (f.xs+f.x) then
 			if y > f.y and y < (f.ys+f.y) then
-				--здесь надо добавить проверку на соответствие
-				--имени игрока на пим имени присланном эвентом
 				if player_name == pim.getInventoryName() then
 				market.screenActions[f.func](player_name)end
 			end
@@ -129,8 +127,8 @@ market.button={
 	eight={x=6,xs=6,y=10,ys=3,text='8',tx=4,ty=1,func='8',bg=999999,fg=0x68f029},
 	nine={x=10,xs=6,y=10,ys=3,text='9',tx=4,ty=1,func='9',bg=999999,fg=0x68f029},
 	zero={x=6,xs=6,y=14,ys=3,text='0',tx=4,ty=1,func='0',bg=999999,fg=0x68f029},
-	pimm={x=10,xs=40,y=12,ys=3,text='Welcome to PimMarket',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029},
-	player={x=10,xs=40,y=8,ys=3,text='player',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029}
+	pimm={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029},
+	player={x=10,xs=24,y=8,ys=3,text='player',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029}
 }
 
 --это обработчик экрана.
@@ -139,6 +137,7 @@ market.button={
 market.screenActions={}
 market.screenActions.pimm=function()
 end
+
 
 --замена кнопок экрана: вызов очистки и прорисовки
 function market.replace(button_list)
@@ -203,6 +202,13 @@ market.color = {
     red = 0xff0000
 }
 
+--собственно отсюда начинаются действия покупателя в магазине
+market.pimm=function()
+
+end
+
+
+
 market.hello=function(player_name,uuid,id)
 	market.screen={}
 	table.insert(market.screen,market.button.pim)
@@ -210,7 +216,7 @@ market.hello=function(player_name,uuid,id)
 	market.button.player.xs=#player_name+10
 	market.button.player.x=19-#player_name/2
 	table.insert(market.screen,market.button.player)
-	market.clear(777777)
+	market.clear(2345)
 	market.place()
 end
 

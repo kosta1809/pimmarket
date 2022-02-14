@@ -54,4 +54,5 @@ gpu=require('component').gpu
 --gpu.setResolution(48,16)
 gpu.setResolution(75,25)
 event.listen('player_on',builder)
+event.listen('touch',m.touch_handler)
 print('starting up')

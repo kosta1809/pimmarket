@@ -96,7 +96,7 @@ function market.save_toFile(itemlist)
 	itemlist.size=size
 	return true
 end
-
+--====================================================
 --2022.02.13-14
 --эта функция делает(будет делать)
 --разные штуки по касанию экрана
@@ -111,6 +111,8 @@ function market.touch_handler(touch,address,x,y,z,player_name)
 		end
 	end
 end
+
+
 
 --содержит используемые кнопки. Кнопки содержат поля:
 --координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
@@ -141,7 +143,6 @@ end
 
 --замена кнопок экрана: вызов очистки и прорисовки
 function market.replace(button_list)
-	market.screen={}
 	market.screen=button_list
 	market.clear(0)
 	market.place()
@@ -209,9 +210,8 @@ end
 
 
 market.hello=function(player_name,uuid,id)
-	button_list={}
 	market.button.player.text=player_name
-	market.button.player.xs=#player_name+10
+	market.button.player.xs=#player_name+2
 	market.button.player.x=19-#player_name/2
 	local btns={}
 	button_list.a=market.button.pimm

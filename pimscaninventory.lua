@@ -209,7 +209,7 @@ end
 
 
 
-market.hello=function(player_name,uuid,id)
+market.hello=function(evnt,player_name,uuid,id)
 	market.button.player.text=player_name
 	market.button.player.xs=#player_name+2
 	market.button.player.x=19-#player_name/2

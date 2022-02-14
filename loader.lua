@@ -42,8 +42,9 @@ function builder(evnt,player_name,uuid,id)
 	--if not admin then 
 		--else 
 		--end
+	name=player_name
 	m=require('market')
-	m.hello(event,player_name,uuid,id)
+	m.hello(evnt,name,uuid,id)
 	itemlist=m.load_fromFile({})
 	inventory=m.get_playeritemlist({})
 	m.price_build(inventory,itemlist)

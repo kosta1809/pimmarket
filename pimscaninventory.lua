@@ -132,6 +132,14 @@ market.button={
 	pimm={x=10,xs=40,y=14,ys=3,text='Welcome to PimMarket',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029}
 }
 
+--это обработчик экрана.
+--содержит все функции вызываемые кнопками
+--в том числе меняющие содержимое экрана
+market.screenActions={}
+market.screenActions.pimm=function()
+
+end
+
 --замена кнопок экрана: вызов очистки и прорисовки
 local function market.replace(button_list)
 	market.screen={}
@@ -155,10 +163,9 @@ market.screen={
 	pimm={x=5,xs=30,y=14,ys=3,text='Welcome to PimMarket',tx=4,ty=1,func='pimm',bg=999999,fg=0x68f029}
 }
 
---это обработчик экрана.
---содержит все функции вызываемые кнопками
---в том числе меняющие содержимое экрана
-market.screenActions={}
+
+
+--Очистка экранаю ничего особенного. Обычный велосипед
 market.clear=function(background)
 		local gpu=require('component').gpu
 		if not background then background=0 end
@@ -201,6 +208,12 @@ market.color = {
     red = 0xff0000
 }
 
+market.hello=function(player_name,uuid,id)
+	market.screen={}
+	table.insert(market.screen,market.button.pim)
+	market.clear(777777)
+	market.place()
+end
 
 return market
 

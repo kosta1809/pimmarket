@@ -211,7 +211,7 @@ end
 
 market.hello=function(evnt,player_name,uuid,id)
 	market.button.player.text=player_name
-	market.button.player.xs=#player_name+2
+	market.button.player.xs=#player_name+4
 	market.button.player.x=19-#player_name/2
 	local btns={}
 	btns.a=market.button.pimm

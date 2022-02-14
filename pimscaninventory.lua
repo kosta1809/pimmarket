@@ -117,8 +117,8 @@ end
 --содержит используемые кнопки. Кнопки содержат поля:
 --координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
 market.button={
-	bye={x=10,xs=22,y=4,ys=3,text='Купить',tx=2,ty=1,func='bye',bg=999999,fg=0x68f029},
-	sell={x=10,xs=22,y=8,ys=3,text='Продать',tx=2,ty=1,func='sell',bg=999999,fg=0x68f029},
+	bye={x=10,xs=18,y=4,ys=3,text='Купить',tx=2,ty=1,func='bye',bg=999999,fg=0x68f029},
+	sell={x=10,xs=19,y=8,ys=3,text='Продать',tx=2,ty=1,func='sell',bg=999999,fg=0x68f029},
 	one={x=2,xs=6,y=2,ys=3,text='1',tx=2,ty=1,func='1',bg=999999,fg=0x68f029},
 	two={x=8,xs=6,y=2,ys=3,text='2',tx=2,ty=1,func='2',bg=999999,fg=0x68f029},
 	free={x=14,xs=6,y=2,ys=3,text='3',tx=2,ty=1,func='3',bg=999999,fg=0x68f029},

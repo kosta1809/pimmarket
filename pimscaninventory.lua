@@ -214,9 +214,9 @@ market.hello=function(player_name,uuid,id)
 	market.button.player.xs=#player_name+2
 	market.button.player.x=19-#player_name/2
 	local btns={}
-	button_list.a=market.button.pimm
-	button_list.b=market.button.player
-	market.replace(button_list)
+	btns.a=market.button.pimm
+	btns.b=market.button.player
+	market.replace(btns)
 end
 
 return market

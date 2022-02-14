@@ -100,7 +100,7 @@ for f in pairs(buttons) do
 		if y > f.y and y < (f.ys+f.y) then
 			--здесь надо добавить проверку на соответствие
 			--имени игрока на пим имени присланном эвентом
-			if player_name == pim.getInventoryName()
+			if player_name == pim.getInventoryName() then
 			market.screenActions[f.func](player_name)
 		end
 end
@@ -140,6 +140,23 @@ market.screenActions.place=function()
 	end
 end
 
+
+market.color = {
+    pattern = "%[0x(%x%x%x%x%x%x)]",
+    background = 0x000000,
+    pim = 0x46c8e3,
+
+    gray = 0x303030,
+    lightGray = 0x999999,
+    blackGray = 0x1a1a1a,
+    lime = 0x68f029,
+    blackLime = 0x4cb01e,
+    orange = 0xf2b233,
+    blackOrange = 0xc49029,
+    blue = 0x4260f5,
+    blackBlue = 0x273ba1,
+    red = 0xff0000
+}
 
 
 return market

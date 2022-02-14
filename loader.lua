@@ -38,19 +38,19 @@ local m=require'market'
 --local itemlist=market.load_fromFile()
 
 
-function builder(evnt,player,uuid,id)
-	--print(player,uuid,id)
+function builder(evnt,player_name,uuid,id)
 	--if not admin then 
 		--else 
 		--end
 	m=require('market')
-	m.place()
+	m.hello()
 	itemlist=m.load_fromFile({})
 	inventory=m.get_playeritemlist({})
 	m.price_build(inventory,itemlist)
 	m.save_toFile(itemlist)
 	event.pull('player_off')
 end
-
+gpu=require('component').gpu
+gpu.setResolution(48,16)
 event.listen('player_on',builder)
 print('starting up')

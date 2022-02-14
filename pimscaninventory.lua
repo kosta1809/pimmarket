@@ -120,15 +120,15 @@ market.button={
 	bye={x=10,xs=22,y=4,ys=3,text='Купить',tx=2,ty=1,func='bye',bg=999999,fg=0x68f029},
 	sell={x=10,xs=22,y=8,ys=3,text='Продать',tx=2,ty=1,func='sell',bg=999999,fg=0x68f029},
 	one={x=2,xs=6,y=2,ys=3,text='1',tx=2,ty=1,func='1',bg=999999,fg=0x68f029},
-	two={x=6,xs=6,y=2,ys=3,text='2',tx=2,ty=1,func='2',bg=999999,fg=0x68f029},
-	free={x=10,xs=6,y=2,ys=3,text='3',tx=2,ty=1,func='3',bg=999999,fg=0x68f029},
+	two={x=8,xs=6,y=2,ys=3,text='2',tx=2,ty=1,func='2',bg=999999,fg=0x68f029},
+	free={x=14,xs=6,y=2,ys=3,text='3',tx=2,ty=1,func='3',bg=999999,fg=0x68f029},
 	foo={x=2,xs=6,y=6,ys=3,text='4',tx=2,ty=1,func='4',bg=999999,fg=0x68f029},
-	five={x=6,xs=6,y=6,ys=3,text='5',tx=2,ty=1,func='5',bg=999999,fg=0x68f029},
-	six={x=10,xs=6,y=6,ys=3,text='6',tx=2,ty=1,func='6',bg=999999,fg=0x68f029},
+	five={x=8,xs=6,y=6,ys=3,text='5',tx=2,ty=1,func='5',bg=999999,fg=0x68f029},
+	six={x=14,xs=6,y=6,ys=3,text='6',tx=2,ty=1,func='6',bg=999999,fg=0x68f029},
 	seven={x=2,xs=6,y=10,ys=3,text='7',tx=2,ty=1,func='7',bg=999999,fg=0x68f029},
-	eight={x=6,xs=6,y=10,ys=3,text='8',tx=2,ty=1,func='8',bg=999999,fg=0x68f029},
-	nine={x=10,xs=6,y=10,ys=3,text='9',tx=2,ty=1,func='9',bg=999999,fg=0x68f029},
-	zero={x=6,xs=6,y=14,ys=3,text='0',tx=2,ty=1,func='0',bg=999999,fg=0x68f029},
+	eight={x=8,xs=6,y=10,ys=3,text='8',tx=2,ty=1,func='8',bg=999999,fg=0x68f029},
+	nine={x=14,xs=6,y=10,ys=3,text='9',tx=2,ty=1,func='9',bg=999999,fg=0x68f029},
+	zero={x=8,xs=6,y=14,ys=3,text='0',tx=2,ty=1,func='0',bg=999999,fg=0x68f029},
 	pimm={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	player={x=10,xs=24,y=8,ys=3,text='player',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029}
 }
@@ -176,7 +176,7 @@ market.place=function()
 		gpu.setBackground(b.bg)
 		gpu.fill(b.x,b.y,b.xs,b.ys,' ')
 		gpu.setForeground(b.fg)
-		gpu.set(b.x+b.tx,b.y+b.ty,b.text)
+		gpu.set(tonumber(b.x)+tonumber(b.tx),tonumber(b.y)+tonumber(b.ty),b.text)
 		gpu.setBackground(bg)
 		gpu.setForeground(fg)
 	end

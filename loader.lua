@@ -43,7 +43,7 @@ function builder(evnt,player_name,uuid,id)
 		--else 
 		--end
 	m=require('market')
-	m.hello()
+	m.hello(event,player_name,uuid,id)
 	itemlist=m.load_fromFile({})
 	inventory=m.get_playeritemlist({})
 	m.price_build(inventory,itemlist)

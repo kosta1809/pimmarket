@@ -211,14 +211,14 @@ end
 
 
 market.hello=function(player_name,uuid,id)
-	market.screen={}
+	button_list={}
 	market.button.player.text=player_name
 	market.button.player.xs=#player_name+10
 	market.button.player.x=19-#player_name/2
 	local btns={}
-	btns.a=market.button.pim
-	btns.b=market.button.player
-	market.replace(btns)
+	button_list.a=market.button.pim
+	button_list.b=market.button.player
+	market.replace(button_list)
 end
 
 return market

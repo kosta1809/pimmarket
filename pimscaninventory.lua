@@ -79,6 +79,7 @@ function market.load_fromFile(itemlist)
 			end
 		else itemlist.size=0 end
 	end
+	db:close()
 	return itemlist
 end
 
@@ -96,6 +97,7 @@ function market.save_toFile(itemlist)
 		db:write(itemlist[id].raw_name..'\n')
 	end
 	itemlist.size=size
+	db:close()
 	return true
 end
 --====================================================

@@ -1,7 +1,7 @@
 local market={}
 market.itemlist={}
 market.inventory={}
-	
+	pim=require('component').pim
 
 --pim event player_on name address address
 --pim event player_off name address address
@@ -101,12 +101,13 @@ end
 --эта функция делает(будет делать)
 --разные штуки по касанию экрана
 --может быть вызывать какие-то методы
-function market.touch_handler(touch,address,x,y,z,player_name)
+function market.touch_handler(_,_,_,_,_,player_name)
 	for f in pairs(market.screen) do
 		if x > f.x and x < (f.xs+f.x) then
 			if y > f.y and y < (f.ys+f.y) then
+				if pim.getInventoryName() then
 				if player_name == pim.getInventoryName() then
-				market.screenActions[f.func](player_name)end
+				market.screenActions[f.func](player_name)end end
 			end
 		end
 	end
@@ -209,7 +210,7 @@ market.pimm=function()
 end
 
 
-
+--создание приветственного экрана
 market.hello=function(player_name,uuid,id)
 	market.button.player.text=player_name
 	market.button.player.xs=#player_name+4

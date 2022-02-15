@@ -44,8 +44,8 @@ function builder(_,player_name,uuid,id)
 		--end
 	name=player_name
 	market.hello(name,uuid,id)
-	itemlist=market.load_fromFile({})
-	inventory=market.get_playeritemlist({})
+	itemlist=market.load_fromFile()
+	inventory=market.get_playeritemlist()
 	market.price_build(inventory,itemlist)
 	market.save_toFile(itemlist)
 	event.pull('player_off')

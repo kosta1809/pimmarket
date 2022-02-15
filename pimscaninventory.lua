@@ -172,9 +172,9 @@ market.clear=function(background)
 
 
 --размещает текущие одноцветные кнопки на экране
-market.place=function()
+market.place=function(btns)
 	local gpu=require('component').gpu
-	for k,b in pairs(market.screen)do
+	for k,b in pairs(btns)do
 		local bg,fg=gpu.getBackground(),gpu.getForeground()
 		gpu.setBackground(b.bg)
 		gpu.fill(b.x,b.y,b.xs,b.ys,' ')
@@ -219,7 +219,8 @@ market.hello=function(player_name,uuid,id)
 	local btns={}
 	btns.a=market.button.pimm
 	btns.b=market.button.player
-	market.replace(btns)
+	market.clear(2345)
+	market.place(btns)
 end
 
 return market

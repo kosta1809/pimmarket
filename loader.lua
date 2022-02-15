@@ -34,26 +34,25 @@ end
 	file:close()
 --end
 
-local m=require'market'
+local market=require'market'
 --local itemlist=market.load_fromFile()
 
 
-function builder(evnt,player_name,uuid,id)
+function builder(_,player_name,uuid,id)
 	--if not admin then 
 		--else 
 		--end
 	name=player_name
-	m=require('market')
-	m.hello(evnt,name,uuid,id)
-	itemlist=m.load_fromFile({})
-	inventory=m.get_playeritemlist({})
-	m.price_build(inventory,itemlist)
-	m.save_toFile(itemlist)
+	market.hello(name,uuid,id)
+	itemlist=market.load_fromFile({})
+	inventory=market.get_playeritemlist({})
+	market.price_build(inventory,itemlist)
+	market.save_toFile(itemlist)
 	event.pull('player_off')
 end
 gpu=require('component').gpu
 --gpu.setResolution(48,16)
 gpu.setResolution(75,25)
 event.listen('player_on',builder)
-event.listen('touch',m.touch_handler)
+event.listen('touch',market.touch_handler)
 print('starting up')

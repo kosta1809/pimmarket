@@ -63,20 +63,22 @@ end
 
 --load itemlist from file by id
 function market.load_fromFile(itemlist)
-    if 'table'~=type(itemlist) then itemlist={} end
+    if not itemlist then itemlist={} end
 	db=io.open('db.market','r')
 	if db then
 		size=db:read('*line')
-		itemlist.size=size
-		for f=1, size do 
-			id=db:read('*line')
-			itemlist[id]={}
-			itemlist[id].display_name=db:read('*line')
-			itemlist[id].sell_price=db:read('*line')
-			itemlist[id].bye_price=db:read('*line')
-			itemlist[id].raw_name=db:read('*line')
-		end
-	else itemlist.size=0 end
+		if tonumber(size) then
+			itemlist.size=size
+			for f=1, size do 
+				id=db:read('*line')
+				itemlist[id]={}
+				itemlist[id].display_name=db:read('*line')
+				itemlist[id].sell_price=db:read('*line')
+				itemlist[id].bye_price=db:read('*line')
+				itemlist[id].raw_name=db:read('*line')
+			end
+		else itemlist.size=0 end
+	end
 	return itemlist
 end
 

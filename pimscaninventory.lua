@@ -101,17 +101,18 @@ end
 --эта функция делает(будет делать)
 --разные штуки по касанию экрана
 --может быть вызывать какие-то методы
-function market.touch_handler(_,_,_,_,_,player_name)
-	for f in pairs(market.screen) do
-		if x > f.x and x < (f.xs+f.x) then
-			if y > f.y and y < (f.ys+f.y) then
-				if pim.getInventoryName() then
-				if player_name == pim.getInventoryName() then
-				market.screenActions[f.func](player_name)end end
+function market.touch_handler(_,_,x,y,_,player_name)
+
+	if player_name == pim.getInventoryName() then
+		for f in pairs(market.screen) do
+			a=x > f.x and x < (f.xs+f.x)
+			b=y > f.y and y < (f.ys+f.y)
+				if a and b then
+				market.screenActions[f.func](player_name)
+				end
 			end
 		end
 	end
-end
 
 
 

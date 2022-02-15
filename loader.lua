@@ -26,7 +26,7 @@ end
 	file:close()
 
 
-	local handle=inet.request('https://raw.githubusercontent.com/Zardar/pimmarket/master/pimscaninventory.lua')
+	local handle=inet.request('https://raw.githubusercontent.com/Zardar/pimmarket/master/pimmarket.lua')
 	local result=''
 	for chunk in handle do result=result..chunk end
 	local file=io.open('market.lua','w')

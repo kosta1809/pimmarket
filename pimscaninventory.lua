@@ -138,6 +138,7 @@ market.button={
 --в том числе меняющие содержимое экрана
 market.screenActions={}
 market.screenActions.pimm=function()
+	print('touch event write this message')
 end
 
 
@@ -209,7 +210,7 @@ end
 
 
 
-market.hello=function(evnt,player_name,uuid,id)
+market.hello=function(player_name,uuid,id)
 	market.button.player.text=player_name
 	market.button.player.xs=#player_name+4
 	market.button.player.x=19-#player_name/2

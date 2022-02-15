@@ -58,6 +58,7 @@ function market.price_build(inventory,itemlist)
 		end
 	end
 	price=nil
+	return itemlist
 end
 
 

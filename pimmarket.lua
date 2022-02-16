@@ -3,28 +3,31 @@ market.itemlist={}
 market.inventory={}
 market.number=''
 pim=require('component').pim
-me=require('component').me_interface
+chest=require('component').titanium
 
 --pim getStackInSlot:table witch fields k+v: display_name,dmg,id,max_dmg,max_size,mod_id,name,ore_dict,qty,raw_name//whre qty is amount
 --fields form item: display_name, id, raw_name. also need add price for bye, price for cell. 
 
---scan player inventory. return items table
-function market.get_playeritemlist()
-	pim=require('component').pim
+--scan inventory. return items table.
+--из самостоятельной одноцелевой в многоцелевую
+--на вход подать используемый компонент. обычно пим или сундук. или любой другой инвентарь для работы
+function market.get_playeritemlist(device)
+	size=device.totalSlots --число слотов в инвентаре
 	inventory={}
 	index,id,item=1,'',''
-	for f=1,36
-	 do item=pim.getStackInSlot(f) 
+	for f=1,size
+	 do item=device.getStackInSlot(f) 
 	 	--заполняет таблицу инвентаря,
 	 	--добавляя поле slots для повторяющихся
 	 	--в инвентаре предметов. суммирует qty для них
-		if item and not inventory[item.id] then
-			local id=item.id
+	 	--в поле id пишется raw_name
+		if item and not inventory[item.raw_name] then
+			local id=item.raw_name
 			inventory[id]={}
 			inventory[id].display_name=item.display_name
 			inventory[id].sell_price=item.sell_price
 			inventory[id].bye_price=item.bye_price
-			inventory[id].raw_name=item.raw_name
+			inventory[id].name=item.name
 			inventory[id].qty=item.qty
 			inventory[id].slots={f}
 		else if item then
@@ -45,7 +48,7 @@ function market.price_build(inventory,itemlist)
  		if not itemlist[id] then
  			itemlist[id]={}
  			itemlist[id].display_name=inventory[id].display_name
-			itemlist[id].raw_name=inventory[id].raw_name
+			itemlist[id].name=inventory[id].name
 
 			print('Введите цену продажи для '..itemlist[id].display_name..': ')
 			while not tonumber(price) do price=io.read() end
@@ -95,7 +98,7 @@ function market.save_toFile(itemlist)
 		db:write(itemlist[id].display_name..'\n')
 		db:write(itemlist[id].sell_price..'\n')
 		db:write(itemlist[id].bye_price..'\n')
-		db:write(itemlist[id].raw_name..'\n')
+		db:write(itemlist[id].name..'\n')
 	end
 	itemlist.size=size
 	db:close()
@@ -137,7 +140,9 @@ market.button={
 	zero={x=8,xs=6,y=14,ys=3,text='0',tx=2,ty=1,bg=999999,fg=0x68f029},
 	pimm={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	player={x=10,xs=24,y=8,ys=3,text='player',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
-	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029}
+	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
+	up={x=6,xs=10,y=3,ys=5,text='UP',tx=6,ty=3,bg=0x4cb01e,fg=0xf2b233},
+	down={x=6,xs=10,y=10,ys=5,text='DOWN',tx=5,ty=3,bg=0xc49029,fg=0x68f029}
 }
 
 --это обработчик экрана.
@@ -217,7 +222,6 @@ market.color = {
     pattern = "%[0x(%x%x%x%x%x%x)]",
     background = 0x000000,
     pim = 0x46c8e3,
-
     gray = 0x303030,
     lightGray = 0x999999,
     blackGray = 0x1a1a1a,
@@ -246,15 +250,57 @@ market.hello=function(player_name,uuid,id)
 	market.place(btns)
 end
 
-function market.checkMeAvailables(itemlist)
-	me=require('component').me_interface
-	for id in pairs(itemlist) do
-		obj=me.getItemDetail({'item='..id})
-		itemlist[id].qty_me=obj.all().qty
-		itemlist[id].ore_dict=obj.all().ore_dict
+
+--pim & chest - components contains inventory
+--inventoryList - itemlist of csanning inventory
+--item_id, count - name of item and count for migrate
+--op - type of operation in string format. itemPull or itemPush
+--
+function fromInvToInv(pim,item_list[item_id],count, op)
+	c=count
+	for slot in pairs(item_list[item_id].slots) do
+		available=chest.getItemInSlot(slot).qty
+		if c > 0 then
+			if c >  available then
+				c=c-available
+				pim[op]('down',slot,available)
+			else
+				pim[op]('down',slot,c)
+				c=0
+			end
+		end
 	end
-	return itemlist
+	c=nil
 end
+
+--displayet items availabled for trading
+--where pos - position in itemlist for showing
+--and itemlist - numerated itemlist
+function showMeYourCandiesBaby(itemlist,pos)
+	--down={x=32,xs=28,y=0,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x68f029}
+	gpu.setBackground(0x0bae31)
+	gpu.fill(32,0,28,1)
+	gpu.setBackground(0x202020)
+	gpu.fill(32,1,28,19)
+	gpu.setBackground(0x273ba1)
+	gpu.fill(55,1,1,20)
+	gpu.set(40,0,'available items')
+	gpu.set(56,0,'price')
+	y=1
+	for f=pos, #itemlist do
+		gpu.setBackground(0x202020)
+		gpu.set(32,y,itemlist[f].display_name)
+		gpu.setBackground(0x273ba1)
+		gpu.set(55,y,' ')
+		gpu.setBackground(0x202020)
+		gpu.set(56,y,itemlist[f].price)
+		y=y+1
+		if f > 20 then f=#itemlist end
+	end
+end
+
+
+
 
 return market
 

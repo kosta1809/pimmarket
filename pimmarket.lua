@@ -141,8 +141,11 @@ market.button={
 	pimm={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	player={x=10,xs=24,y=8,ys=3,text='player',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
-	up={x=6,xs=10,y=3,ys=5,text='UP',tx=6,ty=3,bg=0x4cb01e,fg=0xf2b233},
-	down={x=6,xs=10,y=10,ys=5,text='DOWN',tx=5,ty=3,bg=0xc49029,fg=0x68f029}
+	shopUp={x=6,xs=10,y=3,ys=5,text='UP',tx=6,ty=3,bg=0x4cb01e,fg=0xf2b233},
+	shopDown={x=6,xs=10,y=10,ys=5,text='DOWN',tx=5,ty=3,bg=0xc49029,fg=0x68f029},
+	shopTopRight={x=32,xs=29,y=1,ys=1,text='Available items       price',tx=3,ty=0,bg=0xc49029,fg=0x0bae31}
+	shopFillRight={x=32,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e}
+	shopVert={x=55,xs=2,y=1,ys=20,text='',tx=0,ty=0,bg=0xc49029,fg=0x303030}
 }
 
 --это обработчик экрана.
@@ -277,15 +280,7 @@ end
 --where pos - position in itemlist for showing
 --and itemlist - numerated itemlist
 function showMeYourCandiesBaby(itemlist,pos)
-	--down={x=32,xs=28,y=0,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x68f029}
-	gpu.setBackground(0x0bae31)
-	gpu.fill(32,0,28,1)
-	gpu.setBackground(0x202020)
-	gpu.fill(32,1,28,19)
-	gpu.setBackground(0x273ba1)
-	gpu.fill(55,1,1,20)
-	gpu.set(40,0,'available items')
-	gpu.set(56,0,'price')
+
 	y=1
 	for f=pos, #itemlist do
 		gpu.setBackground(0x202020)

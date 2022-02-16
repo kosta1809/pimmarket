@@ -246,5 +246,15 @@ market.hello=function(player_name,uuid,id)
 	market.place(btns)
 end
 
+function market.checkMeAvailables(itemlist)
+	me=require('component').me_interface
+	for id in pairs(itemlist) do
+		obj=me.getItemDetail({'item='..id})
+		itemlist[id].qty_me=obj.all().qty
+		itemlist[id].ore_dict=obj.all().ore_dict
+	end
+	return itemlist
+end
+
 return market
 

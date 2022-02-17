@@ -29,13 +29,6 @@ end
 wget('https://raw.githubusercontent.com/Zardar/pimmarket/master/loader.lua','loader.lua')
 wget('https://raw.githubusercontent.com/Zardar/pimmarket/master/pimmarket.lua','market.lua')
 
-local gpu=require('component').gpu
-gpu.setResolution(60,20)
-
-local itemlist,inventory={},{}
-local market=require'market'
-local itemlist=market.load_fromFile()
-
-event.listen('player_on',market.builder)
---event.listen('touch',market.touch_handler)
+local market=require('market')
 print('starting up')
+market.init()

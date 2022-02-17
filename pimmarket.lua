@@ -1,9 +1,18 @@
+local component=require('component')
 local market={}
 market.itemlist={}
 market.inventory={}
 market.number=''
+market.admins={
+  "d2f4fce0-0f27-3a74-8f03-5d579a99988f": "Vova77"
+}
 pim=require('component').pim
 chest=require('component').titanium
+fs=require('filesystem')
+if fs.exists('admins.market') then
+	market.admins=require('admins.market')
+end
+--получаем список админов из укромного места. 
 
 --pim getStackInSlot:table witch fields k+v: display_name,dmg,id,max_dmg,max_size,mod_id,name,ore_dict,qty,raw_name//whre qty is amount
 --fields form item: display_name, id, raw_name. also need add price for bye, price for cell. 
@@ -205,7 +214,7 @@ market.clear=function(background)
 		gpu.fill(1,1,x,y,' ')
 	end
 
-
+--screendriver
 --размещает текущие одноцветные кнопки на экране
 market.place=function(btns)
 	local gpu=require('component').gpu
@@ -290,9 +299,27 @@ function showMeYourCandiesBaby(itemlist,pos)
 		gpu.setBackground(0x202020)
 		gpu.set(56,y,itemlist[f].price)
 		y=y+1
-		if f > 20 then f=#itemlist end
+		if f > 19 then f=#itemlist end
 	end
 end
+
+--добавление предметов и цен в итемлист
+function builder(_,player_name,uuid,id)
+	--if not admin then 
+		--else 
+		--end
+	name=player_name
+	market.hello(name,uuid,id)
+	itemlist=market.load_fromFile()
+	inventory=market.get_playeritemlist()
+	itemlist=market.price_build(inventory,itemlist)
+	market.save_toFile(itemlist)
+	event.pull('player_off')
+end
+
+function whoIsIt(_,name,uuid,id)
+
+
 
 
 

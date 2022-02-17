@@ -5,7 +5,8 @@ market.itemlist = {}
 market.inventory = {}
 market.number= ''
 market.admins= {{"d2f4fce0-0f27-3a74-8f03-5d579a99988f","Vova77"}}
-market.shopLine=0
+market.shopLine=1
+market.shopItemsOnScreen={}
 player={}
 player.status = ' '
 player.name = ' '
@@ -119,6 +120,15 @@ function market.price_build(inventory,itemlist)
 	return itemlist
 end
 
+--добавление предметов и цен в итемлист
+function builder()
+	itemlist=market.load_fromFile()
+	inventory=market.get_playeritemlist()
+	itemlist=market.price_build(inventory,itemlist)
+	market.save_toFile(itemlist)
+	event.pull('player_off')
+end
+
 --====================================================
 --2022.02.13-14
 
@@ -187,28 +197,32 @@ market.screenActions.zero=function()market.number=market.number..'0' event.push(
 market.screenActions.back=function()if #market.number > 0 then
 	market.number=string.sub(market.number,1,#market.number-1) event.push('input_number','-') end end
 market.screenActions.enternumber=function() event.push('input_number','ok') end
-market.sceenActions.shopUp=function()
-market.sceenActions.shopDown=function()
+market.sceenActions.shopUp=function()if market.shoppLine > 1 then
+	market.shopLine=market.shopLine-1 end event.push('list_moving','ok')end
+market.sceenActions.shopDown=function()if itemlist.size-20 > market.shoppLine then
+	market.shopLine=market.shopLine+1 end event.push('list_moving','ok')end
 --================================================================
 
 --замена кнопок экрана: вызов очистки и прорисовки
 function market.replace(buttons)
 	market.screen=buttons
-	market.clear(0)
-	market.place()
+	market.clear(303030)
+	market.place(buttons)
 end
 
 --Очистка экранаю ничего особенного. Обычный велосипед
 market.clear=function(background)
-		gpu=require('component').gpu
-		if not background then background=0 end
-		x,y=gpu.getViewport()
-		gpu.setBackground(background)
-		gpu.fill(1,1,x,y,' ')
-	end
+	gpu.setActiveBuffer(0)	
+	if not background then background=0 end
+	x,y=gpu.getViewport()
+	gpu.setBackground(background)
+	gpu.fill(1,1,x,y,' ')
+	gpu.setActiveBuffer(1)
+end
 
 --размещает текущие одноцветные кнопки на экране
 market.place=function(btns)
+	gpu.setActiveBuffer(0)
 	b = 0
 	for n in pairs(btns)do
 		b=btns[n]
@@ -221,6 +235,7 @@ market.place=function(btns)
 		gpu.setForeground(fg)
 	end
 	b=nil
+	gpu.setActiveBuffer(1)
 end
 --==================================================================
 --pim & chest - components contains inventory
@@ -266,7 +281,7 @@ function market.screenDriver(_,_,x,y,_,player_name)
 --where pos - position in itemlist for showing
 --and itemlist - numerated itemlist
 --создание экрана со списком пердметов
-function showMeYourCandiesBaby(itemlist,pos)
+function market.showMeYourCandiesBaby(itemlist,pos)
 	y=1
 	index=#itemlist
 	for f=pos, index do
@@ -281,25 +296,49 @@ function showMeYourCandiesBaby(itemlist,pos)
 	end
 end
 
---добавление предметов и цен в итемлист
-function builder()
-	itemlist=market.load_fromFile()
-	inventory=market.get_playeritemlist()
-	itemlist=market.price_build(inventory,itemlist)
-	market.save_toFile(itemlist)
-	event.pull('player_off')
+--отрисовывает поля меню выбора товара
+function market.showMe()
+	buttons={'shopUp','shopDown','shopVert','shopTopRight','shopFillRight'}
+	market.replace(buttons)
+	market.screen.shopVert=nil
+	market.screen.shopTopRight=nil
 end
+
+function market.seeMyOwns()
+	line=market.shopLine
+	--market.shopItemsOnScreen={}
+	myItems={}
+	y=1
+	--items={}
+	gpu.setActiveBuffer(0)
+	gpu.setBackground(0xc49029)
+	gpu.setForeground(0x4cb01e)
+	--тут добавлю немного говна. потом возможно переделаю
+	for item in pairs(itemlist) do
+		if y<20 and line == 0 then
+			gpu.set(33, line, item) 
+			table.insert(myItems,item) y=y+1 
+		else 
+			if line > 0 then 
+				line = line-1 
+			end
+		end
+	end
+	gpu.setActiveBuffer(1)
+	market.shopItemsOnScreen=myItems
+	myItems=nil
+end
+
 --==================================================
 --ну привет, дружок-пирожок. посмотрим, что ты взял с собой
 market.screenActions.welcome=function()
 	print('touch event write this message for the test')
 	market.inventory=market.get_playeritemlist()
-
-
+	market.showMe()
 end
 
 --очистка и создание экрана ожидания
-function pimByeBye()
+function market.pimByeBye()
 	market.player={}
 	market.clear(2345)
 	screenInit()
@@ -308,7 +347,7 @@ function pimByeBye()
 end
 
 --создание приветственного экрана
-market.hello=function(name)
+function market.hello(name)
 	market.button.name.text=player_name
 	market.button.name.xs=#player_name+4
 	market.button.name.x=19-#player_name/2
@@ -317,9 +356,8 @@ market.hello=function(name)
 	market.place(btns)
 end
 --===============================================
-
 --сюда попадает получая эвент player_on
-function pimWhoIsIt(_,who,uid,id)
+function market.pimWhoIsIt(_,who,uid,id)
 	market.
 	playerStatus = 'player'
 	for uuid,name in pairs (market.admins) do
@@ -336,16 +374,19 @@ function pimWhoIsIt(_,who,uid,id)
 	--попадает в функцию велком
 end
 
-function screenInit()
+function market.screenInit()
 	market.screen={'entrance'}
 	market.clear(0x202020)
 	market.place(market.screen)
 end
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим
-function init()
+function market.init()
 	market.itemlist=market.load_fromFile({})
+	table.sort(table)
 	gpu.setResolution(60,20)
 	screenInit()
+	gpu.allocateBuffer(1,1)
+	gpu.setActiveBuffer(1)
 	event.listen('player_on',market.pimWhoIsIt)
 end
 

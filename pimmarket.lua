@@ -358,10 +358,9 @@ end
 --===============================================
 --сюда попадает получая эвент player_on
 function market.pimWhoIsIt(_,who,uid,id)
-	market.
-	playerStatus = 'player'
-	for uuid,name in pairs (market.admins) do
-		if uuid==uid and name==who then 
+	market.playerStatus = 'player'
+for f=1, #market.admins do
+		if market.admin[f].uuid==uid and market.admin[f].name==who then 
 			player_status = 'admin'
 		end
 	end

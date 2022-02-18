@@ -1,58 +1,34 @@
-local loader='0.5.0'
+local loader_v='0.5.0'--for check version
+local market_v='0.5.0'
 local inet=require('internet')
-local fs=require('filesystem')
-local event=require('event')
 local component=require('component')
-local itemlist,inventory={},{}
+local event=require('event')
 
-
-for address in component.list("filesy") do 
-        if component.proxy(address).spaceTotal() > 66000 then
-            fs = component.proxy(address)
-            --return true
-        end
+--fs it is filesystem
+for address in component.list("filesy") do
+    if component.proxy(address).spaceTotal() > 66000  and component.proxy(address).exists('init.lua') then
+        local fs = component.proxy(address)
+    end
 end
 if not fs then
-  customError("Filesystem not found!")
+  print("Filesystem not found!")
 end
 
---download library
---if not fs.exists("market.lua") then
-	local handle=inet.request('https://raw.githubusercontent.com/Zardar/pimmarket/master/loader.lua')
+--download files
+function wget(url,name)
+	local handle=inet.request(url)
 	local result=''
 	for chunk in handle do result=result..chunk end
-	local file=io.open('loader.lua','w')
+	local file=io.open(name,'w')
 	file:write(result)
 	file:close()
-
-
-	local handle=inet.request('https://raw.githubusercontent.com/Zardar/pimmarket/master/pimscaninventory.lua')
-	local result=''
-	for chunk in handle do result=result..chunk end
-	local file=io.open('market.lua','w')
-	file:write(result)
-	file:close()
---end
-
-local market=require'market'
---local itemlist=market.load_fromFile()
-
-
-function builder(_,player_name,uuid,id)
-	--if not admin then 
-		--else 
-		--end
-	name=player_name
-	market.hello(name,uuid,id)
-	itemlist=market.load_fromFile()
-	inventory=market.get_playeritemlist()
-	itemlist=market.price_build(inventory,itemlist)
-	market.save_toFile(itemlist)
-	event.pull('player_off')
 end
-gpu=require('component').gpu
---gpu.setResolution(48,16)
-gpu.setResolution(75,25)
-event.listen('player_on',builder)
---event.listen('touch',market.touch_handler)
+
+--in this place need add block: check updates available
+--if veersios < this.versions then download new else nothing end
+wget('https://raw.githubusercontent.com/Zardar/pimmarket/master/loader.lua','loader.lua')
+wget('https://raw.githubusercontent.com/Zardar/pimmarket/master/pimmarket.lua','market.lua')
+
+local market=require('market')
 print('starting up')
+market.init()

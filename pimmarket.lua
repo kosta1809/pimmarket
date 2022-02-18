@@ -4,7 +4,7 @@ local gpu=require('component').gpu
 market.itemlist = {}
 market.inventory = {}
 market.number= ''
-market.admins= {{"d2f4fce0-0f27-3a74-8f03-5d579a99988f","Vova77"}}
+market.admins= {{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"}}
 market.shopLine=1
 market.shopItemsOnScreen={}
 player={}
@@ -358,6 +358,7 @@ end
 --===============================================
 --сюда попадает получая эвент player_on
 function market.pimWhoIsIt(_,who,uid,id)
+if not who then who='' uid='' end
 	market.playerStatus = 'player'
 for f=1, #market.admins do
 		if market.admin[f].uuid==uid and market.admin[f].name==who then 

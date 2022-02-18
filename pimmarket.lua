@@ -74,8 +74,8 @@ function market.load_fromFile(itemlist)
 				itemlist[id].raw_name=db:read('*line')
 			end
 		else itemlist.size=0 end
+		db:close()
 	end
-	if db then db:close() end
 	return itemlist
 end
 

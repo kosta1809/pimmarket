@@ -133,7 +133,8 @@ end
 --2022.02.13-14
 
 --содержит перечень активных кнопок экрана
-market.screen={}
+market.screen={}--здесь держать все кнопки экрана
+market.activity={}--хдесь держать функциональные кнопки
 --содержит используемые кнопки. Кнопки содержат поля:
 --координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
 market.button={
@@ -225,7 +226,7 @@ market.place=function(btns)
 	gpu.setActiveBuffer(0)
 	b = 0
 	for n in pairs(btns)do
-		b=market.screen[n]
+		b=market.button[n]
 		bg,fg=gpu.getBackground(),gpu.getForeground()
 		gpu.setBackground(tonumber(b.bg))
 		gpu.fill(tonumber(b.x),tonumber(b.y),tonumber(b.xs),tonumber(b.ys),' ')

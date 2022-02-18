@@ -15,7 +15,7 @@ if not fs then
 end
 
 --download files
-function wget(url,name)
+local function wget(url,name)
 	local handle=inet.request(url)
 	local result=''
 	for chunk in handle do result=result..chunk end

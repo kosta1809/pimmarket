@@ -391,4 +391,3 @@ function market.init()
 end
 
 return market
-

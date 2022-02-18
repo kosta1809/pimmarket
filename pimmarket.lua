@@ -75,7 +75,7 @@ function market.load_fromFile(itemlist)
 			end
 		else itemlist.size=0 end
 	end
-	db:close()
+	if db then db:close() end
 	return itemlist
 end
 

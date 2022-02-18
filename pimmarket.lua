@@ -227,9 +227,9 @@ market.place=function(btns)
 	for n in pairs(btns)do
 		b=btns[n]
 		bg,fg=gpu.getBackground(),gpu.getForeground()
-		gpu.setBackground(b.bg)
-		gpu.fill(b.x,b.y,b.xs,b.ys,' ')
-		gpu.setForeground(b.fg)
+		gpu.setBackground(tonumber(b.bg))
+		gpu.fill(tonumber(b.x),tonumber(b.y),tonumber(b.xs),tonumber(b.ys),' ')
+		gpu.setForeground(tonumber(b.fg)
 		gpu.set(tonumber(b.x)+tonumber(b.tx),tonumber(b.y)+tonumber(b.ty),b.text)
 		gpu.setBackground(bg)
 		gpu.setForeground(fg)
@@ -382,7 +382,7 @@ end
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим
 function market.init()
 	market.itemlist=market.load_fromFile({})
-	table.sort(table)
+	--table.sort(table)
 	gpu.setResolution(60,20)
 	market.screenInit()
 	gpu.allocateBuffer(1,1)

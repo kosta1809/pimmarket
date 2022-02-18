@@ -244,7 +244,7 @@ end
 --op - type of operation in string format. itemPull or itemPush
 --передаёт пердметы из целевого в назначенный инвентарь
 --параметр передачи задаётся агр. 'op'=itemPull or itemPush
-function fromInvToInv(pim,itemlist_itemid,count, op)
+function market.fromInvToInv(pim,itemlist_itemid,count, op)
 	c=count
 	for slot in pairs(itemlist_itemid.slots) do
 		available=chest.getItemInSlot(slot).qty

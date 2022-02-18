@@ -197,7 +197,7 @@ market.screenActions.zero=function()market.number=market.number..'0' event.push(
 market.screenActions.back=function()if #market.number > 0 then
 	market.number=string.sub(market.number,1,#market.number-1) event.push('input_number','-') end end
 market.screenActions.enternumber=function() event.push('input_number','ok') end
-market.sceenActions.shopUp=function()if market.shopLine > 1 then
+market.screenActions.shopUp=function()if market.shopLine > 1 then
 	market.shopLine=market.shopLine-1 end event.push('list_moving','ok')end
 market.sceenActions.shopDown=function()if itemlist.size-20 > market.shoppLine then
 	market.shopLine=market.shopLine+1 end event.push('list_moving','ok')end

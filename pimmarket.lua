@@ -225,7 +225,7 @@ market.place=function(btns)
 	gpu.setActiveBuffer(0)
 	b = 0
 	for n in pairs(btns)do
-		b=btns[n]
+		b=market.screen[n]
 		bg,fg=gpu.getBackground(),gpu.getForeground()
 		gpu.setBackground(tonumber(b.bg))
 		gpu.fill(tonumber(b.x),tonumber(b.y),tonumber(b.xs),tonumber(b.ys),' ')

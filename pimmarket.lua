@@ -352,7 +352,7 @@ function market.hello(name)
 	market.button.name.text=name
 	market.button.name.xs=#name+4
 	market.button.name.x=19-#name/2
-	btns={'name,'welcome'}
+	btns={'name','welcome'}
 	market.clear(2345)
 	market.place(btns)
 end

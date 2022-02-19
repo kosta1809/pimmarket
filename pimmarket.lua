@@ -349,10 +349,10 @@ end
 
 --создание приветственного экрана
 function market.hello(name)
-	market.button.name.text=player_name
-	market.button.name.xs=#player_name+4
-	market.button.name.x=19-#player_name/2
-	btns={name,welcome}
+	market.button.name.text=name
+	market.button.name.xs=#name+4
+	market.button.name.x=19-#name/2
+	btns={'name,'welcome'}
 	market.clear(2345)
 	market.place(btns)
 end

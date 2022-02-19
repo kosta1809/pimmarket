@@ -338,9 +338,10 @@ end
 function market.pimByeBye()
 	market.player={}
 	market.clear(2345)
-	screenInit()
 	event.ignore('touch',screenDriver)
 	event.ignore('player_off',pimByeBye)
+event.listen('player_on',pimWhoIsIt)
+market.screenInit()
 end
 
 --создание приветственного экрана
@@ -365,6 +366,7 @@ for f=1, #market.admins do
 	--здороваемся
 	market.hello(who)
 	--включаем наблюдение касаний экрана
+event.ignore('player_on',market.pimWhoIsIt)
 	event.listen('touch',market.screenDriver)
 	event.listen('player_off',market.pimByeBye)
 	--после касания игроком стартовых отображённых кнопок он

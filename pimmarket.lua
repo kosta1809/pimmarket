@@ -213,17 +213,17 @@ end
 
 --Очистка экранаю ничего особенного. Обычный велосипед
 market.clear=function(background)
-	gpu.setActiveBuffer(0)	
+	--gpu.setActiveBuffer(0)	
 	if not background then background=0 end
 	x,y=gpu.getViewport()
 	gpu.setBackground(background)
 	gpu.fill(1,1,x,y,' ')
-	gpu.setActiveBuffer(1)
+	--gpu.setActiveBuffer(1)
 end
 
 --размещает текущие одноцветные кнопки на экране
 market.place=function(btns)
-	gpu.setActiveBuffer(0)
+	--gpu.setActiveBuffer(0)
 	b = 0
 	for n in pairs(btns)do
 		b=market.button[btns[n]]
@@ -236,7 +236,7 @@ market.place=function(btns)
 		gpu.setForeground(fg)
 	end
 	b=nil
-	gpu.setActiveBuffer(1)
+	--gpu.setActiveBuffer(1)
 end
 --==================================================================
 --pim & chest - components contains inventory

@@ -380,7 +380,7 @@ function market.screenInit()
 end
 function market.start()
   
-  market.event_player_on=event.listen('player_on',pimWho)
+  market.event_player_on=event.listen('player_on',market.pimWho)
   if market.event_touch then event.cancel(market.event_touch) market.event_touch=nil end
   if market.event_player_off then event.cancel(market.event_player_off) market.event_player_off=nil end
   market.screenInit()

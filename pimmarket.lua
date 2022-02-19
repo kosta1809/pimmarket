@@ -379,7 +379,7 @@ function market.screenInit()
 	market.place(market.screen)
 end
 function market.start()
-  
+  market.event_touch=event.listen('touch',market.screenDriver)
   market.event_player_on=event.listen('player_on',market.pimWho)
   if market.event_touch then event.cancel(market.event_touch) market.event_touch=nil end
   if market.event_player_off then event.cancel(market.event_player_off) market.event_player_off=nil end

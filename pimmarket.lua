@@ -355,7 +355,7 @@ function market.hello(name)
 end
 --===============================================
 --сюда попадает получая эвент player_on
-function market.pimWhoIsIt(_,who,uid,id)
+function market.pimWho(_,who,uid)
 if not who then who='' uid='' end
 	market.player.status = 'player'
 for f=1, #market.admins do
@@ -366,9 +366,9 @@ for f=1, #market.admins do
 	--здороваемся
 	market.hello(who)
 	--включаем наблюдение касаний экрана
-event.ignore('player_on',market.pimWhoIsIt)
-	event.listen('touch',market.screenDriver)
-	event.listen('player_off',market.pimByeBye)
+  event.cancel(market.event_player_on) market.event_player_on=nil
+	market.event_touch=event.listen('touch',market.screenDriver)
+	market.event_player_off=event.listen('player_off',market.pimByeBye)
 	--после касания игроком стартовых отображённых кнопок он
 	--попадает в функцию велком
 end
@@ -378,15 +378,22 @@ function market.screenInit()
 	market.clear(0x202020)
 	market.place(market.screen)
 end
+function market.start()
+  
+  market.event_player_on=event.listen('player_on',pimWho)
+  if market.event_touch then event.cancel(market.event_touch) market.event_touch=nil end
+  if market.event_player_off then event.cancel(market.event_player_off) market.event_player_off=nil end
+  market.screenInit()
+end
+
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим
 function market.init()
 	market.itemlist=market.load_fromFile({})
 	--table.sort(table)
 	gpu.setResolution(60,20)
-	market.screenInit()
 	gpu.allocateBuffer(1,1)
 	--gpu.setActiveBuffer(1)
-	event.listen('player_on',pimWhoIsIt)
+	market.start()
 end
 
 return market

@@ -355,7 +355,7 @@ function market.hello(name)
 end
 --===============================================
 --сюда попадает получая эвент player_on
-function market.pimWho(_,who,uid)
+function pimWho(_,who,uid)
 if not who then who='' uid='' end
 	market.player.status = 'player'
 for f=1, #market.admins do
@@ -379,8 +379,8 @@ function market.screenInit()
 	market.place(market.screen)
 end
 function market.start()
-  market.event_touch=event.listen('touch',market.screenDriver)
-  market.event_player_on=event.listen('player_on',market.pimWho)
+  --market.event_touch=event.listen('touch',market.screenDriver)
+  market.event_player_on=event.listen('player_on',pimWho)
   if market.event_touch then event.cancel(market.event_touch) market.event_touch=nil end
   if market.event_player_off then event.cancel(market.event_player_off) market.event_player_off=nil end
   market.screenInit()

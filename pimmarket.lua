@@ -358,7 +358,7 @@ function market.pimWhoIsIt(_,who,uid,id)
 if not who then who='' uid='' end
 	market.player.status = 'player'
 for f=1, #market.admins do
-		if market.admin[f].uuid==uid and market.admin[f].name==who then 
+		if market.admins[f].uuid==uid and market.admins[f].name==who then 
 			market.player.status = 'admin'
 		end
 	end

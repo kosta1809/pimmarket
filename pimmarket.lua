@@ -385,7 +385,7 @@ function market.init()
 	gpu.setResolution(60,20)
 	market.screenInit()
 	gpu.allocateBuffer(1,1)
-	gpu.setActiveBuffer(1)
+	--gpu.setActiveBuffer(1)
 	event.listen('player_on',market.pimWhoIsIt)
 end
 

@@ -7,12 +7,8 @@ market.number= ''
 market.admins= {{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"}}
 market.shopLine=1
 market.shopItemsOnScreen={}
-player={}
-player.status = ' '
-player.name = ' '
-player.uid = ' '
-player.balance = ' '
-player.ban = '-'
+market.player={status='player',name='name',uid='uid',balance='0',ban='-'}
+
 local pim=require('component').pim
 local chest=require('component').titanium
 local fs=require('filesystem')

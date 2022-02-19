@@ -360,10 +360,10 @@ end
 --сюда попадает получая эвент player_on
 function market.pimWhoIsIt(_,who,uid,id)
 if not who then who='' uid='' end
-	market.playerStatus = 'player'
+	market.player.status = 'player'
 for f=1, #market.admins do
 		if market.admin[f].uuid==uid and market.admin[f].name==who then 
-			player_status = 'admin'
+			market.player.status = 'admin'
 		end
 	end
 	--здороваемся

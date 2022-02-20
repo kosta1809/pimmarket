@@ -199,6 +199,7 @@ market.screenActions.zero=function()market.number=market.number..'0' event.push(
 market.screenActions.back=function()if #market.number > 0 then
 	market.number=string.sub(market.number,1,#market.number-1) event.push('input_number','-') end end
 market.screenActions.enternumber=function() event.push('input_number','ok') end
+--================================================================
 market.screenActions.shopUp=function()if market.shopLine > 1 then
 	market.shopLine=market.shopLine-1 end event.push('list_moving','ok')end
 market.screenActions.shopDown=function()if market.itemlist.size-20 > market.shoppLine then
@@ -281,8 +282,10 @@ function market.screenDriver(_,_,x,y,_,player_name)
 --where pos - position in itemlist for showing
 --and itemlist - numerated itemlist
 --создание экрана со списком пердметов
-function market.showMeYourCandyesBaby(itemlist,pos)
+function market.showMeYourCandyesBaby()
 	local y=1
+	local pos=market.shopLine
+	local itemlist=market.itemlist
 	local index=#itemlist
 	for f=pos, index do
 		gpu.setBackground(0x202020)
@@ -305,7 +308,7 @@ function market.showMe()
 		--эта функция недописана
 		--она размещает наэкране поля для списка айтемов
 		--так же должна организовать вывод самого списка айтемов
-	return market.showMeYourCandyesBaby(market.itemlist,)
+	return market.showMeYourCandyesBaby()
 
 end
 

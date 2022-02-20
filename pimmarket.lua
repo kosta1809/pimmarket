@@ -24,7 +24,10 @@ for chest in pairs(market.component)do
 	end
 end
 --получаем список админов из рабочей дирректории 
+fs=require('filesystem')
+if fs.exists('home/admins.market') then
 	market.admins=require('admins.market')
+end
 
 --pim getStackInSlot:table witch fields k+v: 
 --display_name,dmg,id,max_dmg,max_size,mod_id,name,ore_dict,qty,raw_name//whre qty is amount

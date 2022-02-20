@@ -271,10 +271,10 @@ function market.screenDriver(_,_,x,y,_,player_name)
 
 	if market.player.name == pim.getInventoryName() then
 		for f in pairs(market.button) do
-			a=x > f.x and x < (f.xs+f.x)
-			b=y > f.y and y < (f.ys+f.y)
+			a=x > market.button[f].x and x < (market.button[f].xs+market.button[f].x)
+			b=y > market[f].y and y < (market[f].ys+market[f].y)
 				if a and b then
-				market.screenActions[f]()
+					market.screenActions[f]()
 				end
 			end
 		end

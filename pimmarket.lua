@@ -337,7 +337,7 @@ end
 
 --отрисовывает поля меню выбора товара
 function market.showMe()
-	market.button.status.text='Hello'..market.player.status..market.player.name
+	market.button.status.text=market.player.status..' '..market.player.name
 	market.screen={'shopUp','shopDown','shopFillRight','shopVert','shopTopRight','status'}
 	market.replace()
 	market.screen[4]=nil
@@ -348,7 +348,6 @@ function market.showMe()
 		--так же должна организовать вывод самого списка айтемов
 		--или не должна. посмотрим
 	return market.showMeYourCandyesBaby()
-
 end
 
 
@@ -457,6 +456,7 @@ function market.init()
 	market.merge()
 	--потом создание нумерного листа торговли
 	market.inumerated()
+	market.save_toFile(market.itemlist)
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)
 	gpu.setResolution(60,20)

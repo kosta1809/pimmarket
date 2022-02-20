@@ -11,7 +11,10 @@ market.selectedItem=''
 market.mode='selling'
 market.chest=''--используемый сундук. содержит ссылку на компонет сундук
 market.number= ''--используется при выборе количества и установки цен
-market.admins= {{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"},{uuid="0b448076-a810-3a82-8bb8-2913bdfb2ae5",name="Taoshi"}}
+market.admins={
+	{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"},
+	{uuid="0b448076-a810-3a82-8bb8-2913bdfb2ae5",name="Taoshi"},
+	{uuid="2e1c3d2c-3c30-4424-a917-682cb9b9fd47",name="Velem77"}}
 market.shopLine=1
 market.shopItemsOnScreen={}
 market.player={status='player',name='name',uid='uid',balance='0',ban='-'}
@@ -149,7 +152,7 @@ market.activity={}--хдесь держать функциональные кн�
 --содержит используемые кнопки. Кнопки содержат поля:
 --координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
 market.button={
-	status={x=1,xs=18,y=1,ys=1,text=market.player.status..' '..market.player.name,tx=1,ty=0,bg=0x68f029,fg=0x999999},
+	status={x=1,xs=18,y=1,ys=1,text='hello',tx=1,ty=0,bg=0x68f029,fg=0x999999},
 	bye={x=10,xs=18,y=4,ys=3,text='Купить',tx=2,ty=1,bg=999999,fg=0x68f029},
 	sell={x=10,xs=19,y=8,ys=3,text='Продать',tx=2,ty=1,bg=999999,fg=0x68f029},
 	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
@@ -226,8 +229,11 @@ market.screenActions.name=function()return market.welcome() end
 market.screenActions.welcome=function()return market.welcome() end
 market.screenActions.status=function()
 	if market.player.status=='admin' then
-		market.mode = 'price edit'
+		market.mode = 'price edit'	
+	else 
+		market.mode = 'selling'
 	end
+	market.button.status.text='Hello'..market.player.status..market.player.name
 end
 --================================================================
 --вызов меню набора номера.

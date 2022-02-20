@@ -24,13 +24,13 @@ end
 --scan inventory. return items table.
 --из самостоятельной одноцелевой в многоцелевую
 --на вход подать используемый компонент. обычно пим или сундук. или любой другой инвентарь для работы
-function market.get_playeritemlist()
+function market.get_inventoryitemlist(device)
 	size=device.getInventorySize() --число слотов в инвентаре
 	print(size)
 	inventory={}
 	index,id,item=1,'',''
 	for f=1,size
-	 do item=device.getStackInSlot(f) 
+	 do item=device['getStackInSlot'](f) 
 	 	--заполняет таблицу инвентаря,
 	 	--добавляя поле slots для повторяющихся
 	 	--в инвентаре предметов. суммирует qty для них
@@ -245,9 +245,9 @@ end
 --op - type of operation in string format. itemPull or itemPush
 --передаёт пердметы из целевого в назначенный инвентарь
 --параметр передачи задаётся агр. 'op'=itemPull or itemPush
-function market.fromInvToInv(pim,itemlist_itemid,count, op)
+function market.fromInvToInv(pim,itemid,count, op)
 	c=count
-	for slot in pairs(itemlist_itemid.slots) do
+	for slot in pairs(itemid.slots) do
 		available=chest.getItemInSlot(slot).qty
 		if c > 0 then
 			if c >  available then
@@ -337,7 +337,7 @@ end
 --ну привет, дружок-пирожок. посмотрим, что ты взял с собой
 function market.welcome()
 	print('touch event write this message for the test')
-	market.inventory=market.get_playeritemlist(pim)
+	market.inventory=market.get_inventoryitemlist(pim)
 	print('getting player item list')
 	market.showMe()
 end

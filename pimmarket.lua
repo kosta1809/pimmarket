@@ -270,7 +270,7 @@ function market.screenDriver(touch,addr,x,y,z,player_name)
 
 	if player_name == market.player.name then
 		print('touch is authorized',player_name)
-		print(tostring(market.screen))
+		print(market.screen.name)
 		for f in pairs(market.screen) do
 			a=x > market.button[f].x and x < (market.button[f].xs+market.button[f].x)
 			b=y > market.button[f].y and y < (market.button[f].ys+market.button[f].y)

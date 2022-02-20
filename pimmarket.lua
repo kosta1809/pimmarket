@@ -267,7 +267,9 @@ end
 --вызывает одноименный кнопке метод в том случае,
 --если имя в эвенте совпадает с именем инвентаря на пим
 function market.screenDriver(_,_,x,y,_,player_name)
-	if player.name == pim.getInventoryName() then
+	print('touch event handled',market.player.name)
+
+	if market.player.name == pim.getInventoryName() then
 		for f in pairs(market.screen) do
 			a=x > f.x and x < (f.xs+f.x)
 			b=y > f.y and y < (f.ys+f.y)

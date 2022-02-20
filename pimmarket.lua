@@ -199,6 +199,9 @@ market.screenActions.shopUp=function()if market.shopLine > 1 then
 	market.shopLine=market.shopLine-1 end event.push('list_moving','ok')end
 market.screenActions.shopDown=function()if itemlist.size-20 > market.shoppLine then
 	market.shopLine=market.shopLine+1 end event.push('list_moving','ok')end
+
+market.screenActions.name=function()return market.welcome() end
+market.screenActions.welcome=function()return market.welcome() end
 --================================================================
 
 --замена кнопок экрана: вызов очистки и прорисовки
@@ -329,7 +332,7 @@ end
 
 --==================================================
 --ну привет, дружок-пирожок. посмотрим, что ты взял с собой
-market.screenActions.welcome=function()
+function market.welcome()
 	print('touch event write this message for the test')
 	market.inventory=market.get_playeritemlist()
 	market.showMe()
@@ -338,11 +341,7 @@ end
 --очистка и создание экрана ожидания
 function market.pimByeBye()
 	market.player={}
-	market.clear(2345)
-	event.ignore('touch',screenDriver)
-	event.ignore('player_off',pimByeBye)
-event.listen('player_on',pimWhoIsIt)
-market.screenInit()
+	return market.start()
 end
 
 --создание приветственного экрана
@@ -352,39 +351,40 @@ function market.hello(name)
 	market.button.name.x=19-#name/2
 	btns={'name','welcome'}
 	market.clear(2345)
-	market.place(btns)
+	return market.place(btns)
 end
 --===============================================
 --сюда попадает получая эвент player_on
 function market.pimWho(_,who,uid)
-if not who then who='' uid='' end
+	if not who then who='' uid='' end
 	market.player.status = 'player'
-for f=1, #market.admins do
+	for f=1, #market.admins do
 		if market.admins[f].uuid==uid and market.admins[f].name==who then 
 			market.player.status = 'admin'
 		end
 	end
-	--здороваемся
-	market.hello(who)
+	
 	--включаем наблюдение касаний экрана
-  event.cancel(market.event_player_on) market.event_player_on=nil
+	event.cancel(market.event_player_on) market.event_player_on=nil
 	market.event_touch=event.listen('touch',market.screenDriver)
 	market.event_player_off=event.listen('player_off',market.pimByeBye)
 	--после касания игроком стартовых отображённых кнопок он
 	--попадает в функцию велком
+	--здороваемся
+	return market.hello(who)
 end
 
 function market.screenInit()
 	market.screen={'entrance'}
 	market.clear(0x202020)
-	market.place(market.screen)
+	return market.place(market.screen)
 end
 function market.start()
-  --market.event_touch=event.listen('touch',market.screenDriver)
-  market.event_player_on=event.listen('player_on',market.pimWho)
-  if market.event_touch then event.cancel(market.event_touch) market.event_touch=nil end
-  if market.event_player_off then event.cancel(market.event_player_off) market.event_player_off=nil end
-  market.screenInit()
+	--market.event_touch=event.listen('touch',market.screenDriver)
+	market.event_player_on=event.listen('player_on',market.pimWho)
+	if market.event_touch then event.cancel(market.event_touch) market.event_touch=nil end
+	if market.event_player_off then event.cancel(market.event_player_off) market.event_player_off=nil end
+	return market.screenInit()
 end
 
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим
@@ -394,7 +394,7 @@ function market.init()
 	gpu.setResolution(60,20)
 	gpu.allocateBuffer(1,1)
 	--gpu.setActiveBuffer(1)
-	market.start()
+	return market.start()
 end
 
 return market

@@ -4,6 +4,7 @@ local event=require('event')
 local gpu=require('component').gpu
 market.itemlist = {}
 market.inventory = {}
+market.shopInv = {}
 market.number= ''
 market.admins= {{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"}}
 market.shopLine=1
@@ -156,10 +157,10 @@ market.button={
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
 	shopUp={x=6,xs=10,y=3,ys=5,text='UP',tx=6,ty=3,bg=0x4cb01e,fg=0xf2b233},
-	shopDown={x=6,xs=10,y=10,ys=5,text='DOWN',tx=5,ty=3,bg=0xc49029,fg=0x68f029},
-	shopTopRight={x=32,xs=29,y=1,ys=1,text='Available items       price',tx=3,ty=0,bg=0xc49029,fg=0x0bae31},
-	shopFillRight={x=32,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
-	shopVert={x=55,xs=2,y=1,ys=20,text='',tx=0,ty=0,bg=0xc49029,fg=0x303030}
+	shopDown={x=6,xs=10,y=10,ys=5,text='DOWN',tx=5,ty=3,bg=0x4cb01e,fg=0xf2b233},
+	shopTopRight={x=24,xs=29,y=1,ys=1,text='Available items       price',tx=3,ty=0,bg=0xc49029,fg=0x0bae31},
+	shopFillRight={x=24,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
+	shopVert={x=53,xs=2,y=1,ys=20,text='',tx=0,ty=0,bg=0x202020,fg=0x303030}
 }
 
 --позаимствованная у BrightYC таблица цветов.добавлен мутно-зелёный
@@ -345,6 +346,7 @@ end
 --очистка и создание экрана ожидания
 function market.pimByeBye()
 	market.player={}
+	market.inventory={}
 	return market.start()
 end
 

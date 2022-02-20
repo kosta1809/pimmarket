@@ -358,7 +358,11 @@ end
 --===============================================
 --сюда попадает получая эвент player_on
 function market.pimWho(_,who,uid)
-	if not who then who='' uid='' end
+	--=================================
+	--need connect to server for get player info
+	--=============================
+	market.player.name=who
+	market.player.uid=uid
 	market.player.status = 'player'
 	for f=1, #market.admins do
 		if market.admins[f].uuid==uid and market.admins[f].name==who then 

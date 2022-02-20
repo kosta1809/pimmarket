@@ -26,6 +26,7 @@ end
 --на вход подать используемый компонент. обычно пим или сундук. или любой другой инвентарь для работы
 function market.get_playeritemlist()
 	size=pim.getInventorySize() --число слотов в инвентаре
+	print(size)
 	inventory={}
 	index,id,item=1,'',''
 	for f=1,size

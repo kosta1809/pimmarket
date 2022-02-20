@@ -318,7 +318,7 @@ function market.showMeYourCandyesBaby()
 		gpu.setBackground(0x202020)
 		gpu.set(56,y,market.itemlist[market.inumList[f]].price)
 		y=y+1
-		if f > 19 then f=#itemlist end
+		if y > 19 then f=index+1 end
 	end
 end
 
@@ -337,30 +337,6 @@ function market.showMe()
 
 end
 
-function market.seeMyOwns()
-	local line=market.shopLine
-	--market.shopItemsOnScreen={}
-	local myItems={}
-	local y=1
-	--items={}
-	gpu.setActiveBuffer(0)
-	gpu.setBackground(0xc49029)
-	gpu.setForeground(0x4cb01e)
-	--тут добавлю немного пахучего. потом возможно переделаю
-	for item in pairs(market.itemlist) do
-		if y<20 and line == 0 then
-			gpu.set(33, line, item) 
-			table.insert(myItems,item) y=y+1 
-		else 
-			if line > 0 then 
-				line = line-1 
-			end
-		end
-	end
-	gpu.setActiveBuffer(1)
-	market.shopItemsOnScreen=myItems
-	myItems=nil
-end
 
 --==================================================
 --ну привет, дружок-пирожок. посмотрим, что ты взял с собой
@@ -369,9 +345,6 @@ function market.welcome()
 	market.inventory=market.get_inventoryitemlist(pim)
 	print('getting player item list')
 	market.showMe()
-
-
-
 end
 
 --очистка и создание экрана ожидания
@@ -427,8 +400,10 @@ function market.start()
 	if market.event_player_off then event.cancel(market.event_player_off) market.event_player_off=nil end
 	return market.screenInit()
 end
-
+--сортируем лист в алфавитном порядке
 function market.inumerated()
+	local size=market.itemlist.size
+	market.itemlist.size=nil
 	local index = 1
 	for id in pairs(market.itemlist) do
 		market.inumList[index]=id
@@ -448,7 +423,7 @@ function market.inumerated()
 		index=index-1
 		pos=pos+1
 	end
-
+	market.itemlist.size=size
 end
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим
 function market.init()

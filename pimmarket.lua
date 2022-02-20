@@ -8,6 +8,7 @@ market.chestList = {}--содержит предметы в сундуке св�
 market.inumList={} --содержит нумерованный список с айди предметов магазина
 market.inventory = {}--содержит список предметов текущего посетителя
 market.selectedItem=''
+market.mode='selling'
 market.chest=''--используемый сундук. содержит ссылку на компонет сундук
 market.number= ''--используется при выборе количества и установки цен
 market.admins= {{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"},{uuid="0b448076-a810-3a82-8bb8-2913bdfb2ae5",name="Taoshi"}}
@@ -148,7 +149,7 @@ market.activity={}--хдесь держать функциональные кн�
 --содержит используемые кнопки. Кнопки содержат поля:
 --координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
 market.button={
-	status={x=2,xs=18,y=1,ys=1,text='Welcome '..market.player.status,tx=1,ty=0,bg=999999,fg=0x68f029},
+	status={x=2,xs=18,y=20,ys=1,text='Welcome '..market.player.status..market.player.name,tx=1,ty=0,bg=0x68f029,fg=0x999999},
 	bye={x=10,xs=18,y=4,ys=3,text='Купить',tx=2,ty=1,bg=999999,fg=0x68f029},
 	sell={x=10,xs=19,y=8,ys=3,text='Продать',tx=2,ty=1,bg=999999,fg=0x68f029},
 	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
@@ -223,6 +224,11 @@ market.screenActions.shopFillRight=function(_,y)--ловит выбор игро
 --====================================================================================
 market.screenActions.name=function()return market.welcome() end
 market.screenActions.welcome=function()return market.welcome() end
+market.screenActions.status=function()
+	if market.player.status='admin' then
+		market.mode = 'price edit'
+	end
+end
 --================================================================
 --вызов меню набора номера.
 market.waitForCount=function()
@@ -326,10 +332,10 @@ end
 
 --отрисовывает поля меню выбора товара
 function market.showMe()
-	market.screen={'status','shopUp','shopDown','shopVert','shopTopRight','shopFillRight'}
+	market.screen={'shopUp','shopDown','shopFillRight','shopVert','shopTopRight','status'}
 	market.replace()
-	market.screen[3]=nil
 	market.screen[4]=nil
+	market.screen[5]=nil
 	
 		--эта функция недописана
 		--она размещает наэкране поля для списка айтемов
@@ -352,6 +358,7 @@ end
 function market.pimByeBye()
 	market.player={}
 	market.inventory={}
+	market.mode='selling'
 	return market.start()
 end
 
@@ -434,6 +441,7 @@ end
 function market.init()
 	--надо сперва чекать сундук, затем на его основе подтягивать поля с ценой из файла
 	--либо наоборот. в любом случае сундук апдейдит лист в файле и сохраняет его
+	market.mode='selling'
 	market.itemlist=market.load_fromFile({})
 	market.chestList=market.get_inventoryitemlist(market.chest)
 	--теперь апдейт листа путем добавления полей с отсутствующими айди из сундука в итемлист

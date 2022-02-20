@@ -25,7 +25,7 @@ end
 --из самостоятельной одноцелевой в многоцелевую
 --на вход подать используемый компонент. обычно пим или сундук. или любой другой инвентарь для работы
 function market.get_playeritemlist()
-	size=pim.getInventorySize() --число слотов в инвентаре
+	size=device.getInventorySize() --число слотов в инвентаре
 	print(size)
 	inventory={}
 	index,id,item=1,'',''
@@ -337,7 +337,7 @@ end
 --ну привет, дружок-пирожок. посмотрим, что ты взял с собой
 function market.welcome()
 	print('touch event write this message for the test')
-	market.inventory=market.get_playeritemlist()
+	market.inventory=market.get_playeritemlist(pim)
 	print('getting player item list')
 	market.showMe()
 end

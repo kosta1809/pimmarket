@@ -2,23 +2,29 @@
 local market={}
 local event=require('event')
 local gpu=require('component').gpu
-market.itemlist = {}
-market.inventory = {}
-market.shopInv = {}--наверное, это тоже самое, что и итемлист. 
---либо необъходима реорганизация айтемлиста для соответствия с сундуком
-market.number= ''
-market.admins= {{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"}}
+local component=require('component')
+market.itemlist = {}--содержит все оценённые предметы магазина
+market.chestList = {}--содержит предметы в сундуке связанном с терминалом
+market.inumList={} --содержит нумерованный список с айди предметов магазина
+market.inventory = {}--содержит список предметов текущего посетителя
+market.selectedItem=''
+market.chest=''--используемый сундук. содержит ссылку на компонет сундук
+market.number= ''--используется при выборе количества и установки цен
+market.admins= {{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"},{uuid="0b448076-a810-3a82-8bb8-2913bdfb2ae5",name="Taoshi"}}
 market.shopLine=1
 market.shopItemsOnScreen={}
 market.player={status='player',name='name',uid='uid',balance='0',ban='-'}
-
+--получаем название используемого торгового сундука. список сундуков GTImpact модпака
+market.component = {'neutronium','iridium','osmium','chrome','wolfram','titanium',
+'hsla','aluminium','steel','wriron','chest','tile_extrautils_chestfull_name'}
 local pim=require('component').pim
-local chest=require('component').titanium
-local fs=require('filesystem')
---получаем список админов из рабочей дирректории 
-if fs.exists('home/admins.market') then
-	market.admins=require('admins.market')
+for chest in pairs(market.component)do 
+	if component.isAvailable(market.component[chest]) then
+		market.chest=require('component')[market.component[chest]]
+	end
 end
+--получаем список админов из рабочей дирректории 
+	market.admins=require('admins.market')
 
 --pim getStackInSlot:table witch fields k+v: 
 --display_name,dmg,id,max_dmg,max_size,mod_id,name,ore_dict,qty,raw_name//whre qty is amount
@@ -26,12 +32,12 @@ end
 --===============================================
 --scan inventory. return items table.
 --из самостоятельной одноцелевой в многоцелевую
---на вход подать используемый компонент. обычно пим или сундук. или любой другой инвентарь для работы
+--на вход подать используемый компонент пим или сундук.
 function market.get_inventoryitemlist(device)
 	local size=device.getInventorySize() --число слотов в инвентаре
 	print(size)
-	market.inventory={}
-	local inventory=market.inventory
+	local inventory={}
+	inventory.size=0
 	local id,item='',''
 	for f=1,size
 	 do item=device['getStackInSlot'](f) 
@@ -47,7 +53,8 @@ function market.get_inventoryitemlist(device)
 			inventory[id].bye_price=item.bye_price
 			inventory[id].name=item.name
 			inventory[id].qty=item.qty
-			inventory[id].slots={f}
+			inventory[id].slots={f}--номера слотов занимаемых предметом
+			inventory.size=inventory.size+1
 		else if item then
 			id=item.id
 			inventory[id].qty=inventory[id].qty+item.qty
@@ -55,7 +62,7 @@ function market.get_inventoryitemlist(device)
 			end
 		end
 	end
-	inventory=nil
+	return inventory
 end
 
 --load itemlist from file by id
@@ -124,7 +131,7 @@ end
 --добавление предметов и цен в итемлист
 function builder()
 	market.itemlist=market.load_fromFile()
-	market.inventory=market.get_inventoryitemlist()
+	market.inventory=market.get_inventoryitemlist(pim)--получаем инвентарь игрока
 	market.itemlist=market.price_build(market.inventory,market.itemlist)
 	market.save_toFile(market.itemlist)
 	event.pull('player_off')
@@ -141,18 +148,19 @@ market.activity={}--хдесь держать функциональные кн�
 market.button={
 	bye={x=10,xs=18,y=4,ys=3,text='Купить',tx=2,ty=1,bg=999999,fg=0x68f029},
 	sell={x=10,xs=19,y=8,ys=3,text='Продать',tx=2,ty=1,bg=999999,fg=0x68f029},
-	one={x=2,xs=6,y=2,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
-	two={x=8,xs=6,y=2,ys=3,text='2',tx=2,ty=1,bg=999999,fg=0x68f029},
-	free={x=14,xs=6,y=2,ys=3,text='3',tx=2,ty=1,bg=999999,fg=0x68f029},
-	foo={x=2,xs=6,y=6,ys=3,text='4',tx=2,ty=1,bg=999999,fg=0x68f029},
-	five={x=8,xs=6,y=6,ys=3,text='5',tx=2,ty=1,bg=999999,fg=0x68f029},
-	six={x=14,xs=6,y=6,ys=3,text='6',tx=2,ty=1,bg=999999,fg=0x68f029},
-	seven={x=2,xs=6,y=10,ys=3,text='7',tx=2,ty=1,bg=999999,fg=0x68f029},
-	eight={x=8,xs=6,y=10,ys=3,text='8',tx=2,ty=1,bg=999999,fg=0x68f029},
-	nine={x=14,xs=6,y=10,ys=3,text='9',tx=2,ty=1,bg=999999,fg=0x68f029},
-	zero={x=8,xs=6,y=14,ys=3,text='0',tx=2,ty=1,bg=999999,fg=0x68f029},
-	back={x=2,xs=6,y=14,ys=3,text='<-',tx=2,ty=1,bg=999999,fg=0x68f029},
-	enternumber={x=14,xs=6,y=14,ys=3,text='OK',tx=2,ty=1,bg=999999,fg=0x68f029},
+	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
+	two={x=8,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=999999,fg=0x68f029},
+	free={x=14,xs=6,y=4,ys=3,text='3',tx=2,ty=1,bg=999999,fg=0x68f029},
+	foo={x=2,xs=6,y=8,ys=3,text='4',tx=2,ty=1,bg=999999,fg=0x68f029},
+	five={x=8,xs=6,y=8,ys=3,text='5',tx=2,ty=1,bg=999999,fg=0x68f029},
+	six={x=14,xs=6,y=8,ys=3,text='6',tx=2,ty=1,bg=999999,fg=0x68f029},
+	seven={x=2,xs=6,y=12,ys=3,text='7',tx=2,ty=1,bg=999999,fg=0x68f029},
+	eight={x=8,xs=6,y=12,ys=3,text='8',tx=2,ty=1,bg=999999,fg=0x68f029},
+	nine={x=14,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=999999,fg=0x68f029},
+	zero={x=8,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=999999,fg=0x68f029},
+	back={x=2,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=999999,fg=0x68f029},
+	enternumber={x=16,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=999999,fg=0x68f029},
+	selectedItem={x=4,xs=6,y=2,ys=3,text=market.selectedItem,tx=2,ty=1,bg=999999,fg=0x68f029},
 	
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	entrance={x=2,xs=56,y=2,ys=17,text='Go on PIM',tx=22,ty=9,bg=999999,fg=0x68f029},
@@ -160,7 +168,7 @@ market.button={
 	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
 	shopUp={x=6,xs=10,y=3,ys=5,text='UP',tx=6,ty=3,bg=0x4cb01e,fg=0xf2b233},
 	shopDown={x=6,xs=10,y=10,ys=5,text='DOWN',tx=5,ty=3,bg=0x4cb01e,fg=0xf2b233},
-	shopTopRight={x=24,xs=29,y=1,ys=1,text='Available items       price',tx=3,ty=0,bg=0xc49029,fg=0x0bae31},
+	shopTopRight={x=24,xs=29,y=1,ys=1,text='Available items       count  price',tx=3,ty=1,bg=0xc49029,fg=0x0bae31},
 	shopFillRight={x=24,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
 	shopVert={x=53,xs=2,y=1,ys=20,text='',tx=0,ty=0,bg=0x202020,fg=0x303030}
 }
@@ -200,14 +208,28 @@ market.screenActions.back=function()if #market.number > 0 then
 	market.number=string.sub(market.number,1,#market.number-1) event.push('input_number','-') end end
 market.screenActions.enternumber=function() event.push('input_number','ok') end
 --================================================================
-market.screenActions.shopUp=function()if market.shopLine > 1 then
-	market.shopLine=market.shopLine-1 end event.push('list_moving','ok')end
-market.screenActions.shopDown=function()if market.itemlist.size-20 > market.shoppLine then
-	market.shopLine=market.shopLine+1 end event.push('list_moving','ok')end
+market.screenActions.shopUp=function()if market.shopLine > 10 then
+	market.shopLine=market.shopLine-10 end return market.showMeYourCandyesBaby() end
+market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shoppLine then
+	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby() end
+market.screenActions.shopFillRight=function(_,y)--ловит выбор игроком предмета
+	local line=market.shopLine+y-1
+  market.selectedItem=market.itemlist[market.inumList[line]]
+	return market.waitForCount() end
 
+--====================================================================================
 market.screenActions.name=function()return market.welcome() end
 market.screenActions.welcome=function()return market.welcome() end
 --================================================================
+--вызов меню набора номера.
+market.waitForCount=function()
+market.screen={'one','two','free','foo','five','six','seven','eight',
+'nine','zero','back','enternumber','number','selectedItem'}
+return market.replace()
+
+end
+
+--=================================================
 
 --замена кнопок экрана: вызов очистки и прорисовки
 function market.replace()
@@ -245,25 +267,24 @@ end
 --inventoryList - itemlist of csanning inventory
 --item_id, count - name of item and count for migrate
 --op - type of operation in string format. itemPull or itemPush
---передаёт пердметы из целевого в назначенный инвентарь
+--передаёт выбранный предмет itemid в количестве count из целевого в назначенный инвентарь
 --параметр передачи задаётся агр. 'op'=itemPull or itemPush
-function market.fromInvToInv(pim,itemid,count, op)
+function market.fromInvToInv(device,itemid,count, op)
 	local c=count
 	for slot in pairs(itemid.slots) do
-		local available=chest.getItemInSlot(slot).qty
+		local available=device.getItemInSlot(slot).qty
 		if c > 0 then
 			if c >  available then
 				c=c-available
-				pim[op]('down',slot,available)
+				pim[op]('down',slot,available)--из слота в назначение
 			else
-				pim[op]('down',slot,c)
+				pim[op]('down',slot,c)--остатки меньше стака
 				c=0
 			end
 		end
 	end
-	c=nil
 end
-
+--==--==--==--==--==--==--==--==--==--==--==--
 --эта функция обрабатывает касания экрана.
 --ориентируясь по списку в листе market.screen
 --вызывает одноименный кнопке метод в том случае,
@@ -273,7 +294,7 @@ function market.screenDriver(_,_,x,y,_,player_name)
 		for f = 1, #market.screen do
 			local button=market.button[market.screen[f]]
 			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
-				if a then return market.screenActions[market.screen[f]]() end
+				if a then return market.screenActions[market.screen[f]](x,y) end
 			end
 		end
 	end
@@ -285,15 +306,17 @@ function market.screenDriver(_,_,x,y,_,player_name)
 function market.showMeYourCandyesBaby()
 	local y=1
 	local pos=market.shopLine
-	local itemlist=market.itemlist
-	local index=#itemlist
+	local itemlist=market.inumList
+	local index=#market.inumList
 	for f=pos, index do
 		gpu.setBackground(0x202020)
-		gpu.set(32,y,itemlist[f].display_name)
+		gpu.fill(24,y,30,1)
+		gpu.set(24,y,market.itemlist[market.inumList[f]].display_name)
+		gpu.set(48,y,market.itemlist[market.inumList[f]].qty)
 		gpu.setBackground(0x273ba1)
 		gpu.set(55,y,' ')
 		gpu.setBackground(0x202020)
-		gpu.set(56,y,itemlist[f].price)
+		gpu.set(56,y,market.itemlist[market.inumList[f]].price)
 		y=y+1
 		if f > 19 then f=#itemlist end
 	end
@@ -305,9 +328,11 @@ function market.showMe()
 	market.replace()
 	market.screen[3]=nil
 	market.screen[4]=nil
+	
 		--эта функция недописана
 		--она размещает наэкране поля для списка айтемов
 		--так же должна организовать вывод самого списка айтемов
+		--или не должна. посмотрим
 	return market.showMeYourCandyesBaby()
 
 end
@@ -341,7 +366,7 @@ end
 --ну привет, дружок-пирожок. посмотрим, что ты взял с собой
 function market.welcome()
 	print('touch event write this message for the test')
-	market.get_inventoryitemlist(pim)
+	market.inventory=market.get_inventoryitemlist(pim)
 	print('getting player item list')
 	market.showMe()
 
@@ -395,6 +420,7 @@ function market.screenInit()
 	market.clear(0x202020)
 	return market.place(market.screen)
 end
+
 function market.start()
 	market.event_player_on=event.listen('player_on',market.pimWho)
 	if market.event_touch then event.cancel(market.event_touch) market.event_touch=nil end
@@ -402,9 +428,32 @@ function market.start()
 	return market.screenInit()
 end
 
+function market.inumerated()
+	local index = 1
+	for id in pairs(market.itemlist) do
+		market.inumList[index]=id
+		index=index+1
+	end
+	index=#market.inumList 
+  local pos=1
+	while index>pos do
+		for int = index, pos, -1 do
+			if market.inumList[int] < market.inumList[pos] then
+				market.inumList[pos], market.inumList[int] = market.inumList[int], market.inumList[pos]
+			end
+			if market.inumList[int] > market.inumList[index] then
+				market.inumList[index], market.inumList[int] = market.inumList[int], market.inumList[index]
+			end
+		end
+		index=index-1
+		pos=pos+1
+	end
+
+end
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим
 function market.init()
 	market.itemlist=market.load_fromFile({})
+	market.inumerated()
 	--table.sort(table)
 	gpu.setResolution(60,20)
 	gpu.allocateBuffer(1,1)

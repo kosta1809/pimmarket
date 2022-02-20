@@ -167,7 +167,7 @@ market.button={
 	zero={x=8,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=999999,fg=0x68f029},
 	back={x=2,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=999999,fg=0x68f029},
 	enternumber={x=16,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=999999,fg=0x68f029},
-	selectedItem={x=4,xs=6,y=2,ys=3,text=market.selectedItem,tx=2,ty=1,bg=999999,fg=0x68f029},
+	selectedItem={x=4,xs=6,y=2,ys=3,text='selectedItem',tx=2,ty=1,bg=999999,fg=0x68f029},
 	
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	entrance={x=2,xs=56,y=2,ys=17,text='Go on PIM',tx=22,ty=9,bg=999999,fg=0x68f029},
@@ -233,7 +233,6 @@ market.screenActions.status=function()
 	else 
 		market.mode = 'selling'
 	end
-	market.button.status.text='Hello'..market.player.status..market.player.name
 end
 --================================================================
 --вызов меню набора номера.
@@ -319,7 +318,6 @@ function market.screenDriver(_,_,x,y,_,name)
 --and itemlist - numerated itemlist
 --создание экрана со списком пердметов
 function market.showMeYourCandyesBaby()
-	print(market.player.name)
 	local y=1
 	local pos=market.shopLine
 	local index=#market.inumList
@@ -339,6 +337,7 @@ end
 
 --отрисовывает поля меню выбора товара
 function market.showMe()
+	market.button.status.text='Hello'..market.player.status..market.player.name
 	market.screen={'shopUp','shopDown','shopFillRight','shopVert','shopTopRight','status'}
 	market.replace()
 	market.screen[4]=nil

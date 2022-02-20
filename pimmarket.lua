@@ -313,6 +313,7 @@ function market.screenDriver(_,_,x,y,_,name)
 --and itemlist - numerated itemlist
 --создание экрана со списком пердметов
 function market.showMeYourCandyesBaby()
+	print(market.player.name)
 	local y=1
 	local pos=market.shopLine
 	local index=#market.inumList
@@ -378,7 +379,6 @@ function market.pimWho(_,who,uid)
 	--need connect to server for get player info
 	--=============================
 	market.player.name=who
-	print(market.player.name)
 	os.sleep(2)
 	market.player.uid=uid
 	market.player.status = 'player'

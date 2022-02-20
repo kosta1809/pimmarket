@@ -225,7 +225,7 @@ market.screenActions.shopFillRight=function(_,y)--ловит выбор игро
 market.screenActions.name=function()return market.welcome() end
 market.screenActions.welcome=function()return market.welcome() end
 market.screenActions.status=function()
-	if market.player.status='admin' then
+	if market.player.status=='admin' then
 		market.mode = 'price edit'
 	end
 end

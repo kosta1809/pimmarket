@@ -428,6 +428,7 @@ end
 
 function market.merge()
 	local index=1
+	if not market.itemlist.size then market.itemlist.size=0 end
 	for id in pairs(market.chestList) do
 		market.itemlist[id]=market.chestList[id]
 		market.inumList[index]=id

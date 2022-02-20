@@ -4,7 +4,8 @@ local event=require('event')
 local gpu=require('component').gpu
 market.itemlist = {}
 market.inventory = {}
-market.shopInv = {}
+market.shopInv = {}--наверное, это тоже самое, что и итемлист. 
+--либо необъходима реорганизация айтемлиста для соответствия с сундуком
 market.number= ''
 market.admins= {{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"}}
 market.shopLine=1
@@ -19,7 +20,8 @@ if fs.exists('home/admins.market') then
 	market.admins=require('admins.market')
 end
 
---pim getStackInSlot:table witch fields k+v: display_name,dmg,id,max_dmg,max_size,mod_id,name,ore_dict,qty,raw_name//whre qty is amount
+--pim getStackInSlot:table witch fields k+v: 
+--display_name,dmg,id,max_dmg,max_size,mod_id,name,ore_dict,qty,raw_name//whre qty is amount
 --fields form item: display_name, id, raw_name. also need add price for bye, price for cell. 
 --===============================================
 --scan inventory. return items table.
@@ -28,7 +30,8 @@ end
 function market.get_inventoryitemlist(device)
 	local size=device.getInventorySize() --число слотов в инвентаре
 	print(size)
-	local inventory={}
+	market.inventory={}
+	local inventory=market.inventory
 	local id,item='',''
 	for f=1,size
 	 do item=device['getStackInSlot'](f) 
@@ -52,8 +55,7 @@ function market.get_inventoryitemlist(device)
 			end
 		end
 	end
-	pim=nil
-	return inventory
+	inventory=nil
 end
 
 --load itemlist from file by id
@@ -212,7 +214,7 @@ function market.replace()
 	market.place(market.screen)
 end
 
---Очистка экранаю ничего особенного. Обычный велосипед
+--Очистка экрана ничего особенного. Обычный велосипед
 market.clear=function(background)
 	--gpu.setActiveBuffer(0)	
 	if not background then background=0 end
@@ -225,18 +227,16 @@ end
 --размещает текущие одноцветные кнопки на экране
 market.place=function(btns)
 	--gpu.setActiveBuffer(0)
-	local b = 0
 	for n in pairs(btns)do
-		b=market.button[btns[n]]
-		local bg,fg=gpu.getBackground(),gpu.getForeground()
+		local b=market.button[btns[n]]
+		-- bg,fg=gpu.getBackground(),gpu.getForeground()
 		gpu.setBackground(tonumber(b.bg))
 		gpu.fill(tonumber(b.x),tonumber(b.y),tonumber(b.xs),tonumber(b.ys),' ')
 		gpu.setForeground(tonumber(b.fg))
 		gpu.set(tonumber(b.x)+tonumber(b.tx),tonumber(b.y)+tonumber(b.ty),b.text)
-		gpu.setBackground(bg)
-		gpu.setForeground(fg)
+		--gpu.setBackground(bg)
+		--gpu.setForeground(fg)
 	end
-	b=nil
 	--gpu.setActiveBuffer(1)
 end
 --==================================================================
@@ -263,20 +263,15 @@ function market.fromInvToInv(pim,itemid,count, op)
 	c=nil
 end
 
---эта функция обрабатывает касания экрана
---сверяясь с расположением кнопок в листе market.screen
+--эта функция обрабатывает касания экрана.
+--ориентируясь по списку в листе market.screen
 --вызывает одноименный кнопке метод в том случае,
 --если имя в эвенте совпадает с именем инвентаря на пим
 function market.screenDriver(_,_,x,y,_,player_name)
-
 	if player_name == market.player.name then
-		--print(market.screen[1],market.screen[2])
 		for f = 1, #market.screen do
-			--print(market.screen[f])
 			local button=market.button[market.screen[f]]
-			--print(button)
 			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
-			--print(a)
 				if a then return market.screenActions[market.screen[f]]() end
 			end
 		end
@@ -286,7 +281,7 @@ function market.screenDriver(_,_,x,y,_,player_name)
 --where pos - position in itemlist for showing
 --and itemlist - numerated itemlist
 --создание экрана со списком пердметов
-function market.showMeYourCandiesBaby(itemlist,pos)
+function market.showMeYourCandyesBaby(itemlist,pos)
 	local y=1
 	local index=#itemlist
 	for f=pos, index do
@@ -307,6 +302,11 @@ function market.showMe()
 	market.replace()
 	market.screen[3]=nil
 	market.screen[4]=nil
+		--эта функция недописана
+		--она размещает наэкране поля для списка айтемов
+		--так же должна организовать вывод самого списка айтемов
+	return market.showMeYourCandyesBaby(market.itemlist,)
+
 end
 
 function market.seeMyOwns()
@@ -338,9 +338,12 @@ end
 --ну привет, дружок-пирожок. посмотрим, что ты взял с собой
 function market.welcome()
 	print('touch event write this message for the test')
-	market.inventory=market.get_inventoryitemlist(pim)
+	market.get_inventoryitemlist(pim)
 	print('getting player item list')
 	market.showMe()
+
+
+
 end
 
 --очистка и создание экрана ожидания
@@ -373,8 +376,8 @@ function market.pimWho(_,who,uid)
 			market.player.status = 'admin'
 		end
 	end
-	
-	--включаем наблюдение касаний экрана
+	--включаем наблюдение касаний экрана. выключаем наблюдение player_on
+	--включаем наблюдение player_off
 	event.cancel(market.event_player_on) market.event_player_on=nil
 	market.event_touch=event.listen('touch',market.screenDriver)
 	market.event_player_off=event.listen('player_off',market.pimByeBye)
@@ -390,7 +393,6 @@ function market.screenInit()
 	return market.place(market.screen)
 end
 function market.start()
-	--market.event_touch=event.listen('touch',market.screenDriver)
 	market.event_player_on=event.listen('player_on',market.pimWho)
 	if market.event_touch then event.cancel(market.event_touch) market.event_touch=nil end
 	if market.event_player_off then event.cancel(market.event_player_off) market.event_player_off=nil end

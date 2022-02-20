@@ -302,8 +302,8 @@ end
 
 --отрисовывает поля меню выбора товара
 function market.showMe()
-	buttons={'shopUp','shopDown','shopVert','shopTopRight','shopFillRight'}
-	market.replace(buttons)
+	market.screen={'shopUp','shopDown','shopVert','shopTopRight','shopFillRight'}
+	market.replace(market.screen)
 	market.screen.shopVert=nil
 	market.screen.shopTopRight=nil
 end

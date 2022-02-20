@@ -24,8 +24,8 @@ end
 --scan inventory. return items table.
 --из самостоятельной одноцелевой в многоцелевую
 --на вход подать используемый компонент. обычно пим или сундук. или любой другой инвентарь для работы
-function market.get_playeritemlist(device)
-	size=device.totalSlots --число слотов в инвентаре
+function market.get_playeritemlist()
+	size=pim.getInventorySize() --число слотов в инвентаре
 	inventory={}
 	index,id,item=1,'',''
 	for f=1,size

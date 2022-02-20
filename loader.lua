@@ -16,5 +16,4 @@ wget('https://raw.githubusercontent.com/Zardar/pimmarket/master/loader.lua','loa
 wget('https://raw.githubusercontent.com/Zardar/pimmarket/master/pimmarket.lua','market.lua')
 
 local market=require('market')
-print('starting up')
 market.init()

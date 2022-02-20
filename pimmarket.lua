@@ -24,7 +24,7 @@ for chest in pairs(market.component)do
 	end
 end
 --получаем список админов из рабочей дирректории 
-fs=require('filesystem')
+local fs=require('filesystem')
 if fs.exists('home/admins.market') then
 	market.admins=require('admins.market')
 end
@@ -38,7 +38,6 @@ end
 --на вход подать используемый компонент пим или сундук.
 function market.get_inventoryitemlist(device)
 	local size=device.getInventorySize() --число слотов в инвентаре
-	print(size)
 	local inventory={}
 	inventory.size=0
 	local id,item='',''
@@ -149,6 +148,7 @@ market.activity={}--хдесь держать функциональные кн�
 --содержит используемые кнопки. Кнопки содержат поля:
 --координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
 market.button={
+	status={x=2,xs=18,y=1,ys=1,text='Welcome '..market.player.status,tx=1,ty=0,bg=999999,fg=0x68f029},
 	bye={x=10,xs=18,y=4,ys=3,text='Купить',tx=2,ty=1,bg=999999,fg=0x68f029},
 	sell={x=10,xs=19,y=8,ys=3,text='Продать',tx=2,ty=1,bg=999999,fg=0x68f029},
 	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
@@ -169,10 +169,10 @@ market.button={
 	entrance={x=2,xs=56,y=2,ys=17,text='Go on PIM',tx=22,ty=9,bg=999999,fg=0x68f029},
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
-	shopUp={x=6,xs=10,y=3,ys=5,text='UP',tx=6,ty=3,bg=0x4cb01e,fg=0xf2b233},
-	shopDown={x=6,xs=10,y=10,ys=5,text='DOWN',tx=5,ty=3,bg=0x4cb01e,fg=0xf2b233},
-	shopTopRight={x=24,xs=29,y=1,ys=1,text='Available items       count  price',tx=3,ty=1,bg=0xc49029,fg=0x0bae31},
-	shopFillRight={x=24,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
+	shopUp={x=2,xs=8,y=3,ys=5,text='UP',tx=6,ty=3,bg=0x4cb01e,fg=0xf2b233},
+	shopDown={x=2,xs=8,y=10,ys=5,text='DOWN',tx=5,ty=3,bg=0x4cb01e,fg=0xf2b233},
+	shopTopRight={x=18,xs=29,y=1,ys=1,text='Available items            count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
+	shopFillRight={x=18,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
 	shopVert={x=53,xs=2,y=1,ys=20,text='',tx=0,ty=0,bg=0x202020,fg=0x303030}
 }
 
@@ -309,7 +309,6 @@ function market.screenDriver(_,_,x,y,_,player_name)
 function market.showMeYourCandyesBaby()
 	local y=1
 	local pos=market.shopLine
-	local itemlist=market.inumList
 	local index=#market.inumList
 	for f=pos, index do
 		gpu.setBackground(0x202020)
@@ -327,7 +326,7 @@ end
 
 --отрисовывает поля меню выбора товара
 function market.showMe()
-	market.screen={'shopUp','shopDown','shopVert','shopTopRight','shopFillRight'}
+	market.screen={'status','shopUp','shopDown','shopVert','shopTopRight','shopFillRight'}
 	market.replace()
 	market.screen[3]=nil
 	market.screen[4]=nil
@@ -343,10 +342,9 @@ end
 
 --==================================================
 --ну привет, дружок-пирожок. посмотрим, что ты взял с собой
+--и отправим смотреть что сами припасли
 function market.welcome()
-	print('touch event write this message for the test')
 	market.inventory=market.get_inventoryitemlist(pim)
-	print('getting player item list')
 	market.showMe()
 end
 
@@ -405,14 +403,7 @@ function market.start()
 end
 --сортируем лист в алфавитном порядке
 function market.inumerated()
-	local size=market.itemlist.size
-	market.itemlist.size=nil
-	local index = 1
-	for id in pairs(market.itemlist) do
-		market.inumList[index]=id
-		index=index+1
-	end
-	index=#market.inumList 
+	local index=#market.inumList 
   local pos=1
 	while index>pos do
 		for int = index, pos, -1 do
@@ -426,12 +417,31 @@ function market.inumerated()
 		index=index-1
 		pos=pos+1
 	end
-	market.itemlist.size=size
 end
+
+function market.merge()
+	local index=1
+	for id in pairs(market.chestList) do
+		market.itemlist[id]=market.chestList[id]
+		market.inumList[index]=id
+		market.itemlist.size=market.itemlist.size+1
+		index=index+1
+	end
+
+end
+
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим
 function market.init()
+	--надо сперва чекать сундук, затем на его основе подтягивать поля с ценой из файла
+	--либо наоборот. в любом случае сундук апдейдит лист в файле и сохраняет его
 	market.itemlist=market.load_fromFile({})
+	market.chestList=market.get_inventoryitemlist(market.chest)
+	--теперь апдейт листа путем добавления полей с отсутствующими айди из сундука в итемлист
+	--а market.inumList будет содержать указатели присутствующих товаров в основном листе
+	market.merge()
+	--потом создание нумерного листа торговли
 	market.inumerated()
+	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)
 	gpu.setResolution(60,20)
 	gpu.allocateBuffer(1,1)

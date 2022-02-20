@@ -149,7 +149,7 @@ market.activity={}--хдесь держать функциональные кн�
 --содержит используемые кнопки. Кнопки содержат поля:
 --координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
 market.button={
-	status={x=1,xs=18,y=1,ys=1,text='Hello '..market.player.status..' '..market.player.name,tx=1,ty=0,bg=0x68f029,fg=0x999999},
+	status={x=1,xs=18,y=1,ys=1,text=market.player.status..' '..market.player.name,tx=1,ty=0,bg=0x68f029,fg=0x999999},
 	bye={x=10,xs=18,y=4,ys=3,text='Купить',tx=2,ty=1,bg=999999,fg=0x68f029},
 	sell={x=10,xs=19,y=8,ys=3,text='Продать',tx=2,ty=1,bg=999999,fg=0x68f029},
 	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
@@ -172,7 +172,7 @@ market.button={
 	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
 	shopUp={x=2,xs=8,y=3,ys=5,text='UP',tx=6,ty=3,bg=0x4cb01e,fg=0xf2b233},
 	shopDown={x=2,xs=8,y=10,ys=5,text='DOWN',tx=5,ty=3,bg=0x4cb01e,fg=0xf2b233},
-	shopTopRight={x=22,xs=29,y=1,ys=1,text='Available items            count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
+	shopTopRight={x=22,xs=29,y=1,ys=1,text='Available items        count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
 	shopFillRight={x=22,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
 	shopVert={x=53,xs=2,y=1,ys=20,text='',tx=0,ty=0,bg=0x202020,fg=0x303030}
 }
@@ -378,6 +378,8 @@ function market.pimWho(_,who,uid)
 	--need connect to server for get player info
 	--=============================
 	market.player.name=who
+	print(market.player.name)
+	os.sleep(2)
 	market.player.uid=uid
 	market.player.status = 'player'
 	for f=1, #market.admins do
@@ -393,7 +395,7 @@ function market.pimWho(_,who,uid)
 	--после касания игроком стартовых отображённых кнопок он
 	--попадает в функцию велком
 	--здороваемся
-	return market.hello(who)
+	return market.hello(market.player.name)
 end
 
 function market.screenInit()

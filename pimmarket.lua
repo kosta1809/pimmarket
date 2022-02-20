@@ -206,9 +206,8 @@ market.screenActions.welcome=function()return market.welcome() end
 
 --замена кнопок экрана: вызов очистки и прорисовки
 function market.replace(buttons)
-	market.screen=buttons
 	market.clear(303030)
-	market.place(buttons)
+	market.place(market.screen)
 end
 
 --Очистка экранаю ничего особенного. Обычный велосипед
@@ -304,8 +303,8 @@ end
 function market.showMe()
 	market.screen={'shopUp','shopDown','shopVert','shopTopRight','shopFillRight'}
 	market.replace(market.screen)
-	market.screen.shopVert=nil
-	market.screen.shopTopRight=nil
+	market.screen[3]=nil
+	market.screen[4]=nil
 end
 
 function market.seeMyOwns()
@@ -317,7 +316,7 @@ function market.seeMyOwns()
 	gpu.setActiveBuffer(0)
 	gpu.setBackground(0xc49029)
 	gpu.setForeground(0x4cb01e)
-	--тут добавлю немного говна. потом возможно переделаю
+	--тут добавлю немного пахучего. потом возможно переделаю
 	for item in pairs(itemlist) do
 		if y<20 and line == 0 then
 			gpu.set(33, line, item) 
@@ -338,6 +337,7 @@ end
 function market.welcome()
 	print('touch event write this message for the test')
 	market.inventory=market.get_playeritemlist()
+	print('getting player item list')
 	market.showMe()
 end
 

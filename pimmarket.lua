@@ -26,10 +26,10 @@ end
 --из самостоятельной одноцелевой в многоцелевую
 --на вход подать используемый компонент. обычно пим или сундук. или любой другой инвентарь для работы
 function market.get_inventoryitemlist(device)
-	size=device.getInventorySize() --число слотов в инвентаре
+	local size=device.getInventorySize() --число слотов в инвентаре
 	print(size)
-	inventory={}
-	index,id,item=1,'',''
+	local inventory={}
+	local id,item='',''
 	for f=1,size
 	 do item=device['getStackInSlot'](f) 
 	 	--заполняет таблицу инвентаря,
@@ -59,13 +59,13 @@ end
 --load itemlist from file by id
 function market.load_fromFile(itemlist)
     if not itemlist then itemlist={} end
-	db=io.open('db.market','r')
+	local db=io.open('db.market','r')
 	if db then
-		size=db:read('*line')
+		local size=db:read('*line')
 		if tonumber(size) then
 			itemlist.size=size
-			for f=1, size do 
-				id=db:read('*line')
+			for _=1, size do 
+				local id=db:read('*line')
 				itemlist[id]={}
 				itemlist[id].display_name=db:read('*line')
 				itemlist[id].sell_price=db:read('*line')
@@ -80,9 +80,9 @@ end
 
 --save itemlist to file
 function market.save_toFile(itemlist)
-	db=io.open('db.market','w')
+	local db=io.open('db.market','w')
 	db:write(itemlist.size..'\n')
-	size=itemlist.size
+	local size=itemlist.size
 	itemlist.size=nil
 	for id in pairs(itemlist)do
 		db:write(id..'\n')
@@ -98,7 +98,7 @@ end
 
 --запрос цен от админа на предоставленные предметы 
 function market.price_build(inventory,itemlist)
- 	price=''
+ 	local price=''
  	for id in pairs(inventory) do
  		if not itemlist[id] then
  			itemlist[id]={}
@@ -121,10 +121,10 @@ end
 
 --добавление предметов и цен в итемлист
 function builder()
-	itemlist=market.load_fromFile()
-	inventory=market.get_playeritemlist()
-	itemlist=market.price_build(inventory,itemlist)
-	market.save_toFile(itemlist)
+	market.itemlist=market.load_fromFile()
+	market.inventory=market.get_inventoryitemlist()
+	market.itemlist=market.price_build(market.inventory,market.itemlist)
+	market.save_toFile(market.itemlist)
 	event.pull('player_off')
 end
 
@@ -199,7 +199,7 @@ market.screenActions.back=function()if #market.number > 0 then
 market.screenActions.enternumber=function() event.push('input_number','ok') end
 market.screenActions.shopUp=function()if market.shopLine > 1 then
 	market.shopLine=market.shopLine-1 end event.push('list_moving','ok')end
-market.screenActions.shopDown=function()if itemlist.size-20 > market.shoppLine then
+market.screenActions.shopDown=function()if market.itemlist.size-20 > market.shoppLine then
 	market.shopLine=market.shopLine+1 end event.push('list_moving','ok')end
 
 market.screenActions.name=function()return market.welcome() end
@@ -207,7 +207,7 @@ market.screenActions.welcome=function()return market.welcome() end
 --================================================================
 
 --замена кнопок экрана: вызов очистки и прорисовки
-function market.replace(buttons)
+function market.replace()
 	market.clear(303030)
 	market.place(market.screen)
 end
@@ -216,7 +216,7 @@ end
 market.clear=function(background)
 	--gpu.setActiveBuffer(0)	
 	if not background then background=0 end
-	x,y=gpu.getViewport()
+	local x,y=gpu.getViewport()
 	gpu.setBackground(background)
 	gpu.fill(1,1,x,y,' ')
 	--gpu.setActiveBuffer(1)
@@ -225,10 +225,10 @@ end
 --размещает текущие одноцветные кнопки на экране
 market.place=function(btns)
 	--gpu.setActiveBuffer(0)
-	b = 0
+	local b = 0
 	for n in pairs(btns)do
 		b=market.button[btns[n]]
-		bg,fg=gpu.getBackground(),gpu.getForeground()
+		local bg,fg=gpu.getBackground(),gpu.getForeground()
 		gpu.setBackground(tonumber(b.bg))
 		gpu.fill(tonumber(b.x),tonumber(b.y),tonumber(b.xs),tonumber(b.ys),' ')
 		gpu.setForeground(tonumber(b.fg))
@@ -247,9 +247,9 @@ end
 --передаёт пердметы из целевого в назначенный инвентарь
 --параметр передачи задаётся агр. 'op'=itemPull or itemPush
 function market.fromInvToInv(pim,itemid,count, op)
-	c=count
+	local c=count
 	for slot in pairs(itemid.slots) do
-		available=chest.getItemInSlot(slot).qty
+		local available=chest.getItemInSlot(slot).qty
 		if c > 0 then
 			if c >  available then
 				c=c-available
@@ -267,15 +267,15 @@ end
 --сверяясь с расположением кнопок в листе market.screen
 --вызывает одноименный кнопке метод в том случае,
 --если имя в эвенте совпадает с именем инвентаря на пим
-function market.screenDriver(touch,addr,x,y,z,player_name)
+function market.screenDriver(_,_,x,y,_,player_name)
 
 	if player_name == market.player.name then
 		--print(market.screen[1],market.screen[2])
 		for f = 1, #market.screen do
 			--print(market.screen[f])
-			button=market.button[market.screen[f]]
+			local button=market.button[market.screen[f]]
 			--print(button)
-			a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
+			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
 			--print(a)
 				if a then return market.screenActions[market.screen[f]]() end
 			end
@@ -287,8 +287,8 @@ function market.screenDriver(touch,addr,x,y,z,player_name)
 --and itemlist - numerated itemlist
 --создание экрана со списком пердметов
 function market.showMeYourCandiesBaby(itemlist,pos)
-	y=1
-	index=#itemlist
+	local y=1
+	local index=#itemlist
 	for f=pos, index do
 		gpu.setBackground(0x202020)
 		gpu.set(32,y,itemlist[f].display_name)
@@ -304,22 +304,22 @@ end
 --отрисовывает поля меню выбора товара
 function market.showMe()
 	market.screen={'shopUp','shopDown','shopVert','shopTopRight','shopFillRight'}
-	market.replace(market.screen)
+	market.replace()
 	market.screen[3]=nil
 	market.screen[4]=nil
 end
 
 function market.seeMyOwns()
-	line=market.shopLine
+	local line=market.shopLine
 	--market.shopItemsOnScreen={}
-	myItems={}
-	y=1
+	local myItems={}
+	local y=1
 	--items={}
 	gpu.setActiveBuffer(0)
 	gpu.setBackground(0xc49029)
 	gpu.setForeground(0x4cb01e)
 	--тут добавлю немного пахучего. потом возможно переделаю
-	for item in pairs(itemlist) do
+	for item in pairs(market.itemlist) do
 		if y<20 and line == 0 then
 			gpu.set(33, line, item) 
 			table.insert(myItems,item) y=y+1 

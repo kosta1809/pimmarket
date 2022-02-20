@@ -1,5 +1,5 @@
 
-local market={}
+market={}
 local event=require('event')
 local gpu=require('component').gpu
 local component=require('component')

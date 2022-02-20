@@ -269,8 +269,8 @@ end
 function market.screenDriver(touch,addr,x,y,z,player_name)
 
 	if player_name == market.player.name then
-		print(market.screen[1],market.screen[2])
-		for f in pairs(market.screen) do
+		--print(market.screen[1],market.screen[2])
+		for f = 1, #market.screen do
 			print(f)
 			button=market.button[market.screen[f]]
 			a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))

@@ -275,9 +275,7 @@ function market.screenDriver(touch,addr,x,y,z,player_name)
 			button=market.button[market.screen[f]]
 			a=(x > button.x and x < (button.xs+button.x)) and (y > button.y and y < (button.ys+button.y))
 			print('a is '..a)
-				if a then
-					market.screenActions[button]()
-				end
+				if a then market.screenActions[button]() end
 			end
 		end
 	end
@@ -353,9 +351,9 @@ function market.hello(name)
 	market.button.name.text=name
 	market.button.name.xs=#name+4
 	market.button.name.x=19-#name/2
-	btns={'name','welcome'}
+	market.screen={'name','welcome'}
 	market.clear(2345)
-	return market.place(btns)
+	return market.place(market.screen)
 end
 --===============================================
 --сюда попадает получая эвент player_on

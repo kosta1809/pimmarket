@@ -270,7 +270,7 @@ function market.screenDriver(_,_,x,y,_,player_name)
 	print('touch event handled',market.player.name)
 
 	if market.player.name == pim.getInventoryName() then
-		for f in pairs(market.screen) do
+		for f in pairs(market.button) do
 			a=x > f.x and x < (f.xs+f.x)
 			b=y > f.y and y < (f.ys+f.y)
 				if a and b then

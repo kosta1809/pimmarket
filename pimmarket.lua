@@ -103,8 +103,8 @@ function market.load_fromFile()
 end
 
 --save itemlist to file
-function market.save_toFile()
-	local itemlist=market.itemlist
+function market.save_toFile(list)
+	local itemlist=list
 	local db=io.open('db.market','w')
 	db:write(itemlist.size..'\n')
 	local size=itemlist.size
@@ -474,7 +474,7 @@ function market.init()
 	--потом сортировка нумерного листа торговли
 	market.inumerated()
 	for item in pairs(market.inumList) do print (market.inumList[item]) end
-	market.save_toFile()
+	market.save_toFile(market.itemlist)
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)
 	gpu.setResolution(60,20)

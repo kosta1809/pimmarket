@@ -464,12 +464,7 @@ function market.merge()
 		market.itemlist.size=market.itemlist.size+1
 		index=index+1
 	end
-	for id in pairs(market.itemlist)do
-			a=''
-		for f in pairs(market.itemlist[id])do a=a..f..'='..market.itemlist[id][f]..'  ' end
-			print(a)
-	end
-	os.sleep(5)
+	
 end
 
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим

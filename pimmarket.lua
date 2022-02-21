@@ -202,7 +202,7 @@ end
 function market.save_toFile(list)
 	local itemlist=list
 	local db=io.open('db.market','w')
-	db:write(itemlist.size..'\n')
+	db:write(tostring(itemlist.size)..'\n')
 	local size=itemlist.size
 	itemlist.size=nil
 	for id in pairs(itemlist)do

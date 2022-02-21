@@ -453,15 +453,19 @@ function market.merge()
 		if not market.itemlist[id] then
 			market.itemlist[id]=market.chestList[id]
 			market.itemlist[id].sell_price = 9999
-			market.itemlist[id].bye_price = 0
-			a=''
-			for f in pairs(market.itemlist[id])do a=a..f..'='..market.itemlist[id][f]..'  ' end
-			print(a)
+			market.itemlist[id].bye_price = 0	
 		end
 
+		
 		market.itemlist.size=market.itemlist.size+1
 		index=index+1
 	end
+	for id in pairs(market.itemlist)do
+			a=''
+		for f in pairs(market.itemlist[id])do a=a..f..'='..market.itemlist[id][f]..'  ' end
+			print(a)
+	end
+	os.sleep(5)
 end
 
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим

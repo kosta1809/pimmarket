@@ -14,7 +14,7 @@ market.selectedItem=''
 market.mode='selling'
 market.chest=''--используемый сундук. содержит ссылку на компонет сундук
 market.number= ''--используется при выборе количества и установки цен
-market.admins={
+market.owner={
 	{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"},
 	{uuid="0b448076-a810-3a82-8bb8-2913bdfb2ae5",name="Taoshi"},
 	{uuid="2e1c3d2c-3c30-4424-a917-682cb9b9fd47",name="Velem77"}
@@ -33,8 +33,8 @@ for chest in pairs(market.component)do
 end
 --получаем список админов из рабочей дирректории 
 local fs=require('filesystem')
-if fs.exists('home/admins.market') then
-	market.admins=require('admins.market')
+if fs.exists('home/owner.market') then
+	market.owner=require('owner.market')
 end
 --=============================================================
 --2022.02.13-14
@@ -67,8 +67,8 @@ market.button={
 	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
 	shopUp={x=2,xs=10,y=3,ys=5,text='UP',tx=5,ty=2,bg=0x4cb01e,fg=0xf2b233},
 	shopDown={x=2,xs=10,y=10,ys=5,text='DOWN',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
-	shopTopRight={x=22,xs=29,y=1,ys=1,text='Available items        count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
-	shopFillRight={x=22,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
+	shopTopRight={x=18,xs=29,y=1,ys=1,text='Available items        count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
+	shopFillRight={x=18,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
 	shopVert={x=53,xs=2,y=1,ys=20,text=' ',tx=0,ty=0,bg=0x202020,fg=0x303030}
 }
 --позаимствованная у BrightYC таблица цветов.добавлен мутно-зелёный
@@ -119,7 +119,7 @@ market.screenActions.shopFillRight=function(_,y)--ловит выбор игро
 market.screenActions.name=function()return market.welcome() end
 market.screenActions.welcome=function()return market.welcome() end
 market.screenActions.status=function()
-	if market.player.status=='admin' then
+	if market.player.status=='owner' then
 		market.mode = 'price edit'	
 	else 
 		market.mode = 'selling'
@@ -308,12 +308,12 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 		--gpu.setBackground(0x202020)
 		--gpu.fill(24,y,30,1)
 		local item=inumList[pos]
-		gpu.set(24,y,tostring(itemlist[item].display_name))
+		gpu.set(20,y,tostring(itemlist[item].display_name))
 		gpu.set(48,y,tostring(itemlist[item].qty))
 		--gpu.setBackground(0x273ba1)
 		gpu.set(55,y,' ')
 		--gpu.setBackground(0x202020)
-		gpu.set(56,y,tostring(itemlist[item].price))
+		gpu.set(56,y,tostring(itemlist[item].sell_price))
 		y=y+1
 		pos=pos+1
 		if y > 19 then pos=total+1 end
@@ -371,9 +371,9 @@ function market.pimWho(_,who,uid)
 	market.player.name=who
 	market.player.uid=uid
 	market.player.status = 'player'
-	for f=1, #market.admins do
-		if market.admins[f].uuid==uid and market.admins[f].name==who then 
-			market.player.status = 'admin'
+	for f=1, #market.owner do
+		if market.owner[f].uuid==uid and market.owner[f].name==who then 
+			market.player.status = 'owner'
 		end
 	end
 	--включаем наблюдение касаний экрана. выключаем наблюдение player_on
@@ -424,13 +424,15 @@ function market.merge()
 		market.inumList[index]=id
 		if not market.itemlist[id] then
 			market.itemlist[id]=market.chestList[id]
-			market.itemlist[id].sell_price = 9999
-			market.itemlist[id].bye_price = 0	
-			market.itemlist[id].qty=market.chestList[id].qty
+			market.itemlist[id].sell_price = '9999'
+			market.itemlist[id].bye_price = '0'	
+			market.itemlist[id].qty=tostring(market.chestList[id].qty)
+			print(market.itemlist[id].qty)
 			market.itemlist[id].display_name=market.chestList[id].display_name
 			market.itemlist.size=market.itemlist.size+1
 		end
 		index=index+1
+		os.sleep(1)
 	end
 	
 end

@@ -326,9 +326,12 @@ function market.screenDriver(_,_,x,y,_,name)
 --создание экрана со списком пердметов
 function market.showMeYourCandyesBaby()
 	local y=1
+	gpu.setBackground(0)
 	print('оно должно выводить список предметов. и где он?')
 	local pos=market.shopLine
+
 	local index=#market.inumList
+	print(index) os.sleep(4)
 	for f=pos, index do
 		gpu.setBackground(0x202020)
 		gpu.fill(24,y,30,1)

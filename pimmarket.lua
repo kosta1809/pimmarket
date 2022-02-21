@@ -77,7 +77,7 @@ end
 
 --load itemlist from file
 function market.load_fromFile()
-	local itemlist = market.itemlist
+	local itemlist = {}
 	if not fs.exists('home/db.market') then
 		local db=io.open('db.market','w')
 		db:write('0'..'\n')
@@ -88,12 +88,11 @@ function market.load_fromFile()
 		if tonumber(size) then
 			itemlist.size=size
 			for _=1, size do 
-				local id=db:read('*line')
+				local id=tostring(db:read('*line'))
 				itemlist[id]={}
-				itemlist[id].display_name=db:read('*line')
-				itemlist[id].sell_price=db:read('*line')
-				itemlist[id].bye_price=db:read('*line')
-				itemlist[id].raw_name=db:read('*line')
+				itemlist[id].display_name=tostring(db:read('*line'))
+				itemlist[id].sell_price=tonumber(db:read('*line'))
+				itemlist[id].bye_price=tonumber(db:read('*line'))
 			end
   end
   db:close()
@@ -113,7 +112,6 @@ function market.save_toFile(list)
 		db:write(itemlist[id].display_name..'\n')
 		db:write(itemlist[id].sell_price..'\n')
 		db:write(itemlist[id].bye_price..'\n')
-		db:write(itemlist[id].name..'\n')
 	end
 	itemlist.size=size
 	db:close()

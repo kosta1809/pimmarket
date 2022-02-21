@@ -75,10 +75,15 @@ function market.get_inventoryitemlist(device)
 end
 
 --load itemlist from file by id
-function market.load_fromFile(itemlist)
-    if not itemlist then itemlist={} end
-	local db=io.open('db.market','r')
-	if db then
+function market.load_fromFile()
+	local itemlist = market.itemlist
+	if not fs.exists('home/db.market') then
+		local db=io.open('db.market','w')
+		db:write('0'..'\n')
+		db:close()
+		itemlist.size=0
+	else
+		local db=io.open('db.market','r')
 		local size=db:read('*line')
 		if tonumber(size) then
 			itemlist.size=size
@@ -90,14 +95,14 @@ function market.load_fromFile(itemlist)
 				itemlist[id].bye_price=db:read('*line')
 				itemlist[id].raw_name=db:read('*line')
 			end
-		else itemlist.size=0 end
 		db:close()
 	end
 	return itemlist
 end
 
 --save itemlist to file
-function market.save_toFile(itemlist)
+function market.save_toFile()
+	itemlist=market.itemlist
 	local db=io.open('db.market','w')
 	db:write(itemlist.size..'\n')
 	local size=itemlist.size
@@ -452,7 +457,7 @@ function market.init()
 	--надо сперва чекать сундук, затем на его основе подтягивать поля с ценой из файла
 	--либо наоборот. в любом случае сундук апдейдит лист в файле и сохраняет его
 	market.mode='selling'
-	market.itemlist=market.load_fromFile({})
+	market.itemlist=market.load_fromFile()
 	market.chestList=market.get_inventoryitemlist(market.chest)
 	--теперь апдейт листа путем добавления полей с отсутствующими айди из сундука в итемлист
 	--а market.inumList будет содержать указатели присутствующих товаров в основном листе
@@ -460,7 +465,7 @@ function market.init()
 	--потом создание нумерного листа торговли
 	market.inumerated()
 	for item in pairs(market.inumList) do print (market.inumList[item]) end
-	market.save_toFile(market.itemlist)
+	market.save_toFile()
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)
 	gpu.setResolution(60,20)

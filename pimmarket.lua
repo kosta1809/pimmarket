@@ -255,7 +255,9 @@ function market.screenDriver(_,_,x,y,_,name)
 		for f = 1, #market.screen do
 			local button=market.button[market.screen[f]]
 			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
+				gpu.set(24,19,a)
 				if a then
+					gpu.set(12,19,market.screen[f])
 					return market.screenActions[market.screen[f]](y)
 				end
 			end

@@ -142,7 +142,7 @@ end
 --из самостоятельной одноцелевой в многоцелевую
 --на вход подать используемый компонент пим или сундук.
 function market.get_inventoryitemlist(device)
-	local size=device.getInventorySize() --число слотов в инвентаре
+	local size=device['getInventorySize']() --число слотов в инвентаре
 	local inventory={}
 	inventory.size=0
 	local id,item='',''
@@ -455,7 +455,7 @@ function market.merge()
 			market.itemlist[id]=market.chestList[id]
 			market.itemlist[id].sell_price = 9999
 			market.itemlist[id].bye_price = 0
-			print(narket.itemlist[id])
+			print(market.itemlist[id])
 		end
 
 		market.itemlist.size=market.itemlist.size+1

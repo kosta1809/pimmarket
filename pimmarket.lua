@@ -3,7 +3,7 @@ local market={}
 local event=require('event')
 local gpu=require('component').gpu
 local component=require('component')
-local table=require'table'
+
 --лист с полями sell_price, bye_price, qty, display_name,name
 --и ключом raw_name
 market.itemlist = {}--содержит все оценённые предметы магазина
@@ -308,13 +308,12 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 		--gpu.setBackground(0x202020)
 		--gpu.fill(24,y,30,1)
 		local item=inumList[pos]
-		gpu.set(24,y,itemlist[item].display_name)
-		print(itemlist[item].qty)
-		gpu.set(48,y,itemlist[item].qty)
+		gpu.set(24,y,tostring(itemlist[item].display_name))
+		gpu.set(48,y,tostring(itemlist[item].qty))
 		--gpu.setBackground(0x273ba1)
 		gpu.set(55,y,' ')
 		--gpu.setBackground(0x202020)
-		gpu.set(56,y,itemlist[item].price)
+		gpu.set(56,y,tostring(itemlist[item].price))
 		y=y+1
 		pos=pos+1
 		if y > 19 then pos=total+1 end

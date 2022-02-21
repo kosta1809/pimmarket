@@ -3,6 +3,7 @@ local market={}
 local event=require('event')
 local gpu=require('component').gpu
 local component=require('component')
+local table=require'table'
 --лист с полями sell_price, bye_price, qty, display_name,name
 --и ключом raw_name
 market.itemlist = {}--содержит все оценённые предметы магазина
@@ -218,38 +219,6 @@ function market.save_toFile(list)
 	return true
 end
 
---запрос цен от админа на предоставленные предметы 
-function market.price_build(inventory,itemlist)
- 	local price=''
- 	for id in pairs(inventory) do
- 		if not itemlist[id] then
- 			itemlist[id]={}
- 			itemlist[id].display_name=inventory[id].display_name
-			itemlist[id].name=inventory[id].name
-
-			print('Введите цену продажи для '..itemlist[id].display_name..': ')
-			while not tonumber(price) do price=io.read() end
-			itemlist[id].sell_price=price price=''
-
-			print('Введите цену покупки для '..itemlist[id].display_name..': ')
-			while not tonumber(price) do price=io.read() end
-			itemlist[id].bye_price=price price='' 
-			itemlist.size=itemlist.size+1
-		end
-	end
-	price=nil
-	return itemlist
-end
-
---добавление предметов и цен в итемлист
-function builder()
-	market.itemlist=market.load_fromFile()
-	market.inventory=market.get_inventoryitemlist(pim)--получаем инвентарь игрока
-	market.itemlist=market.price_build(market.inventory,market.itemlist)
-	market.save_toFile(market.itemlist)
-	event.pull('player_off')
-end
-
 --=================================================
 
 --замена кнопок экрана: вызов очистки и прорисовки
@@ -338,12 +307,14 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	while pos <= total do
 		--gpu.setBackground(0x202020)
 		--gpu.fill(24,y,30,1)
-		gpu.set(24,y,itemlist[inumList[pos]].display_name)
-		gpu.set(48,y,itemlist[inumList[pos]].qty)
+		local item=inumList[pos]
+		gpu.set(24,y,itemlist[item].display_name)
+		print(itemlist[item].qty)
+		gpu.set(48,y,itemlist[item].qty)
 		--gpu.setBackground(0x273ba1)
 		gpu.set(55,y,' ')
 		--gpu.setBackground(0x202020)
-		gpu.set(56,y,itemlist[inumList[pos]].price)
+		gpu.set(56,y,itemlist[item].price)
 		y=y+1
 		pos=pos+1
 		if y > 19 then pos=total+1 end
@@ -430,7 +401,7 @@ function market.start()
 	return market.screenInit()
 end
 --сортируем лист в алфавитном порядке
-function market.inumerated()
+function market.sort()
 	local index=#market.inumList 
 	local pos=1
 	while index > pos do
@@ -458,10 +429,8 @@ function market.merge()
 			market.itemlist[id].bye_price = 0	
 			market.itemlist[id].qty=market.chestList[id].qty
 			market.itemlist[id].display_name=market.chestList[id].display_name
+			market.itemlist.size=market.itemlist.size+1
 		end
-
-		
-		market.itemlist.size=market.itemlist.size+1
 		index=index+1
 	end
 	
@@ -484,7 +453,7 @@ function market.init()
 	market.merge()
 	--потом сортировка нумерного листа торговли
 	print('enumerate available items...')
-	market.inumerated()
+	market.sort()
 	--for item in pairs(market.inumList) do print (market.inumList[item]) end
 	print('save current database...')
 	market.save_toFile(market.itemlist)

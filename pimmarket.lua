@@ -335,13 +335,13 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	gpu.set(5,5,'тут мы побывали') os.sleep(3)
 
 	while pos <= total do
-		gpu.setBackground(0x202020)
-		gpu.fill(24,y,30,1)
+		--gpu.setBackground(0x202020)
+		--gpu.fill(24,y,30,1)
 		gpu.set(24,y,itemlist[inumList[f]].display_name)
 		gpu.set(48,y,itemlist[inumList[f]].qty)
-		gpu.setBackground(0x273ba1)
+		--gpu.setBackground(0x273ba1)
 		gpu.set(55,y,' ')
-		gpu.setBackground(0x202020)
+		--gpu.setBackground(0x202020)
 		gpu.set(56,y,itemlist[inumList[f]].price)
 		y=y+1
 		pos=pos+1

@@ -393,6 +393,7 @@ function market.merge()
 		index=index+1
 	end
 end
+
 --=================================================
 --замена кнопок экрана: вызов очистки и прорисовки
 function market.replace()

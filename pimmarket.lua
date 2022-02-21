@@ -68,7 +68,7 @@ market.button={
 	shopDown={x=2,xs=10,y=10,ys=5,text='DOWN',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
 	shopTopRight={x=22,xs=29,y=1,ys=1,text='Available items        count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
 	shopFillRight={x=22,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
-	shopVert={x=53,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x202020,fg=0x303030}
+	shopVert={x=53,xs=2,y=1,ys=20,text=' ',tx=0,ty=0,bg=0x202020,fg=0x303030}
 }
 --позаимствованная у BrightYC таблица цветов.добавлен мутно-зелёный
 market.color = {
@@ -326,16 +326,15 @@ function market.screenDriver(_,_,x,y,_,name)
 --создание экрана со списком пердметов
 function market.showMeYourCandyesBaby(itemlist,inumList)
 	local y=1
-	gpu.setBackground(0)
 	local pos=market.shopLine
-	local index=#inumList
+	local total=#inumList
 
 	gpu.setBackground(0)
-		gpu.setForeground(0xffffff)
-		gpu.set(5,3,index..' видов товара в сундуке')
-		gpu.set(5,5,'тут мы побывали') os.sleep(3)
+	gpu.setForeground(0xffffff)
+	gpu.set(5,3,total..' видов товара в сундуке')
+	gpu.set(5,5,'тут мы побывали') os.sleep(3)
 
-	for f=pos, index do
+	while pos <= total do
 		gpu.setBackground(0x202020)
 		gpu.fill(24,y,30,1)
 		gpu.set(24,y,itemlist[inumList[f]].display_name)
@@ -345,14 +344,15 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 		gpu.setBackground(0x202020)
 		gpu.set(56,y,itemlist[inumList[f]].price)
 		y=y+1
-		if y > 19 then f=index+1 end
+		pos=pos+1
+		if y > 19 then pos=total+1 end
 	end
 end
 
 --отрисовывает поля меню выбора товара
 function market.showMe()
 	market.button.status.text=market.player.status..' '..market.player.name
-	market.screen={'shopUp','shopDown','shopFillRight','shopVert','shopTopRight','status'}
+	market.screen={'shopUp','shopDown','shopFillRight','shopTopRight','shopVert','status'}
 	market.replace()
 	market.screen[4]=nil
 	market.screen[5]=nil

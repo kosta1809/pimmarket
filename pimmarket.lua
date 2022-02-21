@@ -336,7 +336,9 @@ function market.hello(name)
 	market.button.name.x=19-#name/2
 	market.screen={'name','welcome'}
 	market.clear(2345)
-	return market.place(market.screen)
+	market.place(market.screen)
+	os.sleep(1)
+	return market.showMe()
 end
 --===============================================
 --сюда попадает получая эвент player_on

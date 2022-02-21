@@ -446,19 +446,18 @@ function market.merge()
 	print('hello from merge')
 	if not market.itemlist.size then market.itemlist.size=0 end
 	for id in pairs(market.chestList) do
+		print(id)
 		market.inumList[index]=id
 		if not market.itemlist[id] then
 			market.itemlist[id]=market.chestList[id]
 			market.itemlist[id].sell_price = 9999
 			market.itemlist[id].bye_price = 0
 		end
-		market.itemlist[id].qty = market.chestList.qty
-		market.itemlist[id].slots = market.chestList.slots
 
 		market.itemlist.size=market.itemlist.size+1
 		index=index+1
 	end
-	print('merge complite') os.sleep(2)
+	print('merge complite') os.sleep(1)
 end
 
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим
@@ -473,7 +472,7 @@ function market.init()
 	market.merge()
 	--потом сортировка нумерного листа торговли
 	market.inumerated()
-	for item in pairs(market.inumList) do print (market.inumList[item]) end
+	--for item in pairs(market.inumList) do print (market.inumList[item]) end
 	market.save_toFile(market.itemlist)
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)

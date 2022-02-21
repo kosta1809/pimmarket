@@ -142,12 +142,13 @@ end
 --из самостоятельной одноцелевой в многоцелевую
 --на вход подать используемый компонент пим или сундук.
 function market.get_inventoryitemlist(device)
-	local size=device['getInventorySize']() --число слотов в инвентаре
+	local size=device.getInventorySize() --число слотов в инвентаре
+	print(size)
 	local inventory={}
 	inventory.size=0
 	local id,item='',''
 	for f=1,size do
-		item=device['getStackInSlot'](f) 
+		item=device.getStackInSlot(f) 
 	 	--заполняет таблицу инвентаря,
 	 	--добавляя поле slots для повторяющихся
 	 	--в инвентаре предметов. суммирует qty для них
@@ -191,6 +192,7 @@ function market.load_fromFile()
 				itemlist[id].display_name=tostring(db:read('*line'))
 				itemlist[id].sell_price=tonumber(db:read('*line'))
 				itemlist[id].bye_price=tonumber(db:read('*line'))
+				itemlist[id].qty=0
 			end
   end
   db:close()

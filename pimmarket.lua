@@ -301,13 +301,13 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 
 	gpu.setBackground(0)
 	gpu.setForeground(0xffffff)
-	gpu.set(3,18,total..' видов товара в сундуке')
+	gpu.set(3,18,total..' наименование')
 
 	while pos <= total do
 		--gpu.setBackground(0x202020)
 		--gpu.fill(24,y,30,1)
 		local item=inumList[pos]
-		gpu.set(20,y,tostring(itemlist[item].display_name))
+		gpu.set(20,y,itemlist[item].display_name)
 		gpu.set(48,y,tostring(itemlist[item].qty))
 		--gpu.setBackground(0x273ba1)
 		gpu.set(55,y,' ')
@@ -422,13 +422,14 @@ function market.merge()
 	for id in pairs(market.chestList) do
 		market.inumList[index]=id
 		if not market.itemlist[id] then
-			market.itemlist[id]=market.chestList[id]
+			market.itemlist[id]={}
 			market.itemlist[id].sell_price = '9999'
 			market.itemlist[id].bye_price = '0'	
-			market.itemlist[id].qty=tostring(market.chestList[id].qty)
+			market.itemlist[id].qty=market.chestList[id].qty
 			market.itemlist[id].display_name=market.chestList[id].display_name
-			print(market.itemlist[id].qty,market.itemlist[id].display_name)
 			market.itemlist.size=market.itemlist.size+1
+		else
+			market.itemlist[id].qty=market.itemlist[id].qty + market.chestList[id].qty
 		end
 		index=index+1
 	end

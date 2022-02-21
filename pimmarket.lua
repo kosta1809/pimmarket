@@ -193,7 +193,6 @@ function market.load_fromFile()
 				itemlist[id].display_name=tostring(db:read('*line'))
 				itemlist[id].sell_price=tonumber(db:read('*line'))
 				itemlist[id].bye_price=tonumber(db:read('*line'))
-				itemlist[id].qty=0
 			end
   end
   db:close()

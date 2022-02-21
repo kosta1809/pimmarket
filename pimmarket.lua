@@ -385,10 +385,8 @@ function market.merge()
 			market.itemlist[id].display_name=market.chestList[id].display_name
 			market.itemlist.size=market.itemlist.size+1
 		else
-			print (market.itemlist[id].qty)
-			local qty = market.itemlist[id].qty
-			qty = qty + market.chestList[id].qty
-			market.itemlist[id].qty= qty 
+			market.itemlist[id].qty=market.chestList[id].qty
+			market.itemlist[id].slots=market.chestList[id].slots
 		end
 		index=index+1
 	end

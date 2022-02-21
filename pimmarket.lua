@@ -325,7 +325,7 @@ function market.screenDriver(_,_,x,y,_,name)
 --and itemlist - numerated itemlist
 --создание экрана со списком пердметов
 function market.showMeYourCandyesBaby(itemlist,inumList)
-	local y=1
+	local y=2
 	local pos=market.shopLine
 	local total=#inumList
 

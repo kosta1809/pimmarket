@@ -125,8 +125,15 @@ market.screenActions.status=function()
 	end
 end
 --================================================================
+--вызов меню набора номера.
+market.waitForCount=function()
+market.screen={'one','two','free','foo','five','six','seven','eight',
+'nine','zero','back','enternumber','number','selectedItem'}
+return market.replace()
 
+end
 
+--================================================================
 --pim getStackInSlot:table witch fields k+v: 
 --display_name,dmg,id,max_dmg,max_size,mod_id,name,ore_dict,qty,raw_name//whre qty is amount
 --fields form item: display_name, id, raw_name. also need add price for bye, price for cell. 
@@ -241,15 +248,6 @@ function builder()
 	event.pull('player_off')
 end
 
-
---вызов меню набора номера.
-market.waitForCount=function()
-market.screen={'one','two','free','foo','five','six','seven','eight',
-'nine','zero','back','enternumber','number','selectedItem'}
-return market.replace()
-
-end
-
 --=================================================
 
 --замена кнопок экрана: вызов очистки и прорисовки
@@ -330,7 +328,13 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	local y=1
 	gpu.setBackground(0)
 	local pos=market.shopLine
-	local index=#market.inumList
+	local index=#inumList
+
+	gpu.setBackground(0)
+		gpu.setForeground(0xffffff)
+		gpu.set(5,3,index..' видов товара в сундуке')
+		gpu.set(5,5,'тут мы побывали') os.sleep(3)
+
 	for f=pos, index do
 		gpu.setBackground(0x202020)
 		gpu.fill(24,y,30,1)
@@ -357,9 +361,7 @@ function market.showMe()
 		--она размещает наэкране поля для списка айтемов
 		--так же должна организовать вывод самого списка айтемов
 		--или не должна. посмотрим
-		gpu.setBackground(0)
-		gpu.setForeground(0xffffff)
-		gpu.set(5,5,'тут мы побывали') os.sleep(3)
+		
 	return market.showMeYourCandyesBaby(market.itemlist,market.inumList)
 end
 

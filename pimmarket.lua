@@ -45,7 +45,6 @@ end
 --на вход подать используемый компонент пим или сундук.
 function market.get_inventoryitemlist(device)
 	local size=device.getInventorySize() --число слотов в инвентаре
-	print(size)
 	local inventory={}
 	inventory.size=0
 	local id,item='',''

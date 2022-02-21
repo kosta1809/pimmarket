@@ -74,13 +74,12 @@ function market.get_inventoryitemlist(device)
 	return inventory
 end
 
---load itemlist from file by id
+--load itemlist from file
 function market.load_fromFile()
 	local itemlist = market.itemlist
 	if not fs.exists('home/db.market') then
 		local db=io.open('db.market','w')
 		db:write('0'..'\n')
-		db:close()
 		itemlist.size=0
 	else
 		local db=io.open('db.market','r')
@@ -95,14 +94,15 @@ function market.load_fromFile()
 				itemlist[id].bye_price=db:read('*line')
 				itemlist[id].raw_name=db:read('*line')
 			end
-		db:close()
+  end
+  db:close()
 	end
 	return itemlist
 end
 
 --save itemlist to file
 function market.save_toFile()
-	itemlist=market.itemlist
+	local itemlist=market.itemlist
 	local db=io.open('db.market','w')
 	db:write(itemlist.size..'\n')
 	local size=itemlist.size

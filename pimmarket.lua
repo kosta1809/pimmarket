@@ -357,7 +357,9 @@ function market.showMe()
 		--она размещает наэкране поля для списка айтемов
 		--так же должна организовать вывод самого списка айтемов
 		--или не должна. посмотрим
-		print('тут мы побывали')
+		gpu.setBackground(0)
+		gpu.setForeground(0xffffff)
+		gpu.set(5,5,'тут мы побывали') os.sleep(3)
 	return market.showMeYourCandyesBaby(market.itemlist,market.inumList)
 end
 

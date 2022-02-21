@@ -427,12 +427,11 @@ function market.merge()
 			market.itemlist[id].sell_price = '9999'
 			market.itemlist[id].bye_price = '0'	
 			market.itemlist[id].qty=tostring(market.chestList[id].qty)
-			print(market.itemlist[id].qty)
 			market.itemlist[id].display_name=market.chestList[id].display_name
+			print(market.itemlist[id].qty,market.itemlist[id].display_name)
 			market.itemlist.size=market.itemlist.size+1
 		end
 		index=index+1
-		os.sleep(1)
 	end
 	
 end
@@ -466,6 +465,4 @@ function market.init()
 	--gpu.setActiveBuffer(1)
 	return market.start()
 end
-
 return market
-

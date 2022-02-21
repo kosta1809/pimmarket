@@ -326,6 +326,7 @@ function market.screenDriver(_,_,x,y,_,name)
 --создание экрана со списком пердметов
 function market.showMeYourCandyesBaby()
 	local y=1
+	print('оно должно выводить список предметов. и где он?')
 	local pos=market.shopLine
 	local index=#market.inumList
 	for f=pos, index do
@@ -354,6 +355,7 @@ function market.showMe()
 		--она размещает наэкране поля для списка айтемов
 		--так же должна организовать вывод самого списка айтемов
 		--или не должна. посмотрим
+		print('тут мы побывали')
 	return market.showMeYourCandyesBaby()
 end
 

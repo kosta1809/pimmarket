@@ -163,7 +163,7 @@ function market.get_inventoryitemlist(device)
 			inventory[id].slots={f}--номера слотов занимаемых предметом
 			inventory.size=inventory.size+1
 		else if item then
-			id=item.id
+			id=item.raw_name
 			inventory[id].qty=inventory[id].qty+item.qty
 			inventory[id].slots[#inventory[id].slots+1]=f
 			--table.insert(inventory[id].slots,f)--можно заменить на

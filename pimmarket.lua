@@ -111,7 +111,7 @@ market.screenActions.shopUp=function()if market.shopLine > 10 then
 	market.shopLine=market.shopLine-10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
 market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shoppLine then
 	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
-market.screenActions.shopFillRight=function(y)--ловит выбор игроком предмета
+market.screenActions.shopFillRight=function(_,y)--ловит выбор игроком предмета
 	local line = y-1+market.shopLine
   market.selectedItem=market.itemlist[market.inumList[line]]
 	return market.waitForCount() end
@@ -249,16 +249,16 @@ end
 --вызывает одноименный кнопке метод в том случае,
 --если имя в эвенте совпадает с именем инвентаря на пим
 function market.screenDriver(_,_,x,y,_,name)
-	local who=name..market.player.name
-	gpu.set(20,20,who)
+	--local who=name..market.player.name
+	--gpu.set(20,20,who)
 	if name == market.player.name then
-		for f = 1, #market.screen do
+		for f in pairs (market.screen) do
 			local button=market.button[market.screen[f]]
 			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
 				gpu.set(24,19,a)
 				if a then
-					gpu.set(12,19,market.screen[f])
-					return market.screenActions[market.screen[f]](y)
+					--gpu.set(12,19,market.screen[f])
+					return market.screenActions[market.screen[f]](x,y)
 				end
 			end
 		end

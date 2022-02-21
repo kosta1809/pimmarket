@@ -3,6 +3,8 @@ local market={}
 local event=require('event')
 local gpu=require('component').gpu
 local component=require('component')
+--лист с полями sell_price, bye_price, qty, display_name,name
+--и ключом raw_name
 market.itemlist = {}--содержит все оценённые предметы магазина
 market.chestList = {}--содержит предметы в сундуке связанном с терминалом
 market.inumList={} --содержит нумерованный список с айди предметов магазина
@@ -444,8 +446,15 @@ function market.merge()
 	print('hello from merge')
 	if not market.itemlist.size then market.itemlist.size=0 end
 	for id in pairs(market.chestList) do
-		market.itemlist[id]=market.chestList[id]
 		market.inumList[index]=id
+		if not market.itemlist[id] then
+			market.itemlist[id]=market.chestList[id]
+			market.itemlist[id].sell_price = 9999
+			market.itemlist[id].bye_price = 0
+		end
+		market.itemlist[id].qty = market.chestList.qty
+		market.itemlist[id].slots = market.chestList.slots
+
 		market.itemlist.size=market.itemlist.size+1
 		index=index+1
 	end
@@ -462,7 +471,7 @@ function market.init()
 	--теперь апдейт листа путем добавления полей с отсутствующими айди из сундука в итемлист
 	--а market.inumList будет содержать указатели присутствующих товаров в основном листе
 	market.merge()
-	--потом создание нумерного листа торговли
+	--потом сортировка нумерного листа торговли
 	market.inumerated()
 	for item in pairs(market.inumList) do print (market.inumList[item]) end
 	market.save_toFile()

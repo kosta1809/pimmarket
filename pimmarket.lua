@@ -249,23 +249,22 @@ end
 --вызывает одноименный кнопке метод в том случае,
 --если имя в эвенте совпадает с именем инвентаря на пим
 function market.screenDriver(_,_,x,y,_,name)
-	return screenDriver2(x,y,name)
+	screenDriver2(x,y,name)
 end
 ----ход конём
 function market.screenDriver2(x,y,name)
-local touched = ''
 	if name == market.player.name then
 		for f in pairs (market.screen) do
 			local button=market.button[market.screen[f]]
 			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
 			if a then
-				touched = f
+				market.screenActions[market.screen[f]](x,y)
 			end
 		end
 	else gpu.set(12,20,'ошибка сравнения имён')
 
 	end
-	market.screenActions[market.screen[touched]](x,y)
+	
 end
 
 

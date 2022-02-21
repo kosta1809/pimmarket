@@ -45,7 +45,7 @@ market.activity={}--здесь держать функциональные кн�
 --размер по x y, текст, внутренняя позиция текста, имя функции если используется, цвета
 market.button={
 	status={x=1,xs=18,y=1,ys=1,text='hello',tx=1,ty=0,bg=0x68f029,fg=777777},
-	mode={x=1,xs=12,y=1,ys=1,text='trade',tx=1,ty=0,bg=0x68f029,fg=777777},
+	mode={x=1,xs=12,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x68f029,fg=777777},
 	bye={x=10,xs=18,y=4,ys=3,text='Купить',tx=2,ty=1,bg=999999,fg=0x68f029},
 	sell={x=10,xs=19,y=8,ys=3,text='Продать',tx=2,ty=1,bg=999999,fg=0x68f029},
 	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
@@ -60,7 +60,7 @@ market.button={
 	zero={x=8,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=999999,fg=0x68f029},
 	back={x=2,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=999999,fg=0x68f029},
 	enternumber={x=16,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=999999,fg=0x68f029},
-	selectedItem={x=4,xs=6,y=2,ys=3,text='selectedItem',tx=2,ty=1,bg=999999,fg=0x68f029},
+	selectedItem={x=4,xs=25,y=1,ys=3,text='selectedItem',tx=2,ty=1,bg=999999,fg=0x68f029},
 	
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	entrance={x=2,xs=56,y=2,ys=17,text='Go on PIM',tx=22,ty=9,bg=999999,fg=0x68f029},
@@ -68,7 +68,7 @@ market.button={
 	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
 	shopUp={x=2,xs=10,y=5,ys=5,text='UP',tx=5,ty=2,bg=0x4cb01e,fg=0xf2b233},
 	shopDown={x=2,xs=10,y=12,ys=5,text='DOWN',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
-	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items            count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
+	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items              count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
 	shopFillRight={x=12,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
 	shopVert={x=53,xs=2,y=1,ys=20,text=' ',tx=0,ty=0,bg=0x202020,fg=0x303030}
 }
@@ -111,7 +111,7 @@ market.screenActions.shopUp=function()if market.shopLine > 10 then
 	market.shopLine=market.shopLine-10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
 market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shoppLine then
 	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
-market.screenActions.shopFillRight=function(_,y)--ловит выбор игроком предмета
+market.screenActions.shopFillRight=function(y)--ловит выбор игроком предмета
 	local line = y-1+market.shopLine
   market.selectedItem=market.itemlist[market.inumList[line]]
 	return market.waitForCount() end
@@ -122,7 +122,6 @@ market.screenActions.welcome=function()return market.welcome() end
 market.screenActions.status=function()
 	if market.player.status=='owner' then
 		market.mode = 'price edit'	
-		
 	else 
 		market.mode = 'trade'
 	end
@@ -250,12 +249,14 @@ end
 --вызывает одноименный кнопке метод в том случае,
 --если имя в эвенте совпадает с именем инвентаря на пим
 function market.screenDriver(_,_,x,y,_,name)
+	local who=name..market.player.name
+	gpu.set(20,20,who)
 	if name == market.player.name then
 		for f = 1, #market.screen do
 			local button=market.button[market.screen[f]]
 			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
 				if a then
-					return market.screenActions[market.screen[f]](x,y)
+					return market.screenActions[market.screen[f]](y)
 				end
 			end
 		end
@@ -277,7 +278,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	while pos <= total do
 		--gpu.fill(24,y,30,1,'')
 		local item=inumList[pos]
-		gpu.set(12,y,itemlist[item].display_name)
+		gpu.set(14,y,itemlist[item].display_name)
 		gpu.set(48,y,tostring(itemlist[item].qty))
 		--gpu.setBackground(0x273ba1)
 		gpu.set(55,y,' ')
@@ -294,9 +295,9 @@ function market.showMe()
 	market.button.status.text=market.player.status..' '..market.player.name
 	market.screen={'shopUp','shopDown','shopFillRight','status','shopVert','shopTopRight','mode'}
 	market.replace()
-	market.screen[5]=nil
-	market.screen[6]=nil
-	market.screen[7]=nil
+	--market.screen[5]=nil
+	--market.screen[6]=nil
+	--market.screen[7]=nil
 	
 		--эта функция недописана
 		--она размещает наэкране поля для списка айтемов

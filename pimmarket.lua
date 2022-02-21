@@ -447,7 +447,6 @@ end
 
 function market.merge()
 	local index=1
-	print('hello from merge')
 	if not market.itemlist.size then market.itemlist.size=0 end
 	for id in pairs(market.chestList) do
 		market.inumList[index]=id
@@ -455,13 +454,14 @@ function market.merge()
 			market.itemlist[id]=market.chestList[id]
 			market.itemlist[id].sell_price = 9999
 			market.itemlist[id].bye_price = 0
-			print(market.itemlist[id])
+			a=''
+			for f in pairs(market.itemlist[id])do a=a..f..'='..market.itemlist[id][f]..'  ' end
+			print(a)
 		end
 
 		market.itemlist.size=market.itemlist.size+1
 		index=index+1
 	end
-	print('merge complite') os.sleep(4)
 end
 
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим
@@ -469,17 +469,25 @@ function market.init()
 	--надо сперва чекать сундук, затем на его основе подтягивать поля с ценой из файла
 	--либо наоборот. в любом случае сундук апдейдит лист в файле и сохраняет его
 	market.mode='selling'
+	print('load database from file...')
 	market.itemlist=market.load_fromFile()
+	print('file loading succesfull')
+	print('getting chest inventory...')
 	market.chestList=market.get_inventoryitemlist(market.chest)
+	print('complite')
 	--теперь апдейт листа путем добавления полей с отсутствующими айди из сундука в итемлист
 	--а market.inumList будет содержать указатели присутствующих товаров в основном листе
+	print('merge tables')
 	market.merge()
 	--потом сортировка нумерного листа торговли
+	print('enumerate available items...')
 	market.inumerated()
 	--for item in pairs(market.inumList) do print (market.inumList[item]) end
+	print('save current database...')
 	market.save_toFile(market.itemlist)
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)
+	print('initialization complite') os.sleep(1)
 	gpu.setResolution(60,20)
 	gpu.allocateBuffer(1,1)
 	--gpu.setActiveBuffer(1)

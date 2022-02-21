@@ -35,6 +35,97 @@ local fs=require('filesystem')
 if fs.exists('home/admins.market') then
 	market.admins=require('admins.market')
 end
+--=============================================================
+--2022.02.13-14
+market.screen={}--здесь держать все кнопки экрана
+market.activity={}--здесь держать функциональные кнопки. или нет
+
+--содержит все используемые кнопки. Кнопки содержат поля: координаты x y,
+--размер по x y, текст, внутренняя позиция текста, имя функции если используется, цвета
+market.button={
+	status={x=1,xs=18,y=1,ys=1,text='hello',tx=1,ty=0,bg=0x68f029,fg=777777},
+	bye={x=10,xs=18,y=4,ys=3,text='Купить',tx=2,ty=1,bg=999999,fg=0x68f029},
+	sell={x=10,xs=19,y=8,ys=3,text='Продать',tx=2,ty=1,bg=999999,fg=0x68f029},
+	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
+	two={x=8,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=999999,fg=0x68f029},
+	free={x=14,xs=6,y=4,ys=3,text='3',tx=2,ty=1,bg=999999,fg=0x68f029},
+	foo={x=2,xs=6,y=8,ys=3,text='4',tx=2,ty=1,bg=999999,fg=0x68f029},
+	five={x=8,xs=6,y=8,ys=3,text='5',tx=2,ty=1,bg=999999,fg=0x68f029},
+	six={x=14,xs=6,y=8,ys=3,text='6',tx=2,ty=1,bg=999999,fg=0x68f029},
+	seven={x=2,xs=6,y=12,ys=3,text='7',tx=2,ty=1,bg=999999,fg=0x68f029},
+	eight={x=8,xs=6,y=12,ys=3,text='8',tx=2,ty=1,bg=999999,fg=0x68f029},
+	nine={x=14,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=999999,fg=0x68f029},
+	zero={x=8,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=999999,fg=0x68f029},
+	back={x=2,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=999999,fg=0x68f029},
+	enternumber={x=16,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=999999,fg=0x68f029},
+	selectedItem={x=4,xs=6,y=2,ys=3,text='selectedItem',tx=2,ty=1,bg=999999,fg=0x68f029},
+	
+	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
+	entrance={x=2,xs=56,y=2,ys=17,text='Go on PIM',tx=22,ty=9,bg=999999,fg=0x68f029},
+	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
+	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
+	shopUp={x=2,xs=10,y=3,ys=5,text='UP',tx=5,ty=2,bg=0x4cb01e,fg=0xf2b233},
+	shopDown={x=2,xs=10,y=10,ys=5,text='DOWN',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
+	shopTopRight={x=22,xs=29,y=1,ys=1,text='Available items        count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
+	shopFillRight={x=22,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
+	shopVert={x=53,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x202020,fg=0x303030}
+}
+--позаимствованная у BrightYC таблица цветов.добавлен мутно-зелёный
+market.color = {
+    pattern = "%[0x(%x%x%x%x%x%x)]",
+    background = 0x000000,
+    pim = 0x46c8e3,
+    gray = 0x303030,
+    lightGray = 0x999999,
+    blackGray = 0x1a1a1a,
+    lime = 0x68f029,
+    greengray = 0x0bde31,
+    blackLime = 0x4cb01e,
+    orange = 0xf2b233,
+    blackOrange = 0xc49029,
+    blue = 0x4260f5,
+    blackBlue = 0x273ba1,
+    red = 0xff0000
+}
+--это обработчик экрана.
+--содержит все функции вызываемые кнопками
+--в том числе меняющие содержимое экрана
+market.screenActions={}
+market.screenActions.one=function()market.number=market.number..'1' event.push('input_number','+') end
+market.screenActions.two=function()market.number=market.number..'2' event.push('input_number','+') end
+market.screenActions.free=function()market.number=market.number..'3' event.push('input_number','+') end
+market.screenActions.foo=function()market.number=market.number..'4' event.push('input_number','+') end
+market.screenActions.five=function()market.number=market.number..'5' event.push('input_number','+') end
+market.screenActions.six=function()market.number=market.number..'6' event.push('input_number','+') end
+market.screenActions.seven=function()market.number=market.number..'7' event.push('input_number','+') end
+market.screenActions.eight=function()market.number=market.number..'8' event.push('input_number','+') end
+market.screenActions.nine=function()market.number=market.number..'9' event.push('input_number','+') end
+market.screenActions.zero=function()market.number=market.number..'0' event.push('input_number','+') end
+market.screenActions.back=function()if #market.number > 0 then
+	market.number=string.sub(market.number,1,#market.number-1) event.push('input_number','-') end end
+market.screenActions.enternumber=function() event.push('input_number','ok') end
+--================================================================
+market.screenActions.shopUp=function()if market.shopLine > 10 then
+	market.shopLine=market.shopLine-10 end return market.showMeYourCandyesBaby() end
+market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shoppLine then
+	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby() end
+market.screenActions.shopFillRight=function(_,y)--ловит выбор игроком предмета
+	local line=market.shopLine+y-1
+  market.selectedItem=market.itemlist[market.inumList[line]]
+	return market.waitForCount() end
+
+--====================================================================================
+market.screenActions.name=function()return market.welcome() end
+market.screenActions.welcome=function()return market.welcome() end
+market.screenActions.status=function()
+	if market.player.status=='admin' then
+		market.mode = 'price edit'	
+	else 
+		market.mode = 'selling'
+	end
+end
+--================================================================
+
 
 --pim getStackInSlot:table witch fields k+v: 
 --display_name,dmg,id,max_dmg,max_size,mod_id,name,ore_dict,qty,raw_name//whre qty is amount
@@ -150,98 +241,7 @@ function builder()
 	event.pull('player_off')
 end
 
---====================================================
---2022.02.13-14
 
---содержит перечень активных кнопок экрана
-market.screen={}--здесь держать все кнопки экрана
-market.activity={}--хдесь держать функциональные кнопки
---содержит используемые кнопки. Кнопки содержат поля:
---координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
-market.button={
-	status={x=1,xs=18,y=1,ys=1,text='hello',tx=1,ty=0,bg=0x68f029,fg=777777},
-	bye={x=10,xs=18,y=4,ys=3,text='Купить',tx=2,ty=1,bg=999999,fg=0x68f029},
-	sell={x=10,xs=19,y=8,ys=3,text='Продать',tx=2,ty=1,bg=999999,fg=0x68f029},
-	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
-	two={x=8,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=999999,fg=0x68f029},
-	free={x=14,xs=6,y=4,ys=3,text='3',tx=2,ty=1,bg=999999,fg=0x68f029},
-	foo={x=2,xs=6,y=8,ys=3,text='4',tx=2,ty=1,bg=999999,fg=0x68f029},
-	five={x=8,xs=6,y=8,ys=3,text='5',tx=2,ty=1,bg=999999,fg=0x68f029},
-	six={x=14,xs=6,y=8,ys=3,text='6',tx=2,ty=1,bg=999999,fg=0x68f029},
-	seven={x=2,xs=6,y=12,ys=3,text='7',tx=2,ty=1,bg=999999,fg=0x68f029},
-	eight={x=8,xs=6,y=12,ys=3,text='8',tx=2,ty=1,bg=999999,fg=0x68f029},
-	nine={x=14,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=999999,fg=0x68f029},
-	zero={x=8,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=999999,fg=0x68f029},
-	back={x=2,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=999999,fg=0x68f029},
-	enternumber={x=16,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=999999,fg=0x68f029},
-	selectedItem={x=4,xs=6,y=2,ys=3,text='selectedItem',tx=2,ty=1,bg=999999,fg=0x68f029},
-	
-	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
-	entrance={x=2,xs=56,y=2,ys=17,text='Go on PIM',tx=22,ty=9,bg=999999,fg=0x68f029},
-	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
-	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
-	shopUp={x=2,xs=10,y=3,ys=5,text='UP',tx=5,ty=2,bg=0x4cb01e,fg=0xf2b233},
-	shopDown={x=2,xs=10,y=10,ys=5,text='DOWN',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
-	shopTopRight={x=22,xs=29,y=1,ys=1,text='Available items        count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
-	shopFillRight={x=22,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
-	shopVert={x=53,xs=2,y=1,ys=20,text='',tx=0,ty=0,bg=0x202020,fg=0x303030}
-}
-
---позаимствованная у BrightYC таблица цветов.добавлен мутно-зелёный
-market.color = {
-    pattern = "%[0x(%x%x%x%x%x%x)]",
-    background = 0x000000,
-    pim = 0x46c8e3,
-    gray = 0x303030,
-    lightGray = 0x999999,
-    blackGray = 0x1a1a1a,
-    lime = 0x68f029,
-    greengray = 0x0bde31,
-    blackLime = 0x4cb01e,
-    orange = 0xf2b233,
-    blackOrange = 0xc49029,
-    blue = 0x4260f5,
-    blackBlue = 0x273ba1,
-    red = 0xff0000
-}
---это обработчик экрана.
---содержит все функции вызываемые кнопками
---в том числе меняющие содержимое экрана
-market.screenActions={}
-market.screenActions.one=function()market.number=market.number..'1' event.push('input_number','+') end
-market.screenActions.two=function()market.number=market.number..'2' event.push('input_number','+') end
-market.screenActions.free=function()market.number=market.number..'3' event.push('input_number','+') end
-market.screenActions.foo=function()market.number=market.number..'4' event.push('input_number','+') end
-market.screenActions.five=function()market.number=market.number..'5' event.push('input_number','+') end
-market.screenActions.six=function()market.number=market.number..'6' event.push('input_number','+') end
-market.screenActions.seven=function()market.number=market.number..'7' event.push('input_number','+') end
-market.screenActions.eight=function()market.number=market.number..'8' event.push('input_number','+') end
-market.screenActions.nine=function()market.number=market.number..'9' event.push('input_number','+') end
-market.screenActions.zero=function()market.number=market.number..'0' event.push('input_number','+') end
-market.screenActions.back=function()if #market.number > 0 then
-	market.number=string.sub(market.number,1,#market.number-1) event.push('input_number','-') end end
-market.screenActions.enternumber=function() event.push('input_number','ok') end
---================================================================
-market.screenActions.shopUp=function()if market.shopLine > 10 then
-	market.shopLine=market.shopLine-10 end return market.showMeYourCandyesBaby() end
-market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shoppLine then
-	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby() end
-market.screenActions.shopFillRight=function(_,y)--ловит выбор игроком предмета
-	local line=market.shopLine+y-1
-  market.selectedItem=market.itemlist[market.inumList[line]]
-	return market.waitForCount() end
-
---====================================================================================
-market.screenActions.name=function()return market.welcome() end
-market.screenActions.welcome=function()return market.welcome() end
-market.screenActions.status=function()
-	if market.player.status=='admin' then
-		market.mode = 'price edit'	
-	else 
-		market.mode = 'selling'
-	end
-end
---================================================================
 --вызов меню набора номера.
 market.waitForCount=function()
 market.screen={'one','two','free','foo','five','six','seven','eight',
@@ -315,7 +315,9 @@ function market.screenDriver(_,_,x,y,_,name)
 		for f = 1, #market.screen do
 			local button=market.button[market.screen[f]]
 			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
-				if a then return market.screenActions[market.screen[f]](x,y) end
+				if a then
+					return market.screenActions[market.screen[f]](x,y)
+				end
 			end
 		end
 	end
@@ -324,23 +326,20 @@ function market.screenDriver(_,_,x,y,_,name)
 --where pos - position in itemlist for showing
 --and itemlist - numerated itemlist
 --создание экрана со списком пердметов
-function market.showMeYourCandyesBaby()
+function market.showMeYourCandyesBaby(itemlist,inumList)
 	local y=1
 	gpu.setBackground(0)
-	print('оно должно выводить список предметов. и где он?')
 	local pos=market.shopLine
-
 	local index=#market.inumList
-	print(index) os.sleep(4)
 	for f=pos, index do
 		gpu.setBackground(0x202020)
 		gpu.fill(24,y,30,1)
-		gpu.set(24,y,market.itemlist[market.inumList[f]].display_name)
-		gpu.set(48,y,market.itemlist[market.inumList[f]].qty)
+		gpu.set(24,y,itemlist[inumList[f]].display_name)
+		gpu.set(48,y,itemlist[inumList[f]].qty)
 		gpu.setBackground(0x273ba1)
 		gpu.set(55,y,' ')
 		gpu.setBackground(0x202020)
-		gpu.set(56,y,market.itemlist[market.inumList[f]].price)
+		gpu.set(56,y,itemlist[inumList[f]].price)
 		y=y+1
 		if y > 19 then f=index+1 end
 	end
@@ -359,7 +358,7 @@ function market.showMe()
 		--так же должна организовать вывод самого списка айтемов
 		--или не должна. посмотрим
 		print('тут мы побывали')
-	return market.showMeYourCandyesBaby()
+	return market.showMeYourCandyesBaby(market.itemlist,market.inumList)
 end
 
 

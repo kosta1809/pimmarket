@@ -456,6 +456,8 @@ function market.merge()
 			market.itemlist[id]=market.chestList[id]
 			market.itemlist[id].sell_price = 9999
 			market.itemlist[id].bye_price = 0	
+			market.itemlist[id].qty=market.chestList[id].qty
+			market.itemlist[id].display_name=market.chestList[id].display_name
 		end
 
 		

@@ -250,7 +250,7 @@ end
 --если имя в эвенте совпадает с именем инвентаря на пим
 function market.screenDriver(_,_,x,y,_,name)
 	--local who=name..market.player.name
-	gpu.set(20,20,market.shopLine)
+	---gpu.set(20,20,market.shopLine)
 	if name == market.player.name then
 		for f in pairs (market.screen) do
 			local button=market.button[market.screen[f]]

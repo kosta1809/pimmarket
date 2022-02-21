@@ -108,10 +108,10 @@ function market.save_toFile(list)
 	local size=itemlist.size
 	itemlist.size=nil
 	for id in pairs(itemlist)do
-		db:write(id..'\n')
-		db:write(itemlist[id].display_name..'\n')
-		db:write(itemlist[id].sell_price..'\n')
-		db:write(itemlist[id].bye_price..'\n')
+		db:write(tostring(id)..'\n')
+		db:write(tostring(itemlist[id].display_name)..'\n')
+		db:write(tostring(itemlist[id].sell_price)..'\n')
+		db:write(tostring(itemlist[id].bye_price)..'\n')
 	end
 	itemlist.size=size
 	db:close()
@@ -159,7 +159,7 @@ market.activity={}--хдесь держать функциональные кн�
 --содержит используемые кнопки. Кнопки содержат поля:
 --координаты x y, размер по x y, текст, внутренняя позиция текста, имя функции, цвета
 market.button={
-	status={x=1,xs=18,y=1,ys=1,text='hello',tx=1,ty=0,bg=0x68f029,fg=0x999999},
+	status={x=1,xs=18,y=1,ys=1,text='hello',tx=1,ty=0,bg=0x68f029,fg=777777},
 	bye={x=10,xs=18,y=4,ys=3,text='Купить',tx=2,ty=1,bg=999999,fg=0x68f029},
 	sell={x=10,xs=19,y=8,ys=3,text='Продать',tx=2,ty=1,bg=999999,fg=0x68f029},
 	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},

@@ -218,39 +218,7 @@ function market.save_toFile(list)
 	return true
 end
 
---=================================================
 
---замена кнопок экрана: вызов очистки и прорисовки
-function market.replace()
-	market.clear(303030)
-	market.place(market.screen)
-end
-
---Очистка экрана ничего особенного. Обычный велосипед
-market.clear=function(background)
-	--gpu.setActiveBuffer(0)	
-	if not background then background=0 end
-	local x,y=gpu.getViewport()
-	gpu.setBackground(background)
-	gpu.fill(1,1,x,y,' ')
-	--gpu.setActiveBuffer(1)
-end
-
---размещает текущие одноцветные кнопки на экране
-market.place=function(btns)
-	--gpu.setActiveBuffer(0)
-	for n in pairs(btns)do
-		local b=market.button[btns[n]]
-		-- bg,fg=gpu.getBackground(),gpu.getForeground()
-		gpu.setBackground(tonumber(b.bg))
-		gpu.fill(tonumber(b.x),tonumber(b.y),tonumber(b.xs),tonumber(b.ys),' ')
-		gpu.setForeground(tonumber(b.fg))
-		gpu.set(tonumber(b.x)+tonumber(b.tx),tonumber(b.y)+tonumber(b.ty),b.text)
-		--gpu.setBackground(bg)
-		--gpu.setForeground(fg)
-	end
-	--gpu.setActiveBuffer(1)
-end
 --==================================================================
 --pim & chest - components contains inventory
 --inventoryList - itemlist of csanning inventory
@@ -273,6 +241,7 @@ function market.fromInvToInv(device,itemid,count, op)
 		end
 	end
 end
+-=============================================================
 --==--==--==--==--==--==--==--==--==--==--==--
 --эта функция обрабатывает касания экрана.
 --ориентируясь по списку в листе market.screen
@@ -289,7 +258,7 @@ function market.screenDriver(_,_,x,y,_,name)
 			end
 		end
 	end
-
+--==--==--==--==--==--==--==--==--==--==--==--
 --displayet items availabled for trading
 --where pos - position in itemlist for showing
 --and itemlist - numerated itemlist
@@ -299,13 +268,12 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	local pos=market.shopLine
 	local total=#inumList
 
-	gpu.setBackground(0)
-	gpu.setForeground(0xffffff)
+	gpu.setBackground(0xc49029)
+	gpu.setForeground(0x0)
 	gpu.set(3,18,total..' наименование')
-
+	
 	while pos <= total do
-		--gpu.setBackground(0x202020)
-		--gpu.fill(24,y,30,1)
+		--gpu.fill(24,y,30,1,'')
 		local item=inumList[pos]
 		gpu.set(20,y,itemlist[item].display_name)
 		gpu.set(48,y,tostring(itemlist[item].qty))
@@ -385,19 +353,7 @@ function market.pimWho(_,who,uid)
 	--здороваемся
 	return market.hello(market.player.name)
 end
-
-function market.screenInit()
-	market.screen={'entrance'}
-	market.clear(0x202020)
-	return market.place(market.screen)
-end
-
-function market.start()
-	market.event_player_on=event.listen('player_on',market.pimWho)
-	if market.event_touch then event.cancel(market.event_touch) market.event_touch=nil end
-	if market.event_player_off then event.cancel(market.event_player_off) market.event_player_off=nil end
-	return market.screenInit()
-end
+--=============================================================
 --сортируем лист в алфавитном порядке
 function market.sort()
 	local index=#market.inumList 
@@ -415,7 +371,7 @@ function market.sort()
 		pos=pos+1
 	end
 end
-
+--подшивает актульный список предметов к основному
 function market.merge()
 	local index=1
 	if not market.itemlist.size then market.itemlist.size=0 end
@@ -435,6 +391,50 @@ function market.merge()
 	end
 	
 end
+--=================================================
+--замена кнопок экрана: вызов очистки и прорисовки
+function market.replace()
+	market.clear(303030)
+	market.place(market.screen)
+end
+
+--Очистка экрана ничего особенного. Обычный велосипед
+market.clear=function(background)
+	--gpu.setActiveBuffer(0)	
+	if not background then background=0 end
+	local x,y=gpu.getViewport()
+	gpu.setBackground(background)
+	gpu.fill(1,1,x,y,' ')
+	--gpu.setActiveBuffer(1)
+end
+
+--размещает текущие одноцветные кнопки на экране
+market.place=function(btns)
+	--gpu.setActiveBuffer(0)
+	for n in pairs(btns)do
+		local b=market.button[btns[n]]
+		-- bg,fg=gpu.getBackground(),gpu.getForeground()
+		gpu.setBackground(tonumber(b.bg))
+		gpu.fill(tonumber(b.x),tonumber(b.y),tonumber(b.xs),tonumber(b.ys),' ')
+		gpu.setForeground(tonumber(b.fg))
+		gpu.set(tonumber(b.x)+tonumber(b.tx),tonumber(b.y)+tonumber(b.ty),b.text)
+		--gpu.setBackground(bg)
+		--gpu.setForeground(fg)
+	end
+	--gpu.setActiveBuffer(1)
+end
+function market.screenInit()
+	market.screen={'entrance'}
+	market.clear(0x202020)
+	return market.place(market.screen)
+end
+
+function market.start()
+	market.event_player_on=event.listen('player_on',market.pimWho)
+	if market.event_touch then event.cancel(market.event_touch) market.event_touch=nil end
+	if market.event_player_off then event.cancel(market.event_player_off) market.event_player_off=nil end
+	return market.screenInit()
+end
 
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим
 function market.init()
@@ -452,14 +452,14 @@ function market.init()
 	print('merge tables')
 	market.merge()
 	--потом сортировка нумерного листа торговли
-	print('enumerate available items...')
+	print('sorting available items...')
 	market.sort()
 	--for item in pairs(market.inumList) do print (market.inumList[item]) end
 	print('save current database...')
 	market.save_toFile(market.itemlist)
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)
-	print('initialization complite') os.sleep(1)
+	print('initialization complete') os.sleep(1)
 	gpu.setResolution(60,20)
 	gpu.allocateBuffer(1,1)
 	--gpu.setActiveBuffer(1)

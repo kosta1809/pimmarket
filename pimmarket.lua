@@ -1,5 +1,5 @@
 
-market={}
+local market={}
 local event=require('event')
 local gpu=require('component').gpu
 local component=require('component')
@@ -14,7 +14,8 @@ market.number= ''--используется при выборе количест
 market.admins={
 	{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"},
 	{uuid="0b448076-a810-3a82-8bb8-2913bdfb2ae5",name="Taoshi"},
-	{uuid="2e1c3d2c-3c30-4424-a917-682cb9b9fd47",name="Velem77"}}
+	{uuid="2e1c3d2c-3c30-4424-a917-682cb9b9fd47",name="Velem77"}
+}
 market.shopLine=1
 market.shopItemsOnScreen={}
 market.player={status='player',name='name',uid='uid',balance='0',ban='-'}
@@ -42,11 +43,12 @@ end
 --на вход подать используемый компонент пим или сундук.
 function market.get_inventoryitemlist(device)
 	local size=device.getInventorySize() --число слотов в инвентаре
+	print(size)
 	local inventory={}
 	inventory.size=0
 	local id,item='',''
-	for f=1,size
-	 do item=device['getStackInSlot'](f) 
+	for f=1,size do
+		item=device['getStackInSlot'](f) 
 	 	--заполняет таблицу инвентаря,
 	 	--добавляя поле slots для повторяющихся
 	 	--в инвентаре предметов. суммирует qty для них
@@ -65,6 +67,7 @@ function market.get_inventoryitemlist(device)
 			id=item.id
 			inventory[id].qty=inventory[id].qty+item.qty
 			inventory[id].slots[#inventory[id].slots+1]=f
+			--table.insert(inventory[id].slots,f)--можно заменить на
 			end
 		end
 	end
@@ -383,7 +386,6 @@ function market.pimWho(_,who,uid)
 	--need connect to server for get player info
 	--=============================
 	market.player.name=who
-	os.sleep(2)
 	market.player.uid=uid
 	market.player.status = 'player'
 	for f=1, #market.admins do
@@ -434,6 +436,7 @@ end
 
 function market.merge()
 	local index=1
+	print('hello from merge')
 	if not market.itemlist.size then market.itemlist.size=0 end
 	for id in pairs(market.chestList) do
 		market.itemlist[id]=market.chestList[id]
@@ -441,7 +444,7 @@ function market.merge()
 		market.itemlist.size=market.itemlist.size+1
 		index=index+1
 	end
-
+	print('merge complite') os.sleep(2)
 end
 
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим
@@ -456,6 +459,7 @@ function market.init()
 	market.merge()
 	--потом создание нумерного листа торговли
 	market.inumerated()
+	for item in pairs(market.inumList) do print (item) end
 	market.save_toFile(market.itemlist)
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)

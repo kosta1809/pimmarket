@@ -11,7 +11,7 @@ market.chestList = {}--содержит предметы в сундуке св�
 market.inumList={} --содержит нумерованный список с айди предметов магазина
 market.inventory = {}--содержит список предметов текущего посетителя
 market.selectedItem=''
-market.mode='selling'
+market.mode='trade'
 market.chest=''--используемый сундук. содержит ссылку на компонет сундук
 market.number= ''--используется при выборе количества и установки цен
 market.owner={
@@ -45,6 +45,7 @@ market.activity={}--здесь держать функциональные кн�
 --размер по x y, текст, внутренняя позиция текста, имя функции если используется, цвета
 market.button={
 	status={x=1,xs=18,y=1,ys=1,text='hello',tx=1,ty=0,bg=0x68f029,fg=777777},
+	mode={x=1,xs=12,y=1,ys=1,text='trade',tx=1,ty=0,bg=0x68f029,fg=777777},
 	bye={x=10,xs=18,y=4,ys=3,text='Купить',tx=2,ty=1,bg=999999,fg=0x68f029},
 	sell={x=10,xs=19,y=8,ys=3,text='Продать',tx=2,ty=1,bg=999999,fg=0x68f029},
 	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
@@ -65,10 +66,10 @@ market.button={
 	entrance={x=2,xs=56,y=2,ys=17,text='Go on PIM',tx=22,ty=9,bg=999999,fg=0x68f029},
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
-	shopUp={x=2,xs=10,y=3,ys=5,text='UP',tx=5,ty=2,bg=0x4cb01e,fg=0xf2b233},
-	shopDown={x=2,xs=10,y=10,ys=5,text='DOWN',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
-	shopTopRight={x=18,xs=29,y=1,ys=1,text='Available items        count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
-	shopFillRight={x=18,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
+	shopUp={x=2,xs=10,y=5,ys=5,text='UP',tx=5,ty=2,bg=0x4cb01e,fg=0xf2b233},
+	shopDown={x=2,xs=10,y=12,ys=5,text='DOWN',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
+	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items            count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
+	shopFillRight={x=12,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
 	shopVert={x=53,xs=2,y=1,ys=20,text=' ',tx=0,ty=0,bg=0x202020,fg=0x303030}
 }
 --позаимствованная у BrightYC таблица цветов.добавлен мутно-зелёный
@@ -107,11 +108,11 @@ market.screenActions.back=function()if #market.number > 0 then
 market.screenActions.enternumber=function() event.push('input_number','ok') end
 --================================================================
 market.screenActions.shopUp=function()if market.shopLine > 10 then
-	market.shopLine=market.shopLine-10 end return market.showMeYourCandyesBaby() end
+	market.shopLine=market.shopLine-10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
 market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shoppLine then
-	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby() end
+	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
 market.screenActions.shopFillRight=function(_,y)--ловит выбор игроком предмета
-	local line=market.shopLine+y-1
+	local line = y-1+market.shopLine
   market.selectedItem=market.itemlist[market.inumList[line]]
 	return market.waitForCount() end
 
@@ -121,8 +122,9 @@ market.screenActions.welcome=function()return market.welcome() end
 market.screenActions.status=function()
 	if market.player.status=='owner' then
 		market.mode = 'price edit'	
+		
 	else 
-		market.mode = 'selling'
+		market.mode = 'trade'
 	end
 end
 --================================================================
@@ -270,12 +272,12 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 
 	gpu.setBackground(0xc49029)
 	gpu.setForeground(0x0)
-	gpu.set(3,18,total..' наименование')
+	gpu.set(3,18,total..'items')
 	
 	while pos <= total do
 		--gpu.fill(24,y,30,1,'')
 		local item=inumList[pos]
-		gpu.set(20,y,itemlist[item].display_name)
+		gpu.set(12,y,itemlist[item].display_name)
 		gpu.set(48,y,tostring(itemlist[item].qty))
 		--gpu.setBackground(0x273ba1)
 		gpu.set(55,y,' ')
@@ -290,10 +292,11 @@ end
 --отрисовывает поля меню выбора товара
 function market.showMe()
 	market.button.status.text=market.player.status..' '..market.player.name
-	market.screen={'shopUp','shopDown','shopFillRight','shopTopRight','shopVert','status'}
+	market.screen={'shopUp','shopDown','shopFillRight','status','shopVert','shopTopRight','mode'}
 	market.replace()
-	market.screen[4]=nil
 	market.screen[5]=nil
+	market.screen[6]=nil
+	market.screen[7]=nil
 	
 		--эта функция недописана
 		--она размещает наэкране поля для списка айтемов
@@ -316,7 +319,7 @@ end
 function market.pimByeBye()
 	market.player={}
 	market.inventory={}
-	market.mode='selling'
+	market.mode='trade'
 	return market.start()
 end
 
@@ -443,7 +446,7 @@ end
 function market.init()
 	--надо сперва чекать сундук, затем на его основе подтягивать поля с ценой из файла
 	--либо наоборот. в любом случае сундук апдейдит лист в файле и сохраняет его
-	market.mode='selling'
+	market.mode='trade'
 	print('load database from file...')
 	market.itemlist=market.load_fromFile()
 	print('file loading succesfull')

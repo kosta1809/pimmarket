@@ -337,12 +337,12 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	while pos <= total do
 		--gpu.setBackground(0x202020)
 		--gpu.fill(24,y,30,1)
-		gpu.set(24,y,itemlist[inumList[f]].display_name)
-		gpu.set(48,y,itemlist[inumList[f]].qty)
+		gpu.set(24,y,itemlist[inumList[pos]].display_name)
+		gpu.set(48,y,itemlist[inumList[pos]].qty)
 		--gpu.setBackground(0x273ba1)
 		gpu.set(55,y,' ')
 		--gpu.setBackground(0x202020)
-		gpu.set(56,y,itemlist[inumList[f]].price)
+		gpu.set(56,y,itemlist[inumList[pos]].price)
 		y=y+1
 		pos=pos+1
 		if y > 19 then pos=total+1 end

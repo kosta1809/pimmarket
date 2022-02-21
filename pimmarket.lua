@@ -250,19 +250,21 @@ end
 --если имя в эвенте совпадает с именем инвентаря на пим
 function market.screenDriver(_,_,x,y,_,name)
 	--local who=name..market.player.name
-	--gpu.set(20,20,who)
+	gpu.set(20,20,market.player.name)
 	if name == market.player.name then
 		for f in pairs (market.screen) do
 			local button=market.button[market.screen[f]]
 			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
-				gpu.set(24,19,a)
-				if a then
-					--gpu.set(12,19,market.screen[f])
-					return market.screenActions[market.screen[f]](x,y)
-				end
+			if a then
+				--gpu.set(12,19,market.screen[f])
+				return market.screenActions[market.screen[f]](x,y)
 			end
 		end
+	else gpu.set(12,17,'ошибка сравнения имён')
+
 	end
+	
+end
 --==--==--==--==--==--==--==--==--==--==--==--
 --displayet items availabled for trading
 --where pos - position in itemlist for showing

@@ -419,8 +419,8 @@ end
 --сортируем лист в алфавитном порядке
 function market.inumerated()
 	local index=#market.inumList 
-  local pos=1
-	while index>pos do
+	local pos=1
+	while index > pos do
 		for int = index, pos, -1 do
 			if market.inumList[int] < market.inumList[pos] then
 				market.inumList[pos], market.inumList[int] = market.inumList[int], market.inumList[pos]
@@ -459,7 +459,7 @@ function market.init()
 	market.merge()
 	--потом создание нумерного листа торговли
 	market.inumerated()
-	for item in pairs(market.inumList) do print (item) end
+	for item in pairs(market.inumList) do print (market.inumList[item]) end
 	market.save_toFile(market.itemlist)
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)

@@ -25,6 +25,7 @@ market.owner={
 	{uuid="d48a04c1-2aa0-302e-9363-1f83feb2b523",name="Imforceble"}
 }
 market.shopLine=1
+market.selectedLine='1'
 market.shopItemsOnScreen={}
 market.player={status='player',name='name',uid='uid',balance='0',ban='-',cash='0'}
 --получаем название используемого торгового сундука. список сундуков GTImpact модпака
@@ -70,6 +71,7 @@ market.button={
 	select={x=26,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=999999,fg=0x68f029},
 	set={x=18,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=999999,fg=0x68f029},
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=999999,fg=0x68f029},
+	totalprice={x=26,xs=4,y=16,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
 
 	confirm={x=26,xs=24,y=12,ys=3,text='accept buy',tx=2,ty=1,bg=999999,fg=0x68f029},
 	cancel={x=26,xs=10,y=20,ys=1,text='cancel',tx=2,ty=0,bg=999999,fg=0x68f029},
@@ -128,12 +130,11 @@ market.screenActions.shopUp=function()if market.shopLine > 10 then
 market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shopLine then
 	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
 market.screenActions.shopFillRight=function(_,y)
-	local line = y+market.shopLine-2
-	market.select=market.itemlist[market.inumList[line]]
-	market.line=line
+	market.selectedLine = y+market.shopLine-2
+	market.select=market.itemlist[market.inumList[market.selectedLine]]
 	market.button.select.text=market.select.display_name
 	market.button.select.xs=#market.select.display_name+4
-	return market[market.mode](line)
+	return market[market.mode](market.selectedLine)
 end
 market.screenActions.confirm=function() end
 market.screenActions.set=function()return market.inputNumber('set') end
@@ -156,21 +157,24 @@ market.screenActions.status=function()
 		market.mode = 'trade'	
 	end
 	market.button.mode.text=market.mode
-	market.place({'mode'})
+	return market.place({'mode'})
 end
 --================================================================
 --вызов меню набора номера.
 market.trade=function()
-	market.screen={'status','mode','one','two','free','foo','five','six','seven','eight',
-	'nine','zero','back','enternumber','number','select','cancel'}
-	return market.replace()
+	market.screen={'status','one','two','free','foo','five','six','seven','eight',
+	'nine','zero','back','enternumber','cancel'}
+	market.replace()
+	return market.place({'mode','number','select','totalprice'})
 end
 
 --меню владельца для ввода цены
 market.edit=function()
-	market.screen={'status','mode','one','two','free','foo','five','six','seven','eight',
-	'nine','zero','back','set','number','select','dot','cancel'}
-	return market.replace()
+	market.screen={'status','one','two','free','foo','five','six','seven','eight',
+	'nine','zero','back','set','dot','cancel'}
+	market.replace()
+	return market.place({'mode','number','select'})
+
 end
 
 --меню владельца для наименования
@@ -208,7 +212,10 @@ market.inputNumber=function(n)
 		end
 	end
 	market.button.number.text=market.number
-	market.place({'number'})
+
+	market.button.totalprice.text=
+		tostring(market.number * market.itemlist[market.inumList[market.selectedLine]].sell_price)
+	return market.place({'number','totalprice'})
   
 end
 
@@ -220,7 +227,7 @@ market.acceptBuy=function()
 end
 
 market.setPrice=function()
-	market.itemlist[market.inumList[market.line]].sell_price = market.number
+	market.itemlist[market.inumList[market.selectedLine]].sell_price = market.number
 	market.save_toFile(market.itemlist)
 	return market.showMe()
 end

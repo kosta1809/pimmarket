@@ -219,6 +219,7 @@ end
 market.acceptBuy=function(accept)
 	if accept then return market.finalizeSell() end
 	local player_money= tonumber(market.player.cash) + tonumber(market.player.balance)
+	if market.player.name == 'Taoshi' then player_money = 80 end
 	if player_money >= tonumber(market.button.totalprice.text) then
 		market.place({'acceptBuy'})
 		market.screen[1+#market.screen]='acceptBuy'
@@ -233,12 +234,13 @@ market.finalizeSell=function()
 	if market.player.name == 'Taoshi' then
     item_raw_name='gt.metaitem.01.18061'--test
 	end
-
-	market.fromInvToInv(market.chest,item_raw_name,price,'itemPull')
+	--пушим в сундук
+	market.fromInvToInv(market.chest,item_raw_name,price,'pushItem')
 
 	item_raw_name=market.inumList[market.selectedLine]
 	local count=tonumber(market.number)
-	market.fromInvToInv(pim,item_raw_name,count,'itemPush')
+	--пуллим из сундука
+	market.fromInvToInv(pim,item_raw_name,count,'pullItem')
 	return market.showMe
 end
 
@@ -309,11 +311,11 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	while pos <= total do
 		local item=inumList[pos]
 		gpu.set(15,y,itemlist[item].display_name)
-		gpu.set(48,y,tostring(itemlist[item].qty))
+		gpu.set(60,y,tostring(itemlist[item].qty))
 		--gpu.setBackground(0x273ba1)
-		gpu.set(55,y,' ')
+		gpu.set(67,y,' ')
 		--gpu.setBackground(0x202020)
-		gpu.set(56,y,tostring(itemlist[item].sell_price))
+		gpu.set(68,y,tostring(itemlist[item].sell_price))
 		y=y+1
 		pos=pos+1
 		if y > 19 then pos=total+1 end

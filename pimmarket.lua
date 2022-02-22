@@ -1,10 +1,10 @@
 
 local market={}
-local event=require('event')
 local gpu=require('component').gpu
 local component=require('component')
 local computer=require'computer'
 local pull=computer.pullSignal
+local pim=require('component').pim
 
 --лист с полями sell_price, bye_price, qty, display_name,name
 --и ключом raw_name
@@ -27,7 +27,7 @@ market.player={status='player',name='name',uid='uid',balance='0',ban='-'}
 --получаем название используемого торгового сундука. список сундуков GTImpact модпака
 market.component = {'neutronium','iridium','osmium','chrome','wolfram','titanium',
 'hsla','aluminium','steel','wriron','chest','tile_extrautils_chestfull_name'}
-local pim=require('component').pim
+
 for chest in pairs(market.component)do 
 	if component.isAvailable(market.component[chest]) then
 		market.chest=require('component')[market.component[chest]]
@@ -306,17 +306,7 @@ end
 
 
 
---создание приветственного экрана
-function market.hello(name)
-	market.button.name.text=name
-	market.button.name.xs=#name+4
-	market.button.name.x=19-#name/2
-	market.screen={'name','welcome'}
-	market.clear(2345)
-	market.place(market.screen)
-	os.sleep(1)
-	return market.showMe()
-end
+
 --===============================================
 --очистка и создание экрана ожидания
 --сюда попадаем получая эвент player_off
@@ -360,16 +350,18 @@ function market.pimWho(_,who,uid)
 			market.player.status = 'owner'
 		end
 	end
-	--включаем наблюдение касаний экрана. выключаем наблюдение player_on
-	--включаем наблюдение player_off
-	event.ignode('player_on',market.pimWho) market.event_player_on=nil
-	market.event_touch=event.listen('touch',market.screenDriver)
-	market.event_player_off=event.listen('player_off',market.pimByeBye)
-	--после касания игроком стартовых отображённых кнопок он
-	--попадает в функцию велком
 	--здороваемся
-	return market.hello(market.player.name)
+	market.button.name.text=name
+	market.button.name.xs=#name+4
+	market.button.name.x=19-#name/2
+	market.screen={'name','welcome'}
+	market.clear(2345)
+	market.place(market.screen)
+	os.sleep(1)
+	--отправляемся в каталон товаров
+	return market.showMe()
 end
+
 --=============================================================
 --сортируем лист в алфавитном порядке
 function market.sort()
@@ -448,21 +440,14 @@ function market.screenInit()
 	return market.place(market.screen)
 end
 
-function market.start()
-	market.event_player_on=event.listen('player_on',market.pimWho)
-	if market.event_touch then event.ignore('touch',market.screenDriver) market.event_touch=nil end
-	if market.event_player_off then event.ignore('player_off',market.pimByeBye) market.event_player_off=nil end
-	return market.screenInit()
-end
-
 computer.pullSignal=function(...)
 	local evnt={pull(...)}
-	if evnt[1]=='player_on' then print('one') end--market.pimWho(evnt)end
-	if evnt[1]=='player_off'then print('two')end--market.pimByeBye(evnt)end
-	if evnt[1]=='touch'then print('free')end--market.screenDriver(evnt)end
+	if evnt[1]=='player_on' then market.pimWho(evnt)end
+	if evnt[1]=='player_off'then market.pimByeBye(evnt)end
+	if evnt[1]=='touch'then market.screenDriver(evnt)end
 	return table.unpack(evnt)
 end
---ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим
+--инициализация
 function market.init()
 	--надо сперва чекать сундук, затем на его основе подтягивать поля с ценой из файла
 	--либо наоборот. в любом случае сундук апдейдит лист в файле и сохраняет его
@@ -490,6 +475,6 @@ function market.init()
 	gpu.allocateBuffer(1,1)
 	--gpu.setActiveBuffer(1)
 	
-	return market.start()
+	return market.screenInit()
 end
 return market

@@ -15,7 +15,7 @@ market.itemlist = {}--содержит все оценённые предмет�
 market.chestList = {}--содержит предметы в сундуке связанном с терминалом
 market.inumList={} --содержит нумерованный список с айди предметов магазина
 market.inventory = {}--содержит список предметов текущего посетителя
-market.select='' --выбранный предмет?
+market.select='' --raw_name выбранного предмета
 market.mode='trade'
 market.chest=''--используемый сундук. содержит ссылку на компонет сундук
 market.number= ''--используется при выборе количества и установки цен
@@ -130,8 +130,8 @@ market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shop
 market.screenActions.shopFillRight=function(_,y)
 	market.selectedLine = y+market.shopLine-2
 	market.select=market.inumList[market.selectedLine]
-	market.button.select.text=market.select.display_name
-	market.button.select.xs=#market.select.display_name+4
+	market.button.select.text=market.itemlist[market.select].display_name
+	market.button.select.xs=#market.itemlist[market.select].display_name+4
 	return market[market.mode](market.selectedLine)
 end
 market.screenActions.set=function()return market.inputNumber('set') end
@@ -230,14 +230,13 @@ market.finalizeSell=function()
 	price=math.floor(price)
 	local item_raw_name='item.npcmoney'
 	if market.player.name == 'Taoshi' then
-		local item_raw_name='gt.metaitem.01.18061'--test
+    item_raw_name='gt.metaitem.01.18061'--test
 	end
 
-	local device = market.chest
 	market.fromInvToInv(market.chest,item_raw_name,price,'itemPull')
 
 	item_raw_name=market.inumList[market.selectedLine]
-	count=tonumber(market.number)
+	local count=tonumber(market.number)
 	market.fromInvToInv(pim,item_raw_name,count,'itemPush')
 	return market.showMe
 end

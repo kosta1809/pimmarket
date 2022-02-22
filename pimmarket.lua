@@ -3,6 +3,8 @@ local market={}
 local event=require('event')
 local gpu=require('component').gpu
 local component=require('component')
+local computer=require'computer'
+local pull=computer.pullSignal
 
 --лист с полями sell_price, bye_price, qty, display_name,name
 --и ключом raw_name
@@ -136,7 +138,7 @@ return market.replace()
 end
 --скромно перерисовывает поле цифрового ввода
 market.inputNumber=function()
-	
+	market.place({'inputNumber'})
 end
 
 --================================================================
@@ -247,30 +249,7 @@ function market.fromInvToInv(device,itemid,count, op)
 	end
 end
 --=============================================================
---==--==--==--==--==--==--==--==--==--==--==--
---эта функция обрабатывает касания экрана.
---ориентируясь по списку в листе market.screen
---вызывает одноименный кнопке метод в том случае,
---если имя в эвенте совпадает с именем инвентаря на пим
-function market.screenDriver(_,_,x,y,_,name)
-	--if name == market.player.name then
-	local list=market.screen
-		for f in pairs (list) do
-			local button=market.button[list[f]]
-			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
-			if a then
-				return market.screenActions[list[f]](x,y)
-			end
-		end
-	--else gpu.set(12,20,'ошибка сравнения имён')
 
-	--end
-end
-----ход конём
-
-
-
---==--==--==--==--==--==--==--==--==--==--==--
 --displayet items availabled for trading
 --where pos - position in itemlist for showing
 --and itemlist - numerated itemlist
@@ -325,13 +304,7 @@ function market.welcome()
 	market.showMe()
 end
 
---очистка и создание экрана ожидания
-function market.pimByeBye()
-	market.player={}
-	market.inventory={}
-	market.mode='trade'
-	return market.start()
-end
+
 
 --создание приветственного экрана
 function market.hello(name)
@@ -345,6 +318,35 @@ function market.hello(name)
 	return market.showMe()
 end
 --===============================================
+--очистка и создание экрана ожидания
+--сюда попадаем получая эвент player_off
+function market.pimByeBye()
+	market.player={}
+	market.inventory={}
+	market.mode='trade'
+	return market.start()
+end
+--==--==--==--==--==--==--==--==--==--==--==--
+--сюда попадаем получая эвент  touch
+--эта функция обрабатывает касания экрана.
+--ориентируясь по списку в листе market.screen
+--вызывает одноименный кнопке метод в том случае,
+--если имя в эвенте совпадает с именем инвентаря на пим
+function market.screenDriver(_,_,x,y,_,name)
+	if name == market.player.name then
+	local list=market.screen
+		for f in pairs (list) do
+			local button=market.button[list[f]]
+			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
+			if a then
+				return market.screenActions[list[f]](x,y)
+			end
+		end
+	--else gpu.set(12,20,'ошибка сравнения имён')
+
+	end
+end
+--==--==--==--==--==--==--==--==--==--==--==--
 --сюда попадает получая эвент player_on
 function market.pimWho(_,who,uid)
 	--=================================
@@ -454,6 +456,13 @@ function market.start()
 	return market.screenInit()
 end
 
+computer.pullSignal=function(...)
+	local evnt={pull(...)}
+	if evnt[1]='player_on' then print('one') --market.pimWho(evnt)end
+	if evnt[1]='player_off'then print('two')--market.pimByeBye(evnt)end
+	if evnt[1]='touch'then print('free')--market.screenDriver(evnt)end
+	return table.unpack(evnt)
+end
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим
 function market.init()
 	--надо сперва чекать сундук, затем на его основе подтягивать поля с ценой из файла
@@ -481,6 +490,7 @@ function market.init()
 	gpu.setResolution(60,20)
 	gpu.allocateBuffer(1,1)
 	--gpu.setActiveBuffer(1)
+	
 	return market.start()
 end
 return market

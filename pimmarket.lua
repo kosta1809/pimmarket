@@ -5,6 +5,7 @@ local component=require('component')
 local computer=require('computer')
 local pullSignal=computer.pullSignal
 local pim=require('component').pim
+local unicode=require('unicode')
 
 --лист с полями sell_price, bye_price, qty, display_name,name
 --и ключом raw_name
@@ -49,21 +50,21 @@ market.button={
 	status={x=1,xs=18,y=1,ys=1,text='hello',tx=1,ty=0,bg=0x68f029,fg=777777},
 	mode={x=1,xs=12,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x68f029,fg=777777},
 
-	bye={x=10,xs=18,y=4,ys=3,text='Купить',tx=2,ty=1,bg=999999,fg=0x68f029},
-	sell={x=10,xs=19,y=8,ys=3,text='Продать',tx=2,ty=1,bg=999999,fg=0x68f029},
+	bye={x=32,xs=8,y=4,ys=3,text='Купить',tx=1,ty=1,bg=999999,fg=0x68f029},
+	sell={x=32,xs=8,y=8,ys=3,text='Продать',tx=1,ty=1,bg=999999,fg=0x68f029},
 	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
-	two={x=8,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=999999,fg=0x68f029},
-	free={x=14,xs=6,y=4,ys=3,text='3',tx=2,ty=1,bg=999999,fg=0x68f029},
+	two={x=10,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=999999,fg=0x68f029},
+	free={x=18,xs=6,y=4,ys=3,text='3',tx=2,ty=1,bg=999999,fg=0x68f029},
 	foo={x=2,xs=6,y=8,ys=3,text='4',tx=2,ty=1,bg=999999,fg=0x68f029},
-	five={x=8,xs=6,y=8,ys=3,text='5',tx=2,ty=1,bg=999999,fg=0x68f029},
-	six={x=14,xs=6,y=8,ys=3,text='6',tx=2,ty=1,bg=999999,fg=0x68f029},
+	five={x=10,xs=6,y=8,ys=3,text='5',tx=2,ty=1,bg=999999,fg=0x68f029},
+	six={x=18,xs=6,y=8,ys=3,text='6',tx=2,ty=1,bg=999999,fg=0x68f029},
 	seven={x=2,xs=6,y=12,ys=3,text='7',tx=2,ty=1,bg=999999,fg=0x68f029},
-	eight={x=8,xs=6,y=12,ys=3,text='8',tx=2,ty=1,bg=999999,fg=0x68f029},
-	nine={x=14,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=999999,fg=0x68f029},
-	zero={x=8,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=999999,fg=0x68f029},
+	eight={x=10,xs=6,y=12,ys=3,text='8',tx=2,ty=1,bg=999999,fg=0x68f029},
+	nine={x=18,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=999999,fg=0x68f029},
+	zero={x=10,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=999999,fg=0x68f029},
 	back={x=2,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=999999,fg=0x68f029},
-	enternumber={x=16,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=999999,fg=0x68f029},
-	select={x=4,xs=25,y=19,ys=1,text='select',tx=2,ty=0,bg=999999,fg=0x68f029},
+	enternumber={x=24,xs=6,y=12,ys=3,text='OK',tx=2,ty=1,bg=999999,fg=0x68f029},
+	select={x=24,xs=24,y=3,ys=3,text='select',tx=2,ty=0,bg=999999,fg=0x68f029},
 	
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	entrance={x=2,xs=56,y=2,ys=17,text='Go on PIM',tx=22,ty=9,bg=999999,fg=0x68f029},
@@ -72,7 +73,7 @@ market.button={
 	shopUp={x=2,xs=10,y=7,ys=5,text='UP',tx=5,ty=2,bg=0x4cb01e,fg=0xf2b233},
 	shopDown={x=2,xs=10,y=13,ys=5,text='DOWN',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
 	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items              count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
-	shopFillRight={x=12,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
+	shopFillRight={x=12,xs=29,y=1,ys=18,text=' ',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
 	shopVert={x=53,xs=2,y=1,ys=20,text=' ',tx=0,ty=0,bg=0x202020,fg=0x303030}
 }
 --позаимствованная у BrightYC таблица цветов.добавлен мутно-зелёный
@@ -120,6 +121,7 @@ market.screenActions.shopFillRight=function(_,y)
 print(y)
 	local line = y-1+market.shopLine
   market.select=market.itemlist[market.inumList[line]]
+  marker.button.select.text=market.select.display_name
 	return market.waitForCount() end
 
 --====================================================================================
@@ -191,7 +193,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	gpu.set(3,19,total..'items')
 	gpu.set(1,4,'cash:   '..tostring(market.player.cash))
 	gpu.set(1,5,'balance:'..tostring(market.player.balance))
-	gpu.fill(15,2,38,18,'')
+	gpu.fill(15,2,38,18,' ')
 	while pos <= total do
 		
 		local item=inumList[pos]
@@ -231,7 +233,7 @@ function market.screenDriver(x,y,name)
 	local list=market.screen
 		for f in pairs (list) do
 			local button=market.button[list[f]]
-			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
+			local a=(x >= button.x and x <= (button.xs+button.x-1)) and (y >= (button.y) and y <= (button.ys+button.y-1))
 			if a then
 				return market.screenActions[list[f]](x,y)
 			end

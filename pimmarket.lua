@@ -64,7 +64,7 @@ market.button={
 	zero={x=10,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=999999,fg=0x68f029},
 	back={x=2,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=999999,fg=0x68f029},
 	enternumber={x=18,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=999999,fg=0x68f029},
-	number={x=26,xs=24,y=8,ys=3,text='number',tx=10,ty=1,bg=999999,fg=0x68f029},
+	number={x=26,xs=24,y=8,ys=3,text='',tx=10,ty=1,bg=999999,fg=0x68f029},
 	select={x=26,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=999999,fg=0x68f029},
 	set={x=18,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=999999,fg=0x68f029},
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=999999,fg=0x68f029},
@@ -196,10 +196,10 @@ market.inputNumber=function(n)
 	if n == 'set' then return market.setPrice() end
 	if n == 'n' then return market.acceptBuy() end
 	if tonumber(market.number) > 999 then
-	market.number=string.sub(market.number,1,#market.number-1)
+	market.number=string.sub(market.number,1,#market.number-1) end
 	market.button.number.text=market.number
 	market.place({'number'})
-  end
+  
 end
 
 --запрашивает подтверждение выбора и количества

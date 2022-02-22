@@ -403,7 +403,6 @@ function market.merge()
 			market.itemlist[id].display_name=market.chestList[id].display_name
 			market.itemlist.size=market.itemlist.size+1
 		else
-			print(market.chestList[id].qty)
 			market.itemlist[id].qty=market.chestList[id].qty
 			market.itemlist[id].slots=market.chestList[id].slots
 		end
@@ -458,9 +457,9 @@ end
 
 computer.pullSignal=function(...)
 	local evnt={pull(...)}
-	if evnt[1]=='player_on' then print('one') --market.pimWho(evnt)end
-	if evnt[1]=='player_off'then print('two')--market.pimByeBye(evnt)end
-	if evnt[1]=='touch'then print('free')--market.screenDriver(evnt)end
+	if evnt[1]=='player_on' then print('one') end--market.pimWho(evnt)end
+	if evnt[1]=='player_off'then print('two')end--market.pimByeBye(evnt)end
+	if evnt[1]=='touch'then print('free')end--market.screenDriver(evnt)end
 	return table.unpack(evnt)
 end
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим

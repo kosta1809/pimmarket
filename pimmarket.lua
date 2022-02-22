@@ -360,7 +360,7 @@ function market.pimWho(_,who,uid)
 	end
 	--включаем наблюдение касаний экрана. выключаем наблюдение player_on
 	--включаем наблюдение player_off
-	event.ignode('player_on',pimWho) market.event_player_on=nil
+	event.ignode('player_on',market.pimWho) market.event_player_on=nil
 	market.event_touch=event.listen('touch',market.screenDriver)
 	market.event_player_off=event.listen('player_off',market.pimByeBye)
 	--после касания игроком стартовых отображённых кнопок он
@@ -427,10 +427,10 @@ market.clear=function(background)
 end
 
 --размещает текущие одноцветные кнопки на экране
-market.place=function(btns)
+market.place=function(buttons)
 	--gpu.setActiveBuffer(0)
-	for n in pairs(btns)do
-		local b=market.button[btns[n]]
+	for n in pairs(buttons)do
+		local b=market.button[buttons[n]]
 		-- bg,fg=gpu.getBackground(),gpu.getForeground()
 		gpu.setBackground(tonumber(b.bg))
 		gpu.fill(tonumber(b.x),tonumber(b.y),tonumber(b.xs),tonumber(b.ys),' ')
@@ -450,7 +450,7 @@ end
 function market.start()
 	market.event_player_on=event.listen('player_on',market.pimWho)
 	if market.event_touch then event.ignore('touch',market.screenDriver) market.event_touch=nil end
-	if market.event_player_off then event.ignore('player_off',pimByeBye) market.event_player_off=nil end
+	if market.event_player_off then event.ignore('player_off',market.pimByeBye) market.event_player_off=nil end
 	return market.screenInit()
 end
 

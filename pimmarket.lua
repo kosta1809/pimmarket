@@ -21,7 +21,8 @@ market.owner={
 	{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"},
 	{uuid="0b448076-a810-3a82-8bb8-2913bdfb2ae5",name="Taoshi"},
 	{uuid="2e1c3d2c-3c30-4424-a917-682cb9b9fd47",name="Velem77"},
-	{uuid="9e5f1396-ad94-3b1a-8ab7-c7c150e2c6f5",name="kosta1809"}
+	{uuid="9e5f1396-ad94-3b1a-8ab7-c7c150e2c6f5",name="kosta1809"},
+	{uuid="d48a04c1-2aa0-302e-9363-1f83feb2b523",name="Imforceble"}
 }
 market.shopLine=1
 market.shopItemsOnScreen={}
@@ -192,6 +193,7 @@ market.typing=function(line)
 		market.place({'newname'})
 	end
 	market.itemlist[market.inumList[line]].display_name = name
+	save_toFile(market.itemlist)
 	return market.showMe()
 end
 
@@ -219,8 +221,9 @@ end
 
 market.setPrice=function()
 	market.itemlist[market.inumList[market.line]].sell_price = market.number
-  return market.showMe()
-  end
+	save_toFile(market.itemlist)
+	return market.showMe()
+end
 --==================================================================
 --pim & chest - components contains inventory
 --inventoryList - itemlist of csanning inventory

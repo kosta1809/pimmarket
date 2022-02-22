@@ -5,9 +5,9 @@ local component=require('component')
 local computer=require('computer')
 local pullSignal=computer.pullSignal
 local pim=require('component').pim
-local unicode=require('unicode')
+local event=require('event')
 
---лист с полями sell_price, bye_price, qty, display_name,name
+--лист с полями sell_price, buy_price, qty, display_name,name
 --и ключом raw_name
 market.itemlist = {}--содержит все оценённые предметы магазина
 market.chestList = {}--содержит предметы в сундуке связанном с терминалом
@@ -50,7 +50,7 @@ market.button={
 	status={x=1,xs=18,y=1,ys=1,text='hello',tx=1,ty=0,bg=0x68f029,fg=777777},
 	mode={x=1,xs=12,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x68f029,fg=777777},
 
-	bye={x=32,xs=8,y=4,ys=3,text='Купить',tx=1,ty=1,bg=999999,fg=0x68f029},
+	buy={x=32,xs=8,y=4,ys=3,text='Купить',tx=1,ty=1,bg=999999,fg=0x68f029},
 	sell={x=32,xs=8,y=8,ys=3,text='Продать',tx=1,ty=1,bg=999999,fg=0x68f029},
 	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
 	two={x=10,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=999999,fg=0x68f029},
@@ -63,18 +63,24 @@ market.button={
 	nine={x=18,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=999999,fg=0x68f029},
 	zero={x=10,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=999999,fg=0x68f029},
 	back={x=2,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=999999,fg=0x68f029},
-	enternumber={x=24,xs=6,y=12,ys=3,text='OK',tx=2,ty=1,bg=999999,fg=0x68f029},
-	select={x=24,xs=24,y=3,ys=3,text='select',tx=2,ty=0,bg=999999,fg=0x68f029},
-	
+	enternumber={x=18,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=999999,fg=0x68f029},
+	number={x=26,xs=24,y=8,ys=3,text='number',tx=10,ty=1,bg=999999,fg=0x68f029},
+	select={x=26,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=999999,fg=0x68f029},
+	set={x=18,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=999999,fg=0x68f029},
+	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=999999,fg=0x68f029},
+
+	confirm={x=26,xs=24,y=12,ys=3,text='accept buy',tx=2,ty=1,bg=999999,fg=0x68f029},
+	dot={x=26,xs=6,y=16,ys=3,text='.',tx=2,ty=1,bg=999999,fg=0x68f029},
+
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	entrance={x=2,xs=56,y=2,ys=17,text='Go on PIM',tx=22,ty=9,bg=999999,fg=0x68f029},
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
-	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
+
 	shopUp={x=2,xs=10,y=7,ys=5,text='UP',tx=5,ty=2,bg=0x4cb01e,fg=0xf2b233},
 	shopDown={x=2,xs=10,y=13,ys=5,text='DOWN',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
 	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items              count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
 	shopFillRight={x=12,xs=29,y=1,ys=18,text=' ',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
-	shopVert={x=53,xs=2,y=1,ys=20,text=' ',tx=0,ty=0,bg=0x202020,fg=0x303030}
+	shopVert={x=53,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x4cb01e,fg=0x303030}
 }
 --позаимствованная у BrightYC таблица цветов.добавлен мутно-зелёный
 market.color = {
@@ -118,43 +124,95 @@ market.screenActions.shopUp=function()if market.shopLine > 10 then
 market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shopLine then
 	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
 market.screenActions.shopFillRight=function(_,y)
-print(y)
-	local line = y-1+market.shopLine
-  market.select=market.itemlist[market.inumList[line]]
-  market.button.select.text=market.select.display_name
-	return market.waitForCount() end
+	local line = y+market.shopLine-2
+	market.select=market.itemlist[market.inumList[line]]
+	market.line=line
+	market.button.select.text=market.select.display_name
+	market.button.select.xs=#market.select.display_name+4
+	return market[market.mode](line)
+end
+market.screenActions.confirm=function() end
+market.screenActions.set=function()return market.inputNumber('set') end
 
 --====================================================================================
 market.screenActions.name=function()return market.welcome() end
 market.screenActions.welcome=function()return market.welcome() end
 market.screenActions.status=function()
 	if market.player.status=='owner' then
-		if market.mode=='trade' then
-			market.mode = 'edit'
-		else
-			market.mode = 'trade'
+		if market.mode=='trade' then market.mode = 'edit'	
+		else 
+			if market.mode == 'edit' then market.mode = 'typing'
+			else
+				market.mode = 'trade'
+			end
 		end
 	else 
 		market.mode = 'trade'	
 	end
 	market.button.mode.text=market.mode
+	market.place({'status'})
 end
 --================================================================
 --вызов меню набора номера.
-market.waitForCount=function()
-market.screen={'one','two','free','foo','five','six','seven','eight',
-'nine','zero','back','enternumber','number','select'}
-return market.replace()
-
+market.trade=function()
+	market.screen={'one','two','free','foo','five','six','seven','eight',
+	'nine','zero','back','enternumber','number','select'}
+	return market.replace()
 end
 
---скромно перерисовывает поле цифрового ввода
-market.inputNumber=function()
+--меню владельца для ввода цен
+market.edit=function()
+	market.screen={'one','two','free','foo','five','six','seven','eight',
+	'nine','zero','back','set','number','select'}
+	return market.replace()
+end
+
+--меню владельца для наименования
+market.typing=function(line)
+	market.clear()
+	market.place({'select','newname'})
+	local loop = true
+	local name=''
+  market.itemlist[market.inumList[line]].display_name = name
+	while loop do
+		local _,_,ch,scd = event.pull('key_down')
+		if ch>13 and ch<127 then
+			name=name..string.char(ch)
+		end
+		if ch == 8 then name=string.sub(name,1,#name-1) end
+		if ch==0 and scd==211 then name=string.sub(name,1,#name-1) end
+		if ch==13 then loop = false end
+		market.button.newname.text=name
+		market.button.newname.xs=#name+4
+		market.place({'newname'})
+	end
+	market.itemlist[market.inumList[line]].display_name = name
+	return market.showMe()
+end
+
+
+--скромно перерисовывает поле цифрового ввода и следит за ним
+market.inputNumber=function(arg)
+	if arg == 'set' then return market.setPrice() end
+	if arg == 'n' then return market.acceptBuy() end
+	if tonumber(market.number) > 999 then
+	market.number=string.sub(market.number,1,#market.number-1)
 	market.button.number.text=market.number
 	market.place({'number'})
+  end
 end
- 
 
+--запрашивает подтверждение выбора и количества
+--осуществляет вызов продажи либо продаёт изымая нал/баланс
+market.acceptBuy=function()
+
+
+end
+
+market.setPrice=function()
+	market.itemlist[market.inumList[market.line]].sell_price = market.number
+  return market.showMe()
+  end
 --==================================================================
 --pim & chest - components contains inventory
 --inventoryList - itemlist of csanning inventory
@@ -285,6 +343,7 @@ function market.findCash(inventory)
 function market.pimByeBye()
 	market.player={}
 	market.inventory={}
+	market.number=0
 	market.mode='trade'
 	return market.screenInit()
 end
@@ -316,7 +375,7 @@ function market.merge()
 		if not market.itemlist[id] then
 			market.itemlist[id]={}
 			market.itemlist[id].sell_price = '9999'
-			market.itemlist[id].bye_price = '0'	
+			market.itemlist[id].buy_price = '0'	
 			market.itemlist[id].qty=market.chestList[id].qty
 			market.itemlist[id].display_name=market.chestList[id].display_name
 			market.itemlist.size=market.itemlist.size+1
@@ -347,7 +406,7 @@ function market.get_inventoryitemlist(device)
 			inventory[id]={}
 			inventory[id].display_name=item.display_name
 			inventory[id].sell_price=item.sell_price
-			inventory[id].bye_price=item.bye_price
+			inventory[id].buy_price=item.buy_price
 			inventory[id].name=item.name
 			inventory[id].qty=item.qty
 			inventory[id].slots={f}--номера слотов занимаемых предметом
@@ -379,7 +438,7 @@ function market.load_fromFile()
 				itemlist[id]={}
 				itemlist[id].display_name=tostring(db:read('*line'))
 				itemlist[id].sell_price=tonumber(db:read('*line'))
-				itemlist[id].bye_price=tonumber(db:read('*line'))
+				itemlist[id].buy_price=tonumber(db:read('*line'))
 			end
   end
   db:close()
@@ -398,7 +457,7 @@ function market.save_toFile(list)
 		db:write(tostring(id)..'\n')
 		db:write(tostring(itemlist[id].display_name)..'\n')
 		db:write(tostring(itemlist[id].sell_price)..'\n')
-		db:write(tostring(itemlist[id].bye_price)..'\n')
+		db:write(tostring(itemlist[id].buy_price)..'\n')
 	end
 	itemlist.size=size
 	db:close()

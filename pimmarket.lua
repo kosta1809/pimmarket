@@ -193,7 +193,7 @@ market.typing=function(line)
 		market.place({'newname'})
 	end
 	market.itemlist[market.inumList[line]].display_name = name
-	save_toFile(market.itemlist)
+	market.save_toFile(market.itemlist)
 	return market.showMe()
 end
 
@@ -554,7 +554,7 @@ function market.init()
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)
 	print('initialization complete') os.sleep(1)
-	gpu.setResolution(60,20)
+	gpu.setResolution(72,24)
 	gpu.allocateBuffer(1,1)
 	--gpu.setActiveBuffer(1)
 	return market.screenInit()

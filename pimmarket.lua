@@ -322,7 +322,7 @@ end
 --ориентируясь по списку в листе market.screen
 --вызывает одноименный кнопке метод в том случае,
 --если имя в эвенте совпадает с именем инвентаря на пим
-function market.screenDriver(_,_,x,y,_,name)
+function market.screenDriver(x,y,name)
 	if name == market.player.name then
 	local list=market.screen
 		for f in pairs (list) do
@@ -338,7 +338,7 @@ function market.screenDriver(_,_,x,y,_,name)
 end
 --==--==--==--==--==--==--==--==--==--==--==--
 --сюда попадает получая эвент player_on
-function market.pimWho(_,who,uid)
+function market.pimWho(who,uid)
 	--=================================
 	--need connect to server for get player info
 	--=============================
@@ -440,12 +440,13 @@ function market.screenInit()
 	return market.place(market.screen)
 end
 
+
 computer.pullSignal=function(...)
-	local evnt={pull(...)}
-	if evnt[1]=='player_on' then market.pimWho(evnt)end
-	if evnt[1]=='player_off'then market.pimByeBye(evnt)end
-	if evnt[1]=='touch'then market.screenDriver(evnt)end
-	return table.unpack(evnt)
+	local e={pull(...)}
+	if e[1]=='player_on' then return market.pimWho(e[2],e[3])end
+	if e[1]=='player_off'then return market.pimByeBye()end
+	if e[1]=='touch'then return market.screenDriver(e[3],e[4],e[6])end
+	if e then return table.unpack(e) end
 end
 --инициализация
 function market.init()

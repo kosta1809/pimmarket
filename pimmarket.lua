@@ -93,19 +93,19 @@ market.color = {
 --содержит все функции вызываемые кнопками
 --в том числе меняющие содержимое экрана
 market.screenActions={}
-market.screenActions.one=function()market.number=market.number..'1' event.push('input_number','+') end
-market.screenActions.two=function()market.number=market.number..'2' event.push('input_number','+') end
-market.screenActions.free=function()market.number=market.number..'3' event.push('input_number','+') end
-market.screenActions.foo=function()market.number=market.number..'4' event.push('input_number','+') end
-market.screenActions.five=function()market.number=market.number..'5' event.push('input_number','+') end
-market.screenActions.six=function()market.number=market.number..'6' event.push('input_number','+') end
-market.screenActions.seven=function()market.number=market.number..'7' event.push('input_number','+') end
-market.screenActions.eight=function()market.number=market.number..'8' event.push('input_number','+') end
-market.screenActions.nine=function()market.number=market.number..'9' event.push('input_number','+') end
-market.screenActions.zero=function()market.number=market.number..'0' event.push('input_number','+') end
+market.screenActions.one=function()market.number=market.number..'1' return market.inputNumber(1) end
+market.screenActions.two=function()market.number=market.number..'2' return market.inputNumber(2) end
+market.screenActions.free=function()market.number=market.number..'3' return market.inputNumber(3) end
+market.screenActions.foo=function()market.number=market.number..'4' return market.inputNumber(4) end
+market.screenActions.five=function()market.number=market.number..'5' return market.inputNumber(5) end
+market.screenActions.six=function()market.number=market.number..'6' return market.inputNumber(6) end
+market.screenActions.seven=function()market.number=market.number..'7' return market.inputNumber(7) end
+market.screenActions.eight=function()market.number=market.number..'8' return market.inputNumber(8) end
+market.screenActions.nine=function()market.number=market.number..'9' return market.inputNumber(9) end
+market.screenActions.zero=function()market.number=market.number..'0' return market.inputNumber(0) end
 market.screenActions.back=function()if #market.number > 0 then
-	market.number=string.sub(market.number,1,#market.number-1) event.push('input_number','-') end end
-market.screenActions.enternumber=function() event.push('input_number','ok') end
+	market.number=string.sub(market.number,1,#market.number-1) return market.inputNumber('-') end end
+market.screenActions.enternumber=function() return market.inputNumber('n')  end
 --================================================================
 market.screenActions.shopUp=function()if market.shopLine > 10 then
 	market.shopLine=market.shopLine-10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
@@ -133,6 +133,10 @@ market.screen={'one','two','free','foo','five','six','seven','eight',
 'nine','zero','back','enternumber','number','selectedItem'}
 return market.replace()
 
+end
+--скромно перерисовывает поле цифрового ввода
+market.inputNumber=function()
+	
 end
 
 --================================================================
@@ -255,7 +259,7 @@ function market.screenDriver(_,_,x,y,_,name)
 			local button=market.button[list[f]]
 			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
 			if a then
-				market.screenActions[list[f]](x,y)
+				return market.screenActions[list[f]](x,y)
 			end
 		end
 	--else gpu.set(12,20,'ошибка сравнения имён')
@@ -356,7 +360,7 @@ function market.pimWho(_,who,uid)
 	end
 	--включаем наблюдение касаний экрана. выключаем наблюдение player_on
 	--включаем наблюдение player_off
-	event.cancel(market.event_player_on) market.event_player_on=nil
+	event.ignode('player_on',pimWho) market.event_player_on=nil
 	market.event_touch=event.listen('touch',market.screenDriver)
 	market.event_player_off=event.listen('player_off',market.pimByeBye)
 	--после касания игроком стартовых отображённых кнопок он
@@ -445,8 +449,8 @@ end
 
 function market.start()
 	market.event_player_on=event.listen('player_on',market.pimWho)
-	if market.event_touch then event.cancel(market.event_touch) market.event_touch=nil end
-	if market.event_player_off then event.cancel(market.event_player_off) market.event_player_off=nil end
+	if market.event_touch then event.ignore('touch',market.screenDriver) market.event_touch=nil end
+	if market.event_player_off then event.ignore('player_off',pimByeBye) market.event_player_off=nil end
 	return market.screenInit()
 end
 

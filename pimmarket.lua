@@ -185,13 +185,13 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	gpu.setBackground(0xc49029)
 	gpu.setForeground(0x0)
 	gpu.set(3,19,total..'items')
-	gpu.set(3,3,'cash:   '..market.player.cash)
-	gpu.set(3,4,'balance:'..market.player.balance)
-	gpu.fill(12,2,36,19,'')
+	gpu.set(1,4,'cash:   '..market.player.cash)
+	gpu.set(1,5,'balance:'..market.player.balance)
+	gpu.fill(15,2,36,19,'')
 	while pos <= total do
 		
 		local item=inumList[pos]
-		gpu.set(14,y,itemlist[item].display_name)
+		gpu.set(15,y,itemlist[item].display_name)
 		gpu.set(48,y,tostring(itemlist[item].qty))
 		--gpu.setBackground(0x273ba1)
 		gpu.set(55,y,' ')
@@ -266,7 +266,7 @@ function market.pimWho(who,uid)
 end
 
 function market.findCash(inventory)
-
+ return 0
 	end
 --очистка и создание экрана ожидания
 --сюда попадаем получая эвент player_off

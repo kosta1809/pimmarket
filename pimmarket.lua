@@ -23,7 +23,7 @@ market.owner={
 }
 market.shopLine=1
 market.shopItemsOnScreen={}
-market.player={status='player',name='name',uid='uid',balance='0',ban='-'}
+market.player={status='player',name='name',uid='uid',balance='0',ban='-',cash='0'}
 --получаем название используемого торгового сундука. список сундуков GTImpact модпака
 market.component = {'neutronium','iridium','osmium','chrome','wolfram','titanium',
 'hsla','aluminium','steel','wriron','chest','tile_extrautils_chestfull_name'}
@@ -68,8 +68,8 @@ market.button={
 	entrance={x=2,xs=56,y=2,ys=17,text='Go on PIM',tx=22,ty=9,bg=999999,fg=0x68f029},
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	number={x=14,xs=24  ,y=18,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
-	shopUp={x=2,xs=10,y=5,ys=5,text='UP',tx=5,ty=2,bg=0x4cb01e,fg=0xf2b233},
-	shopDown={x=2,xs=10,y=12,ys=5,text='DOWN',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
+	shopUp={x=2,xs=10,y=7,ys=5,text='UP',tx=5,ty=2,bg=0x4cb01e,fg=0xf2b233},
+	shopDown={x=2,xs=10,y=13,ys=5,text='DOWN',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
 	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items              count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
 	shopFillRight={x=12,xs=29,y=1,ys=1,text='',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
 	shopVert={x=53,xs=2,y=1,ys=20,text=' ',tx=0,ty=0,bg=0x202020,fg=0x303030}
@@ -111,9 +111,10 @@ market.screenActions.enternumber=function() return market.inputNumber('n')  end
 --================================================================
 market.screenActions.shopUp=function()if market.shopLine > 10 then
 	market.shopLine=market.shopLine-10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
-market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shoppLine then
+market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shopLine then
 	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
-market.screenActions.shopFillRight=function(_,y)--ловит выбор игроком предмета
+market.screenActions.shopFillRight=function(_,y)
+print(y)
 	local line = y-1+market.shopLine
   market.selectedItem=market.itemlist[market.inumList[line]]
 	return market.waitForCount() end
@@ -123,10 +124,15 @@ market.screenActions.name=function()return market.welcome() end
 market.screenActions.welcome=function()return market.welcome() end
 market.screenActions.status=function()
 	if market.player.status=='owner' then
-		market.mode = 'price edit'	
+		if market.mode=='trade' then
+			market.mode = 'edit'
+		else
+			market.mode = 'trade'
+		end
 	else 
-		market.mode = 'trade'
+		market.mode = 'trade'	
 	end
+	market.button.mode.text=market.mode
 end
 --================================================================
 --вызов меню набора номера.
@@ -136,22 +142,181 @@ market.screen={'one','two','free','foo','five','six','seven','eight',
 return market.replace()
 
 end
+
 --скромно перерисовывает поле цифрового ввода
 market.inputNumber=function()
 	market.place({'inputNumber'})
 end
+ 
 
---================================================================
---pim getStackInSlot:table witch fields k+v: 
---display_name,dmg,id,max_dmg,max_size,mod_id,name,ore_dict,qty,raw_name//whre qty is amount
---fields form item: display_name, id, raw_name. also need add price for bye, price for cell. 
+--==================================================================
+--pim & chest - components contains inventory
+--inventoryList - itemlist of csanning inventory
+--item_id, count - name of item and count for migrate
+--op - type of operation in string format. itemPull or itemPush
+--передаёт выбранный предмет itemid в количестве count из целевого в назначенный инвентарь
+--параметр передачи задаётся агр. 'op'=itemPull or itemPush
+function market.fromInvToInv(device,itemid,count, op)
+	local c=count
+	for slot in pairs(itemid.slots) do
+		local available=device.getItemInSlot(slot).qty
+		if c > 0 then
+			if c >  available then
+				c=c-available
+				pim[op]('down',slot,available)--из слота в назначение
+			else
+				pim[op]('down',slot,c)--остатки меньше стака
+				c=0
+			end
+		end
+	end
+end
+--=============================================================
+
+--displayet items availabled for trading
+--where pos - position in itemlist for showing
+--and itemlist - numerated itemlist
+--создание экрана со списком пердметов
+function market.showMeYourCandyesBaby(itemlist,inumList)
+	local y=2
+	local pos=market.shopLine
+	local total=#inumList
+
+	gpu.setBackground(0xc49029)
+	gpu.setForeground(0x0)
+	gpu.set(3,19,total..'items')
+	gpu.set(3,3,'cash:   '..market.player.cash)
+	gpu.set(3,4,'balance:'..market.player.balance)
+	gpu.fill(12,2,36,19,'')
+	while pos <= total do
+		
+		local item=inumList[pos]
+		gpu.set(14,y,itemlist[item].display_name)
+		gpu.set(48,y,tostring(itemlist[item].qty))
+		--gpu.setBackground(0x273ba1)
+		gpu.set(55,y,' ')
+		--gpu.setBackground(0x202020)
+		gpu.set(56,y,tostring(itemlist[item].sell_price))
+		y=y+1
+		pos=pos+1
+		if y > 19 then pos=total+1 end
+	end
+end
+
+--отрисовывает поля меню выбора товара
+function market.showMe()
+	market.button.status.text=market.player.status..' '..market.player.name
+	market.screen={'shopUp','shopDown','shopFillRight','status','shopVert','shopTopRight','mode'}
+	market.replace()
+	market.screen[5]=nil
+	market.screen[6]=nil
+	market.screen[7]=nil
+	
+	return market.showMeYourCandyesBaby(market.itemlist,market.inumList)
+end
+
 --===============================================
+--==--==--==--==--==--==--==--==--==--==--==--
+--сюда попадаем получая эвент  touch
+--эта функция обрабатывает касания экрана.
+--ориентируясь по списку в листе market.screen
+--вызывает одноименный кнопке метод в том случае,
+--если имя в эвенте совпадает с именем инвентаря на пим
+function market.screenDriver(x,y,name)
+	if name == market.player.name then
+	local list=market.screen
+		for f in pairs (list) do
+			local button=market.button[list[f]]
+			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
+			if a then
+				return market.screenActions[list[f]](x,y)
+			end
+		end
+	--else gpu.set(12,20,'ошибка сравнения имён')
+	end
+end
+--==--==--==--==--==--==--==--==--==--==--==--
+--сюда попадает получая эвент player_on
+function market.pimWho(who,uid)
+	--=================================
+	--need connect to server for get player info
+	--=============================
+	market.player.name=who
+	market.player.uid=uid
+	market.player.status = 'player'
+	for f=1, #market.owner do
+		if market.owner[f].uuid==uid and market.owner[f].name==who then 
+			market.player.status = 'owner'
+		end
+	end
+	--здороваемся
+	market.button.name.text=who
+	market.button.name.xs=#who+4
+	market.button.name.x=19-#who/2
+	market.screen={'name','welcome'}
+	market.clear(2345)
+	market.place(market.screen)
+	os.sleep(1)
+	--заглядываем в инвентарь игрока. просто любопытство, не более
+	market.inventory=market.get_inventoryitemlist(pim)
+	--находим наличку в инвентаре игрока
+	market.player.cash=market.findCash(market.inventory)
+	--отправляемся в каталог товаров
+	return market.showMe()
+end
+--очистка и создание экрана ожидания
+--сюда попадаем получая эвент player_off
+function market.pimByeBye()
+	market.player={}
+	market.inventory={}
+	market.mode='trade'
+	return market.screenInit()
+end
+--=============================================================
+--сортируем лист в алфавитном порядке
+function market.sort()
+	local index=#market.inumList 
+	local pos=1
+	while index > pos do
+		for int = index, pos, -1 do
+			if market.inumList[int] < market.inumList[pos] then
+				market.inumList[pos], market.inumList[int] = market.inumList[int], market.inumList[pos]
+			end
+			if market.inumList[int] > market.inumList[index] then
+				market.inumList[index], market.inumList[int] = market.inumList[int], market.inumList[index]
+			end
+		end
+		index=index-1
+		pos=pos+1
+	end
+end
+--подшивает актульный список предметов к основному
+function market.merge()
+	local index=1
+	if not market.itemlist.size then market.itemlist.size=0 end
+	market.chestList.size=nil
+	for id in pairs(market.chestList) do
+		market.inumList[index]=id
+		if not market.itemlist[id] then
+			market.itemlist[id]={}
+			market.itemlist[id].sell_price = '9999'
+			market.itemlist[id].bye_price = '0'	
+			market.itemlist[id].qty=market.chestList[id].qty
+			market.itemlist[id].display_name=market.chestList[id].display_name
+			market.itemlist.size=market.itemlist.size+1
+		else
+			market.itemlist[id].qty=market.chestList[id].qty
+			market.itemlist[id].slots=market.chestList[id].slots
+		end
+		index=index+1
+	end
+end
+--=================================================
 --scan inventory. return items table.
 --из самостоятельной одноцелевой в многоцелевую
---на вход подать используемый компонент пим или сундук.
+--на вход подать используемый компонент: пим или сундук.
 function market.get_inventoryitemlist(device)
 	local size=device.getInventorySize() --число слотов в инвентаре
-	print(size)
 	local inventory={}
 	inventory.size=0
 	local id,item='',''
@@ -181,7 +346,6 @@ function market.get_inventoryitemlist(device)
 	end
 	return inventory
 end
-
 --load itemlist from file
 function market.load_fromFile()
 	local itemlist = {}
@@ -225,183 +389,6 @@ function market.save_toFile(list)
 	return true
 end
 
-
---==================================================================
---pim & chest - components contains inventory
---inventoryList - itemlist of csanning inventory
---item_id, count - name of item and count for migrate
---op - type of operation in string format. itemPull or itemPush
---передаёт выбранный предмет itemid в количестве count из целевого в назначенный инвентарь
---параметр передачи задаётся агр. 'op'=itemPull or itemPush
-function market.fromInvToInv(device,itemid,count, op)
-	local c=count
-	for slot in pairs(itemid.slots) do
-		local available=device.getItemInSlot(slot).qty
-		if c > 0 then
-			if c >  available then
-				c=c-available
-				pim[op]('down',slot,available)--из слота в назначение
-			else
-				pim[op]('down',slot,c)--остатки меньше стака
-				c=0
-			end
-		end
-	end
-end
---=============================================================
-
---displayet items availabled for trading
---where pos - position in itemlist for showing
---and itemlist - numerated itemlist
---создание экрана со списком пердметов
-function market.showMeYourCandyesBaby(itemlist,inumList)
-	local y=2
-	local pos=market.shopLine
-	local total=#inumList
-
-	gpu.setBackground(0xc49029)
-	gpu.setForeground(0x0)
-	gpu.set(3,18,total..'items')
-	
-	while pos <= total do
-		--gpu.fill(24,y,30,1,'')
-		local item=inumList[pos]
-		gpu.set(14,y,itemlist[item].display_name)
-		gpu.set(48,y,tostring(itemlist[item].qty))
-		--gpu.setBackground(0x273ba1)
-		gpu.set(55,y,' ')
-		--gpu.setBackground(0x202020)
-		gpu.set(56,y,tostring(itemlist[item].sell_price))
-		y=y+1
-		pos=pos+1
-		if y > 19 then pos=total+1 end
-	end
-end
-
---отрисовывает поля меню выбора товара
-function market.showMe()
-	market.button.status.text=market.player.status..' '..market.player.name
-	market.screen={'shopUp','shopDown','shopFillRight','status','shopVert','shopTopRight','mode'}
-	market.replace()
-	market.screen[5]=nil
-	market.screen[6]=nil
-	market.screen[7]=nil
-	
-		--эта функция недописана
-		--она размещает наэкране поля для списка айтемов
-		--так же должна организовать вывод самого списка айтемов
-		--или не должна. посмотрим
-		
-	return market.showMeYourCandyesBaby(market.itemlist,market.inumList)
-end
-
-
---==================================================
---ну привет, дружок-пирожок. посмотрим, что ты взял с собой
---и отправим смотреть что сами припасли
-function market.welcome()
-	market.inventory=market.get_inventoryitemlist(pim)
-	market.showMe()
-end
-
-
-
-
---===============================================
---очистка и создание экрана ожидания
---сюда попадаем получая эвент player_off
-function market.pimByeBye()
-	market.player={}
-	market.inventory={}
-	market.mode='trade'
-	return market.screenInit()
-end
---==--==--==--==--==--==--==--==--==--==--==--
---сюда попадаем получая эвент  touch
---эта функция обрабатывает касания экрана.
---ориентируясь по списку в листе market.screen
---вызывает одноименный кнопке метод в том случае,
---если имя в эвенте совпадает с именем инвентаря на пим
-function market.screenDriver(x,y,name)
-	if name == market.player.name then
-	local list=market.screen
-		for f in pairs (list) do
-			local button=market.button[list[f]]
-			local a=(x >= button.x and x <= (button.xs+button.x)) and (y >= (button.y) and y <= (button.ys+button.y))
-			if a then
-				return market.screenActions[list[f]](x,y)
-			end
-		end
-	--else gpu.set(12,20,'ошибка сравнения имён')
-
-	end
-end
---==--==--==--==--==--==--==--==--==--==--==--
---сюда попадает получая эвент player_on
-function market.pimWho(who,uid)
-	--=================================
-	--need connect to server for get player info
-	--=============================
-	market.player.name=who
-	market.player.uid=uid
-	market.player.status = 'player'
-	for f=1, #market.owner do
-		if market.owner[f].uuid==uid and market.owner[f].name==who then 
-			market.player.status = 'owner'
-		end
-	end
-	--здороваемся
-	market.button.name.text=who
-	market.button.name.xs=#who+4
-	market.button.name.x=19-#who/2
-	market.screen={'name','welcome'}
-	market.clear(2345)
-	market.place(market.screen)
-	os.sleep(1)
-	--отправляемся в каталог товаров
-	return market.showMe()
-end
-
---=============================================================
---сортируем лист в алфавитном порядке
-function market.sort()
-	local index=#market.inumList 
-	local pos=1
-	while index > pos do
-		for int = index, pos, -1 do
-			if market.inumList[int] < market.inumList[pos] then
-				market.inumList[pos], market.inumList[int] = market.inumList[int], market.inumList[pos]
-			end
-			if market.inumList[int] > market.inumList[index] then
-				market.inumList[index], market.inumList[int] = market.inumList[int], market.inumList[index]
-			end
-		end
-		index=index-1
-		pos=pos+1
-	end
-end
---подшивает актульный список предметов к основному
-function market.merge()
-	local index=1
-	if not market.itemlist.size then market.itemlist.size=0 end
-	market.chestList.size=nil
-	for id in pairs(market.chestList) do
-		market.inumList[index]=id
-		if not market.itemlist[id] then
-			market.itemlist[id]={}
-			market.itemlist[id].sell_price = '9999'
-			market.itemlist[id].bye_price = '0'	
-			market.itemlist[id].qty=market.chestList[id].qty
-			market.itemlist[id].display_name=market.chestList[id].display_name
-			market.itemlist.size=market.itemlist.size+1
-		else
-			market.itemlist[id].qty=market.chestList[id].qty
-			market.itemlist[id].slots=market.chestList[id].slots
-		end
-		index=index+1
-	end
-end
---=================================================
 --замена кнопок экрана: вызов очистки и прорисовки
 function market.replace()
 	market.clear(303030)
@@ -432,6 +419,7 @@ market.place=function(buttons)
 	end
 	--gpu.setActiveBuffer(1)
 end
+
 function market.screenInit()
 	market.screen={'entrance'}
 	market.clear(0x202020)

@@ -209,7 +209,7 @@ market.inputNumber=function(n)
 	end
 	market.button.number.text=market.number
 	market.button.totalprice.text=
-		tostring(market.number * market.itemlist[market.inumList[market.selectedLine]].sell_price)
+		tostring(tonumber(market.number) * tonumber(market.itemlist[market.inumList[market.selectedLine]].sell_price))
 	return market.place({'number','totalprice'})
 end
 

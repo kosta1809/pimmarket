@@ -47,7 +47,7 @@ market.activity={}--здесь держать функциональные кн�
 --содержит все используемые кнопки. Кнопки содержат поля: координаты x y,
 --размер по x y, текст, внутренняя позиция текста, имя функции если используется, цвета
 market.button={
-	status={x=1,xs=18,y=1,ys=1,text='hello',tx=1,ty=0,bg=0x68f029,fg=777777},
+	status={x=1,xs=18,y=1,ys=1,text='player',tx=1,ty=0,bg=0x68f029,fg=777777},
 	mode={x=1,xs=12,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x68f029,fg=777777},
 
 	buy={x=32,xs=8,y=4,ys=3,text='Купить',tx=1,ty=1,bg=999999,fg=0x68f029},
@@ -70,6 +70,7 @@ market.button={
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=999999,fg=0x68f029},
 
 	confirm={x=26,xs=24,y=12,ys=3,text='accept buy',tx=2,ty=1,bg=999999,fg=0x68f029},
+	cancel={x=26,xs=10,y=20,ys=1,text='cancel',tx=2,ty=0,bg=999999,fg=0x68f029},
 	dot={x=26,xs=6,y=16,ys=3,text='.',tx=2,ty=1,bg=999999,fg=0x68f029},
 
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
@@ -113,6 +114,7 @@ market.screenActions.seven=function()market.number=market.number..'7' return mar
 market.screenActions.eight=function()market.number=market.number..'8' return market.inputNumber(8) end
 market.screenActions.nine=function()market.number=market.number..'9' return market.inputNumber(9) end
 market.screenActions.zero=function()market.number=market.number..'0' return market.inputNumber(0) end
+market.screenActions.dot=function()market.number=market.number..'.' return market.inputNumber('.')end
 market.screenActions.back=function()if #market.number > 0 then
 	market.number=string.sub(market.number,1,#market.number-1) return market.inputNumber('-') end end
 market.screenActions.enternumber=function() return market.inputNumber('n')  end
@@ -133,7 +135,9 @@ market.screenActions.shopFillRight=function(_,y)
 end
 market.screenActions.confirm=function() end
 market.screenActions.set=function()return market.inputNumber('set') end
-
+market.screenActions.cancel=function()
+	return market.showMe()
+end
 --====================================================================================
 market.screenActions.name=function()return market.welcome() end
 market.screenActions.welcome=function()return market.welcome() end
@@ -149,21 +153,21 @@ market.screenActions.status=function()
 	else 
 		market.mode = 'trade'	
 	end
-	market.button.status.text=market.mode
-	market.place({'status'})
+	market.button.mode.text=market.mode
+	market.place({'mode'})
 end
 --================================================================
 --вызов меню набора номера.
 market.trade=function()
-	market.screen={'one','two','free','foo','five','six','seven','eight',
-	'nine','zero','back','enternumber','number','select'}
+	market.screen={'status','mode','one','two','free','foo','five','six','seven','eight',
+	'nine','zero','back','enternumber','number','select','cancel'}
 	return market.replace()
 end
 
---меню владельца для ввода цен
+--меню владельца для ввода цены
 market.edit=function()
-	market.screen={'one','two','free','foo','five','six','seven','eight',
-	'nine','zero','back','set','number','select'}
+	market.screen={'status','mode','one','two','free','foo','five','six','seven','eight',
+	'nine','zero','back','set','number','select','dot','cancel'}
 	return market.replace()
 end
 
@@ -195,8 +199,11 @@ end
 market.inputNumber=function(n)
 	if n == 'set' then return market.setPrice() end
 	if n == 'n' then return market.acceptBuy() end
-	if tonumber(market.number) > 999 then
-	market.number=string.sub(market.number,1,#market.number-1) end
+	if #market.number>3 then
+		if tonumber(market.number) > 999 then
+			market.number=string.sub(market.number,1,#market.number-1)
+		end
+	end
 	market.button.number.text=market.number
 	market.place({'number'})
   
@@ -269,8 +276,12 @@ end
 
 --отрисовывает поля меню выбора товара
 function market.showMe()
-	market.button.status.text=market.player.status..' '..market.player.name
-	market.screen={'status','shopUp','shopDown','shopFillRight'}
+	market.button.status.text=market.player.status
+	market.number=''
+	market.mode='trade'
+	market.button.number.text=''
+	market.button.mode.text='trade'
+	market.screen={'status','shopUp','shopDown','shopFillRight','cancel'}
 	market.replace()
 	market.place({'shopVert','shopTopRight','mode'})
 	--market.screen[5]=nil
@@ -344,8 +355,7 @@ function market.findCash(inventory)
 function market.pimByeBye()
 	market.player={}
 	market.inventory={}
-	market.number=''
-	market.mode='trade'
+	
 	return market.screenInit()
 end
 --=============================================================

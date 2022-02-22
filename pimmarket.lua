@@ -458,9 +458,9 @@ end
 
 computer.pullSignal=function(...)
 	local evnt={pull(...)}
-	if evnt[1]='player_on' then print('one') --market.pimWho(evnt)end
-	if evnt[1]='player_off'then print('two')--market.pimByeBye(evnt)end
-	if evnt[1]='touch'then print('free')--market.screenDriver(evnt)end
+	if evnt[1]=='player_on' then print('one') --market.pimWho(evnt)end
+	if evnt[1]=='player_off'then print('two')--market.pimByeBye(evnt)end
+	if evnt[1]=='touch'then print('free')--market.screenDriver(evnt)end
 	return table.unpack(evnt)
 end
 --ставим резолюцию, кнопки, начинаем слушать не топчет ли кто пим

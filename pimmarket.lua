@@ -264,6 +264,10 @@ function market.pimWho(who,uid)
 	--отправляемся в каталог товаров
 	return market.showMe()
 end
+
+function market.findCash(inventory)
+
+	end
 --очистка и создание экрана ожидания
 --сюда попадаем получая эвент player_off
 function market.pimByeBye()

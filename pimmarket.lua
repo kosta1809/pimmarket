@@ -221,7 +221,7 @@ end
 
 market.setPrice=function()
 	market.itemlist[market.inumList[market.line]].sell_price = market.number
-	save_toFile(market.itemlist)
+	market.save_toFile(market.itemlist)
 	return market.showMe()
 end
 --==================================================================
@@ -518,11 +518,12 @@ end
 
 computer.pullSignal=function(...)
 	local e={pullSignal(...)}
-	os.sleep(0.8)
 	if e[1]=='player_on' then
+		os.sleep(2)
 		return market.pimWho(e[2],e[3])
 	end
 	if e[1]=='player_off'then
+		os.sleep(2)
 		return market.pimByeBye()
 	end
 	if e[1]=='touch'then

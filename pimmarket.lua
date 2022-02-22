@@ -519,17 +519,15 @@ end
 computer.pullSignal=function(...)
 	local e={pullSignal(...)}
 	if e[1]=='player_on' then
-		os.sleep(2)
 		return market.pimWho(e[2],e[3])
 	end
 	if e[1]=='player_off'then
-		os.sleep(2)
 		return market.pimByeBye()
 	end
 	if e[1]=='touch'then
 		return market.screenDriver(e[3],e[4],e[6])
 	end
-	if e then return table.unpack(e) end
+	return table.unpack(e) 
 end
 --инициализация
 function market.init()
@@ -554,7 +552,7 @@ function market.init()
 	market.save_toFile(market.itemlist)
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)
-	print('initialization complete') os.sleep(1)
+	print('initialization complete')
 	gpu.setResolution(72,24)
 	gpu.allocateBuffer(1,1)
 	--gpu.setActiveBuffer(1)

@@ -6,6 +6,8 @@ local computer=require('computer')
 local pullSignal=computer.pullSignal
 local pim=require('component').pim
 local event=require('event')
+local table=require('table')
+local math=require('math')
 
 --лист с полями sell_price, buy_price, qty, display_name,name
 --и ключом raw_name
@@ -13,7 +15,7 @@ market.itemlist = {}--содержит все оценённые предмет�
 market.chestList = {}--содержит предметы в сундуке связанном с терминалом
 market.inumList={} --содержит нумерованный список с айди предметов магазина
 market.inventory = {}--содержит список предметов текущего посетителя
-market.select=''
+market.select='' --выбранный предмет?
 market.mode='trade'
 market.chest=''--используемый сундук. содержит ссылку на компонет сундук
 market.number= ''--используется при выборе количества и установки цен
@@ -26,7 +28,6 @@ market.owner={
 }
 market.shopLine=1
 market.selectedLine='1'
-market.shopItemsOnScreen={}
 market.player={status='player',name='name',uid='uid',balance='0',ban='-',cash='0'}
 --получаем название используемого торгового сундука. список сундуков GTImpact модпака
 market.component = {'neutronium','iridium','osmium','chrome','wolfram','titanium',
@@ -72,17 +73,17 @@ market.button={
 	set={x=18,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=999999,fg=0x68f029},
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=999999,fg=0x68f029},
 	totalprice={x=26,xs=4,y=16,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
+	acceptbuy={x=26,xs=24,y=19,ys=3,text='accept buy',tx=2,ty=1,bg=999999,fg=0x68f029},
 
-	confirm={x=26,xs=24,y=12,ys=3,text='accept buy',tx=2,ty=1,bg=999999,fg=0x68f029},
 	cancel={x=26,xs=10,y=20,ys=1,text='cancel',tx=2,ty=0,bg=999999,fg=0x68f029},
 	dot={x=26,xs=6,y=16,ys=3,text='.',tx=2,ty=1,bg=999999,fg=0x68f029},
 
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
-	entrance={x=2,xs=56,y=2,ys=17,text='Go on PIM',tx=22,ty=9,bg=999999,fg=0x68f029},
+	entrance={x=12,xs=48,y=5,ys=19,text='Go on PIM',tx=22,ty=6,bg=999999,fg=0x68f029},
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 
-	shopUp={x=2,xs=10,y=7,ys=5,text='UP',tx=5,ty=2,bg=0x4cb01e,fg=0xf2b233},
-	shopDown={x=2,xs=10,y=13,ys=5,text='DOWN',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
+	shopUp={x=3,xs=10,y=7,ys=5,text='UP',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
+	shopDown={x=3,xs=10,y=13,ys=5,text='DOWN',tx=3,ty=2,bg=0x4cb01e,fg=0xf2b233},
 	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items                          count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
 	shopFillRight={x=12,xs=29,y=1,ys=18,text=' ',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
 	shopVert={x=65,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x4cb01e,fg=0x303030}
@@ -122,6 +123,7 @@ market.screenActions.dot=function()market.number=market.number..'.' return marke
 market.screenActions.back=function()if #market.number > 0 then
 	market.number=string.sub(market.number,1,#market.number-1) return market.inputNumber('-') end end
 market.screenActions.enternumber=function() return market.inputNumber('n')  end
+market.screenActions.acceptbuy=function() return market.acceptBuy(true) end
 --================================================================
 market.screenActions.shopTopRight=function() end
 market.screenActions.shopVert=function() end
@@ -131,12 +133,11 @@ market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shop
 	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
 market.screenActions.shopFillRight=function(_,y)
 	market.selectedLine = y+market.shopLine-2
-	market.select=market.itemlist[market.inumList[market.selectedLine]]
+	market.select=market.inumList[market.selectedLine]
 	market.button.select.text=market.select.display_name
 	market.button.select.xs=#market.select.display_name+4
 	return market[market.mode](market.selectedLine)
 end
-market.screenActions.confirm=function() end
 market.screenActions.set=function()return market.inputNumber('set') end
 market.screenActions.cancel=function()
 	return market.showMe()
@@ -179,7 +180,7 @@ end
 
 --меню владельца для наименования
 market.typing=function(line)
-	market.clear()
+	market.clear(777777)
 	market.place({'select','newname'})
 	local loop = true
 	local name=''
@@ -221,11 +222,34 @@ end
 
 --запрашивает подтверждение выбора и количества
 --осуществляет вызов продажи либо продаёт изымая нал/баланс
-market.acceptBuy=function()
+market.acceptBuy=function(accept)
+	if accept then return market.finalizeSell() end
+	local player_money= tonumber(market.player.cash) + tonumber(market.player.balance)
+	if player_money >= tonumber(market.button.totalprice.text) then
+		market.place({'acceptBuy'})
+		market.screen[1+#market.screen]='acceptBuy'
+	end
+end
+--завершает продажу. забирает валюту. выдаёт предметы
+market.finalizeSell=function()
+	local price = tonumber(market.button.totalprice.text)
+	--market.inumList[market.selectedLine] --рав-имя предмета
+	price=math.floor(price)
+	local item_raw_name='item.npcmoney'
+	if market.player.name == 'Taoshi' then
+		local item_raw_name='gt.metaitem.01.18061'--test
+	end
 
+	local device = market.chest
+	market.fromInvToInv(market.chest,item_raw_name,price,'itemPull')
 
+	item_raw_name=market.inumList[market.selectedLine]
+	count=tonumber(market.number)
+	market.fromInvToInv(pim,item_raw_name,count,'itemPush')
+	return market.showMe
 end
 
+--завершает сессию установки цены овнером
 market.setPrice=function()
 	market.itemlist[market.inumList[market.selectedLine]].sell_price = market.number
 	market.save_toFile(market.itemlist)
@@ -234,14 +258,26 @@ end
 --==================================================================
 --pim & chest - components contains inventory
 --inventoryList - itemlist of csanning inventory
---item_id, count - name of item and count for migrate
+--item_raw_name, count - raw name of item and count for migrate
 --op - type of operation in string format. itemPull or itemPush
+--device - определяет проверяемый инвентарь
 --передаёт выбранный предмет itemid в количестве count из целевого в назначенный инвентарь
 --параметр передачи задаётся агр. 'op'=itemPull or itemPush
-function market.fromInvToInv(device,itemid,count, op)
+function market.fromInvToInv(device,item_raw_name,count, op)
 	local c=count
-	for slot in pairs(itemid.slots) do
-		local available=device.getItemInSlot(slot).qty
+	local legalSlots={}
+	local slots= device.getInventorySize()
+	
+	if slots == 40 then slots=36 end
+	for slot=1,slots,1 do
+		if item_raw_name == device.getStackInSlot(slot).raw_name
+			then table.insert(legalSlots, slot)
+		end
+	end
+
+	for slot in pairs(slots)do
+		local currentItem = device.getStackInSlot(slots[slot])
+		local available=currentItem.qty
 		if c > 0 then
 			if c >  available then
 				c=c-available
@@ -252,6 +288,14 @@ function market.fromInvToInv(device,itemid,count, op)
 			end
 		end
 	end
+end
+
+function market.findCash(inventory)
+	local cash=0
+	if inventory['item.npcmoney'] then
+		cash = inventory['item.npcmoney'].qty
+	end
+	return cash
 end
 --=============================================================
 
@@ -264,8 +308,8 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	local pos=market.shopLine
 	local total=#inumList
 
-	gpu.setBackground(303030)
-	gpu.setForeground(0x0)
+	gpu.setBackground(0x115533)
+	gpu.setForeground(0xAA33AA)
 	gpu.set(3,19,total..'items')
 	gpu.set(1,4,'cash:   '..tostring(market.player.cash))
 	gpu.set(1,5,'balance:'..tostring(market.player.balance))
@@ -287,6 +331,13 @@ end
 
 --отрисовывает поля меню выбора товара
 function market.showMe()
+	--заглядываем в инвентарь игрока. просто любопытство, не более
+	market.inventory=market.get_inventoryitemlist(pim)
+	--находим наличку в инвентаре игрока
+	market.player.cash=market.findCash(market.inventory)
+	--костыль. убрать после появления сервера
+	market.player.balance=0
+	--статус игрока. владелец или игрок
 	market.button.status.text=market.player.status
 	market.number=''
 	market.mode='trade'
@@ -343,24 +394,11 @@ function market.pimWho(who,uid)
 	market.screen={'name','welcome'}
 	market.clear(2345)
 	market.place(market.screen)
-	os.sleep(1)
-	--заглядываем в инвентарь игрока. просто любопытство, не более
-	market.inventory=market.get_inventoryitemlist(pim)
-	--находим наличку в инвентаре игрока
-	market.player.cash=market.findCash(market.inventory)
-	--костыль. убрать после появления сервера
-	market.player.balance=0
+	
 	--отправляемся в каталог товаров
 	return market.showMe()
 end
 
-function market.findCash(inventory)
-	local cash=0
-	if inventory['item.npcmoney'] then
-		cash = inventory['item.npcmoney'].qty
-	end
- return cash
-	end
 --очистка и создание экрана ожидания
 --сюда попадаем получая эвент player_off
 function market.pimByeBye()
@@ -488,7 +526,7 @@ end
 
 --замена кнопок экрана: вызов очистки и прорисовки
 function market.replace()
-	market.clear(303030)
+	market.clear(505050)
 	market.place(market.screen)
 end
 

@@ -283,9 +283,9 @@ function market.showMe()
 	market.button.status.text=market.player.status..' '..market.player.name
 	market.screen={'shopUp','shopDown','shopFillRight','status','shopVert','shopTopRight','mode'}
 	market.replace()
-	--market.screen[5]=nil
-	--market.screen[6]=nil
-	--market.screen[7]=nil
+	market.screen[5]=nil
+	market.screen[6]=nil
+	market.screen[7]=nil
 	
 		--эта функция недописана
 		--она размещает наэкране поля для списка айтемов
@@ -314,7 +314,7 @@ function market.pimByeBye()
 	market.player={}
 	market.inventory={}
 	market.mode='trade'
-	return market.start()
+	return market.screenInit()
 end
 --==--==--==--==--==--==--==--==--==--==--==--
 --сюда попадаем получая эвент  touch
@@ -351,14 +351,14 @@ function market.pimWho(who,uid)
 		end
 	end
 	--здороваемся
-	market.button.name.text=name
-	market.button.name.xs=#name+4
-	market.button.name.x=19-#name/2
+	market.button.name.text=who
+	market.button.name.xs=#who+4
+	market.button.name.x=19-#who/2
 	market.screen={'name','welcome'}
 	market.clear(2345)
 	market.place(market.screen)
 	os.sleep(1)
-	--отправляемся в каталон товаров
+	--отправляемся в каталог товаров
 	return market.showMe()
 end
 
@@ -401,7 +401,6 @@ function market.merge()
 		index=index+1
 	end
 end
-
 --=================================================
 --замена кнопок экрана: вызов очистки и прорисовки
 function market.replace()
@@ -418,7 +417,6 @@ market.clear=function(background)
 	gpu.fill(1,1,x,y,' ')
 	--gpu.setActiveBuffer(1)
 end
-
 --размещает текущие одноцветные кнопки на экране
 market.place=function(buttons)
 	--gpu.setActiveBuffer(0)
@@ -440,12 +438,17 @@ function market.screenInit()
 	return market.place(market.screen)
 end
 
-
 computer.pullSignal=function(...)
 	local e={pullSignal(...)}
-	if e[1]=='player_on' then return market.pimWho(e[2],e[3])end
-	if e[1]=='player_off'then return market.pimByeBye()end
-	if e[1]=='touch'then return market.screenDriver(e[3],e[4],e[6])end
+	if e[1]=='player_on' then
+		return market.pimWho(e[2],e[3])
+	end
+	if e[1]=='player_off'then
+		return market.pimByeBye()
+	end
+	if e[1]=='touch'then
+		return market.screenDriver(e[3],e[4],e[6])
+	end
 	if e then return table.unpack(e) end
 end
 --инициализация
@@ -475,7 +478,6 @@ function market.init()
 	gpu.setResolution(90,36)
 	gpu.allocateBuffer(1,1)
 	--gpu.setActiveBuffer(1)
-	
 	return market.screenInit()
 end
 return market

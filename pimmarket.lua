@@ -83,9 +83,9 @@ market.button={
 
 	shopUp={x=2,xs=10,y=7,ys=5,text='UP',tx=5,ty=2,bg=0x4cb01e,fg=0xf2b233},
 	shopDown={x=2,xs=10,y=13,ys=5,text='DOWN',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
-	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items              count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
+	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items                          count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
 	shopFillRight={x=12,xs=29,y=1,ys=18,text=' ',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
-	shopVert={x=53,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x4cb01e,fg=0x303030}
+	shopVert={x=65,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x4cb01e,fg=0x303030}
 }
 --позаимствованная у BrightYC таблица цветов.добавлен мутно-зелёный
 market.color = {
@@ -264,7 +264,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	local pos=market.shopLine
 	local total=#inumList
 
-	gpu.setBackground(0xc49029)
+	gpu.setBackground(303030)
 	gpu.setForeground(0x0)
 	gpu.set(3,19,total..'items')
 	gpu.set(1,4,'cash:   '..tostring(market.player.cash))

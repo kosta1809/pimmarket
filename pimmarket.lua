@@ -49,8 +49,8 @@ market.activity={}--здесь держать функциональные кн�
 --содержит все используемые кнопки. Кнопки содержат поля: координаты x y,
 --размер по x y, текст, внутренняя позиция текста, имя функции если используется, цвета
 market.button={
-	status={x=1,xs=18,y=1,ys=1,text='player',tx=1,ty=0,bg=0x68f029,fg=777777},
-	mode={x=1,xs=12,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x68f029,fg=777777},
+	status={x=1,xs=9,y=1,ys=1,text='player',tx=1,ty=0,bg=0x68f029,fg=777777},
+	mode={x=1,xs=9,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x68f029,fg=777777},
 
 	buy={x=32,xs=8,y=4,ys=3,text='Купить',tx=1,ty=1,bg=999999,fg=0x68f029},
 	sell={x=32,xs=8,y=8,ys=3,text='Продать',tx=1,ty=1,bg=999999,fg=0x68f029},
@@ -262,7 +262,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	gpu.set(3,19,total..'items')
 	gpu.set(1,4,'cash:   '..tostring(market.player.cash))
 	gpu.set(1,5,'balance:'..tostring(market.player.balance))
-	gpu.fill(15,2,38,18,' ')
+	gpu.fill(15,2,38,19,' ')
 	while pos <= total do
 		
 		local item=inumList[pos]
@@ -518,6 +518,7 @@ end
 
 computer.pullSignal=function(...)
 	local e={pullSignal(...)}
+	os.sleep(0.8)
 	if e[1]=='player_on' then
 		return market.pimWho(e[2],e[3])
 	end

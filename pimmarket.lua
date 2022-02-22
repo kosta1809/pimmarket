@@ -2,8 +2,8 @@
 local market={}
 local gpu=require('component').gpu
 local component=require('component')
-local computer=require'computer'
-local pull=computer.pullSignal
+local computer=require('computer')
+local pullSignal=computer.pullSignal
 local pim=require('component').pim
 
 --лист с полями sell_price, bye_price, qty, display_name,name
@@ -442,7 +442,7 @@ end
 
 
 computer.pullSignal=function(...)
-	local e={pull(...)}
+	local e={pullSignal(...)}
 	if e[1]=='player_on' then return market.pimWho(e[2],e[3])end
 	if e[1]=='player_off'then return market.pimByeBye()end
 	if e[1]=='touch'then return market.screenDriver(e[3],e[4],e[6])end
@@ -472,7 +472,7 @@ function market.init()
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)
 	print('initialization complete') os.sleep(1)
-	gpu.setResolution(60,20)
+	gpu.setResolution(90,36)
 	gpu.allocateBuffer(1,1)
 	--gpu.setActiveBuffer(1)
 	

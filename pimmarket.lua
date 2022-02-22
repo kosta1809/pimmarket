@@ -121,7 +121,7 @@ market.screenActions.shopFillRight=function(_,y)
 print(y)
 	local line = y-1+market.shopLine
   market.select=market.itemlist[market.inumList[line]]
-  marker.button.select.text=market.select.display_name
+  market.button.select.text=market.select.display_name
 	return market.waitForCount() end
 
 --====================================================================================
@@ -275,8 +275,8 @@ end
 
 function market.findCash(inventory)
 	local cash=0
-	if market.inventory['item.npcmoney'] then
-		cash = market.inventory['item.npcmoney'].qty
+	if inventory['item.npcmoney'] then
+		cash = inventory['item.npcmoney'].qty
 	end
  return cash
 	end

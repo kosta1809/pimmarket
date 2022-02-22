@@ -20,7 +20,8 @@ market.number= ''--используется при выборе количест
 market.owner={
 	{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"},
 	{uuid="0b448076-a810-3a82-8bb8-2913bdfb2ae5",name="Taoshi"},
-	{uuid="2e1c3d2c-3c30-4424-a917-682cb9b9fd47",name="Velem77"}
+	{uuid="2e1c3d2c-3c30-4424-a917-682cb9b9fd47",name="Velem77"},
+	{uuid="9e5f1396-ad94-3b1a-8ab7-c7c150e2c6f5",name="kosta1809"}
 }
 market.shopLine=1
 market.shopItemsOnScreen={}
@@ -549,7 +550,7 @@ function market.init()
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)
 	print('initialization complete') os.sleep(1)
-	gpu.setResolution(90,36)
+	gpu.setResolution(60,20)
 	gpu.allocateBuffer(1,1)
 	--gpu.setActiveBuffer(1)
 	return market.screenInit()

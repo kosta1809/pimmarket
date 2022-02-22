@@ -44,7 +44,7 @@ if fs.exists('home/owner.market') then
 	market.owner=require('owner.market')
 end
 --=============================================================
---2022.02.13-14
+--2022.02.13-14...02.22
 market.screen={}--здесь держать все кнопки экрана
 market.activity={}--здесь держать функциональные кнопки. или нет
 
@@ -53,7 +53,6 @@ market.activity={}--здесь держать функциональные кн�
 market.button={
 	status={x=1,xs=9,y=1,ys=1,text='player',tx=1,ty=0,bg=0x68f029,fg=777777},
 	mode={x=1,xs=9,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x68f029,fg=777777},
-
 	buy={x=32,xs=8,y=4,ys=3,text='Купить',tx=1,ty=1,bg=999999,fg=0x68f029},
 	sell={x=32,xs=8,y=8,ys=3,text='Продать',tx=1,ty=1,bg=999999,fg=0x68f029},
 	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
@@ -74,14 +73,11 @@ market.button={
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=999999,fg=0x68f029},
 	totalprice={x=26,xs=4,y=16,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
 	acceptbuy={x=26,xs=24,y=19,ys=3,text='accept buy',tx=2,ty=1,bg=999999,fg=0x68f029},
-
 	cancel={x=26,xs=10,y=20,ys=1,text='cancel',tx=2,ty=0,bg=999999,fg=0x68f029},
 	dot={x=26,xs=6,y=16,ys=3,text='.',tx=2,ty=1,bg=999999,fg=0x68f029},
-
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
 	entrance={x=12,xs=48,y=5,ys=19,text='Go on PIM',tx=22,ty=6,bg=999999,fg=0x68f029},
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
-
 	shopUp={x=3,xs=10,y=7,ys=5,text='UP',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
 	shopDown={x=3,xs=10,y=13,ys=5,text='DOWN',tx=3,ty=2,bg=0x4cb01e,fg=0xf2b233},
 	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items                          count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
@@ -202,7 +198,6 @@ market.typing=function(line)
 	return market.showMe()
 end
 
-
 --скромно перерисовывает поле цифрового ввода и следит за ним
 market.inputNumber=function(n)
 	if n == 'set' then return market.setPrice() end
@@ -213,11 +208,9 @@ market.inputNumber=function(n)
 		end
 	end
 	market.button.number.text=market.number
-
 	market.button.totalprice.text=
 		tostring(market.number * market.itemlist[market.inumList[market.selectedLine]].sell_price)
 	return market.place({'number','totalprice'})
-  
 end
 
 --запрашивает подтверждение выбора и количества
@@ -298,7 +291,6 @@ function market.findCash(inventory)
 	return cash
 end
 --=============================================================
-
 --displayet items availabled for trading
 --where pos - position in itemlist for showing
 --and itemlist - numerated itemlist
@@ -315,7 +307,6 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	gpu.set(1,5,'balance:'..tostring(market.player.balance))
 	gpu.fill(15,2,38,19,' ')
 	while pos <= total do
-		
 		local item=inumList[pos]
 		gpu.set(15,y,itemlist[item].display_name)
 		gpu.set(48,y,tostring(itemlist[item].qty))
@@ -346,13 +337,8 @@ function market.showMe()
 	market.screen={'status','shopUp','shopDown','shopFillRight','cancel'}
 	market.replace()
 	market.place({'shopVert','shopTopRight','mode'})
-	--market.screen[5]=nil
-	--market.screen[6]=nil
-	--market.screen[7]=nil
-	
 	return market.showMeYourCandyesBaby(market.itemlist,market.inumList)
 end
-
 --===============================================
 --==--==--==--==--==--==--==--==--==--==--==--
 --сюда попадаем получая эвент  touch
@@ -370,7 +356,6 @@ function market.screenDriver(x,y,name)
 				return market.screenActions[list[f]](x,y)
 			end
 		end
-	--else gpu.set(12,20,'ошибка сравнения имён')
 	end
 end
 --==--==--==--==--==--==--==--==--==--==--==--

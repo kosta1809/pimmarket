@@ -71,7 +71,7 @@ market.button={
 	select={x=26,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=999999,fg=0x68f029},
 	set={x=18,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=999999,fg=0x68f029},
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=999999,fg=0x68f029},
-	totalprice={x=26,xs=4,y=16,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
+	totalprice={x=26,xs=8,y=16,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
 	acceptbuy={x=26,xs=24,y=19,ys=3,text='accept buy',tx=2,ty=1,bg=999999,fg=0x68f029},
 	cancel={x=26,xs=10,y=20,ys=1,text='cancel',tx=2,ty=0,bg=999999,fg=0x68f029},
 	dot={x=26,xs=6,y=16,ys=3,text='.',tx=2,ty=1,bg=999999,fg=0x68f029},
@@ -208,8 +208,9 @@ market.inputNumber=function(n)
 		end
 	end
 	market.button.number.text=market.number
-	market.button.totalprice.text=
-		tostring(tonumber(market.number) * tonumber(market.itemlist[market.inumList[market.selectedLine]].sell_price))
+	local items= tonumber(market.number) or 0
+	local count= tonumbertonumber(market.itemlist[market.inumList[market.selectedLine]].sell_price))
+	market.button.totalprice.text= tostring(items*count)
 	return market.place({'number','totalprice'})
 end
 
@@ -299,8 +300,8 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	local pos=market.shopLine
 	local total=#inumList
 
-	gpu.setBackground(0x115533)
-	gpu.setForeground(0xAA33AA)
+	gpu.setBackground(777777)
+	gpu.setForeground(0x3333AA)
 	gpu.set(3,19,total..'items')
 	gpu.set(1,4,'cash:   '..tostring(market.player.cash))
 	gpu.set(1,5,'balance:'..tostring(market.player.balance))
@@ -510,7 +511,7 @@ end
 
 --замена кнопок экрана: вызов очистки и прорисовки
 function market.replace()
-	market.clear(505050)
+	market.clear(777777)
 	market.place(market.screen)
 end
 

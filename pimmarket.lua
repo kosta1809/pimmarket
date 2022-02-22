@@ -149,7 +149,7 @@ market.screenActions.status=function()
 	else 
 		market.mode = 'trade'	
 	end
-	market.button.mode.text=market.mode
+	market.button.status.text=market.mode
 	market.place({'status'})
 end
 --================================================================
@@ -192,9 +192,9 @@ end
 
 
 --скромно перерисовывает поле цифрового ввода и следит за ним
-market.inputNumber=function(arg)
-	if arg == 'set' then return market.setPrice() end
-	if arg == 'n' then return market.acceptBuy() end
+market.inputNumber=function(n)
+	if n == 'set' then return market.setPrice() end
+	if n == 'n' then return market.acceptBuy() end
 	if tonumber(market.number) > 999 then
 	market.number=string.sub(market.number,1,#market.number-1)
 	market.button.number.text=market.number
@@ -270,8 +270,9 @@ end
 --отрисовывает поля меню выбора товара
 function market.showMe()
 	market.button.status.text=market.player.status..' '..market.player.name
-	market.screen={'shopUp','shopDown','shopFillRight','status','shopVert','shopTopRight','mode'}
+	market.screen={'status','shopUp','shopDown','shopFillRight'}
 	market.replace()
+	market.place({'shopVert','shopTopRight','mode'})
 	--market.screen[5]=nil
 	--market.screen[6]=nil
 	--market.screen[7]=nil
@@ -343,7 +344,7 @@ function market.findCash(inventory)
 function market.pimByeBye()
 	market.player={}
 	market.inventory={}
-	market.number=0
+	market.number=''
 	market.mode='trade'
 	return market.screenInit()
 end

@@ -91,9 +91,9 @@ market.button={
 	enternumber={x=30,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	set={x=38,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 
-	number={x=38,xs=24,y=8,ys=3,text='',tx=10,ty=1,bg=0x303030,fg=0x68f029},
+	number={x=38,xs=12,y=8,ys=3,text='',tx=10,ty=1,bg=0x303030,fg=0x68f029},
 	select={x=38,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	totalprice={x=38,xs=10,y=16,ys=3,text='',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	totalprice={x=38,xs=10,y=12,ys=3,text='',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	acceptbuy={x=26,xs=24,y=19,ys=3,text='accept buy',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -203,15 +203,18 @@ market.typing=function(line)
 
 	while loop do
 		local _,_,ch,scd = event.pull('key_down')
-		if ch>13 and ch<127 then
-			name=name..string.char(ch)
-		end
-		if ch == 8 then name=string.sub(name,1,#name-1) end
-		if ch==0 and scd==211 then name=string.sub(name,1,#name-1) end
-		if ch==13 then loop = false end
+		if ch then
+			if ch>32 then 
+				name=name..string.char(ch)
+			end
+
+			if ch == 8 then name=string.sub(name,1,#name-1) end
+			if ch==0 and scd==211 then name=string.sub(name,1,#name-1) end
+			if ch==13 then loop = false end
 		market.button.newname.text=name
 		market.button.newname.xs=#name+4
 		market.place({'newname'})
+		end
 	end
 	market.button.newname.text=''
 	market.itemlist[market.inumList[line]].display_name = name
@@ -228,12 +231,16 @@ market.inputNumber=function(n)
 			market.number=string.sub(market.number,1,#market.number-1)
 		end
 	end
-	market.button.number.text=tostring(market.number)
-	market.button.number.xs= #market.itemlist[market.inumList[market.selectedLine]]+4
+	market.button.number.text=market.number
+	market.button.number.xs= #market.itemlist[market.inumList[market.selectedLine]].display_name+4
+	market.button.number.tx=
+	(#market.itemlist[market.inumList[market.selectedLine]].display_name+4)/2-#market.button.number.text/2
 	local items= tonumber(market.number) or 0
 	local count= tonumber(market.itemlist[market.inumList[market.selectedLine]].sell_price) or 0
 	market.button.totalprice.text= tostring(items*count)
 	market.button.totalprice.xs= #market.itemlist[market.inumList[market.selectedLine]].display_name+4
+	market.button.totalprice.tx= 
+	(#market.itemlist[market.inumList[market.selectedLine]].display_name+4)/2-#market.button.totalprice.text/2
 	return market.place({'number','totalprice'})
 end
 

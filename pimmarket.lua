@@ -103,7 +103,7 @@ market.button={
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	entrance={x=3,xs=68,y=2,ys=22,text='',tx=1,ty=1,bg=0x141414,fg=color.blackLime},
 	pim1={x=24,xs=24,y=6,ys=12,text='',tx=1,ty=1,bg=0x404040,fg=0x68f029},
-	pim2={x=26,xs=20,y=7,ys=10,text='Встаньте на PIM',tx=3,ty=4,bg=0x202020,fg=0x68f029},
+	pim2={x=26,xs=20,y=7,ys=10,text='Встаньте на PIM',tx=2,ty=4,bg=0x202020,fg=0x68f029},
 	buy={x=28,xs=16,y=8,ys=3,text='Купить',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	sell={x=28,xs=16,y=12,ys=3,text='Продать',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	
@@ -231,17 +231,18 @@ market.inputNumber=function(n)
 			market.number=string.sub(market.number,1,#market.number-1)
 		end
 	end
-	market.button.number.text=market.number
+	market.button.number.text=market.number..' '
 	market.button.number.xs= #market.itemlist[market.inumList[market.selectedLine]].display_name+4
 	market.button.number.tx=
 	(#market.itemlist[market.inumList[market.selectedLine]].display_name+4)/2-#market.button.number.text/2
 	local items= tonumber(market.number) or 0
 	local count= tonumber(market.itemlist[market.inumList[market.selectedLine]].sell_price) or 0
-	market.button.totalprice.text= tostring(items*count)
+	market.button.totalprice.text= tostring(items*count)..' '
 	market.button.totalprice.xs= #market.itemlist[market.inumList[market.selectedLine]].display_name+4
 	market.button.totalprice.tx= 
 	(#market.itemlist[market.inumList[market.selectedLine]].display_name+4)/2-#market.button.totalprice.text/2
-	return market.place({'number','totalprice'})
+	if market.mode = 'trade' then return market.place({'number','totalprice'}) end
+	return market.place({'number'})
 end
 
 --запрашивает подтверждение выбора и количества
@@ -346,10 +347,6 @@ end
 
 --отрисовывает поля меню выбора товара
 function market.showMe()
-	--заглядываем в инвентарь игрока. просто любопытство, не более
-	market.inventory=market.get_inventoryitemlist(pim)
-	--находим наличку в инвентаре игрока
-	market.player.cash=market.findCash(market.inventory)
 	--костыль. убрать после появления сервера
 	market.player.balance=0
 	if market.player.name == 'Taoshi' then market.player.balance = 9876 end
@@ -363,6 +360,12 @@ function market.showMe()
 end
 
 market.inShopMenu=function()
+	--заглядываем в инвентарь игрока. просто любопытство, не более
+	market.inventory=market.get_inventoryitemlist(pim)
+	--находим наличку в инвентаре игрока
+	market.player.cash=market.findCash(market.inventory)
+	market.button.cash.text=tostring(market.player.cash)
+	market.button.balance.text=tostring(market.player.balance)
 	market.screen={'status','shopUp','shopDown','shopFillRight','cancel'}
 	market.replace()
 	market.place({'shopVert','shopTopRight','mode','cash','balance'})

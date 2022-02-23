@@ -76,25 +76,26 @@ market.button={
 	cash={x=3,xs=8,y=4,ys=1,text='cash:'..tostring(market.player.cash),tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	balance={x=3,xs=8,y=5,ys=1,text='bal: '..tostring(market.player.balance),tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	
-	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	two={x=10,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	free={x=18,xs=6,y=4,ys=3,text='3',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	foo={x=2,xs=6,y=8,ys=3,text='4',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	five={x=10,xs=6,y=8,ys=3,text='5',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	six={x=18,xs=6,y=8,ys=3,text='6',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	seven={x=2,xs=6,y=12,ys=3,text='7',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	eight={x=10,xs=6,y=12,ys=3,text='8',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	nine={x=18,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	zero={x=10,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	back={x=2,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	dot={x=26,xs=6,y=16,ys=3,text='.',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	one={x=14,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	two={x=22,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	free={x=30,xs=6,y=4,ys=3,text='3',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	foo={x=14,xs=6,y=8,ys=3,text='4',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	five={x=22,xs=6,y=8,ys=3,text='5',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	six={x=30,xs=6,y=8,ys=3,text='6',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	seven={x=14,xs=6,y=12,ys=3,text='7',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	eight={x=22,xs=6,y=12,ys=3,text='8',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	nine={x=30,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	zero={x=22,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	back={x=14,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	dot={x=30,xs=6,y=16,ys=3,text='.',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	enternumber={x=30,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	set={x=38,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 
-	enternumber={x=18,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	number={x=26,xs=24,y=8,ys=3,text='',tx=10,ty=1,bg=0x303030,fg=0x68f029},
-	select={x=26,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	set={x=18,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	number={x=38,xs=24,y=8,ys=3,text='',tx=10,ty=1,bg=0x303030,fg=0x68f029},
+	select={x=38,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	totalprice={x=38,xs=10,y=16,ys=3,text='',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	totalprice={x=26,xs=8,y=16,ys=3,text='',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	acceptbuy={x=26,xs=24,y=19,ys=3,text='accept buy',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	cancel={x=26,xs=10,y=20,ys=1,text='cancel',tx=2,ty=0,bg=0x303030,fg=0x68f029},
 
@@ -226,9 +227,11 @@ market.inputNumber=function(n)
 		end
 	end
 	market.button.number.text=market.number
+	market.button.number.xs= market.itemlist[market.inumList[market.selectedLine]]+4
 	local items= tonumber(market.number) or 0
 	local count= tonumber(market.itemlist[market.inumList[market.selectedLine]].sell_price) or 0
 	market.button.totalprice.text= tostring(items*count)
+	market.button.totalprice.xs= #market.itemlist[market.inumList[market.selectedLine]].display_name+4
 	return market.place({'number','totalprice'})
 end
 

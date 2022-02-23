@@ -98,8 +98,8 @@ market.button={
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	entrance={x=12,xs=48,y=5,ys=19,text='',tx=22,ty=6,bg=color.blackGray,fg=color.blackLime},
-	pim1={x=28,xs=16,y=11,ys=8,text='',tx=1,ty=1,bg=color.blue,fg=0x68f029},
-	pim2={x=30,xs=12,y=9,ys=6,text='Go on PIM',tx=2,ty=3,bg=color.pim,fg=0x68f029},
+	pim1={x=28,xs=16,y=7,ys=8,text='',tx=1,ty=1,bg=color.blackBlue,fg=0x68f029},
+	pim2={x=30,xs=12,y=9,ys=6,text='Go on PIM',tx=2,ty=3,bg=0x202020,fg=0x68f029},
 	buy={x=32,xs=8,y=4,ys=3,text='Купить',tx=1,ty=1,bg=0x303030,fg=0x68f029},
 	sell={x=32,xs=8,y=8,ys=3,text='Продать',tx=1,ty=1,bg=0x303030,fg=0x68f029},
 	

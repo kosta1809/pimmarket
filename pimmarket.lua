@@ -52,41 +52,41 @@ market.activity={}--здесь держать функциональные кн�
 --содержит все используемые кнопки. Кнопки содержат поля: координаты x y,
 --размер по x y, текст, внутренняя позиция текста, имя функции если используется, цвета
 market.button={
-	status={x=1,xs=9,y=1,ys=1,text='player',tx=1,ty=0,bg=0x68f029,fg=777777},
-	mode={x=1,xs=9,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x68f029,fg=777777},
-	buy={x=32,xs=8,y=4,ys=3,text='Купить',tx=1,ty=1,bg=999999,fg=0x68f029},
-	sell={x=32,xs=8,y=8,ys=3,text='Продать',tx=1,ty=1,bg=999999,fg=0x68f029},
-	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=999999,fg=0x68f029},
-	two={x=10,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=999999,fg=0x68f029},
-	free={x=18,xs=6,y=4,ys=3,text='3',tx=2,ty=1,bg=999999,fg=0x68f029},
-	foo={x=2,xs=6,y=8,ys=3,text='4',tx=2,ty=1,bg=999999,fg=0x68f029},
-	five={x=10,xs=6,y=8,ys=3,text='5',tx=2,ty=1,bg=999999,fg=0x68f029},
-	six={x=18,xs=6,y=8,ys=3,text='6',tx=2,ty=1,bg=999999,fg=0x68f029},
-	seven={x=2,xs=6,y=12,ys=3,text='7',tx=2,ty=1,bg=999999,fg=0x68f029},
-	eight={x=10,xs=6,y=12,ys=3,text='8',tx=2,ty=1,bg=999999,fg=0x68f029},
-	nine={x=18,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=999999,fg=0x68f029},
-	zero={x=10,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=999999,fg=0x68f029},
-	back={x=2,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=999999,fg=0x68f029},
-	enternumber={x=18,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=999999,fg=0x68f029},
-	number={x=26,xs=24,y=8,ys=3,text='',tx=10,ty=1,bg=999999,fg=0x68f029},
-	select={x=26,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=999999,fg=0x68f029},
-	set={x=18,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=999999,fg=0x68f029},
-	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=999999,fg=0x68f029},
-	totalprice={x=26,xs=8,y=16,ys=3,text='',tx=2,ty=1,bg=999999,fg=0x68f029},
-	acceptbuy={x=26,xs=24,y=19,ys=3,text='accept buy',tx=2,ty=1,bg=999999,fg=0x68f029},
-	cancel={x=26,xs=10,y=20,ys=1,text='cancel',tx=2,ty=0,bg=999999,fg=0x68f029},
-	dot={x=26,xs=6,y=16,ys=3,text='.',tx=2,ty=1,bg=999999,fg=0x68f029},
-	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
-	entrance={x=12,xs=48,y=5,ys=19,text='Go on PIM',tx=22,ty=6,bg=999999,fg=0x68f029},
-	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,func='pimm',bg=999999,fg=0x68f029},
-	shopUp={x=3,xs=10,y=7,ys=5,text='UP',tx=4,ty=2,bg=0x4cb01e,fg=0xf2b233},
-	shopDown={x=3,xs=10,y=13,ys=5,text='DOWN',tx=3,ty=2,bg=0x4cb01e,fg=0xf2b233},
+	status={x=1,xs=9,y=1,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	mode={x=1,xs=9,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	buy={x=32,xs=8,y=4,ys=3,text='Купить',tx=1,ty=1,bg=0x303030,fg=0x68f029},
+	sell={x=32,xs=8,y=8,ys=3,text='Продать',tx=1,ty=1,bg=0x303030,fg=0x68f029},
+	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	two={x=10,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	free={x=18,xs=6,y=4,ys=3,text='3',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	foo={x=2,xs=6,y=8,ys=3,text='4',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	five={x=10,xs=6,y=8,ys=3,text='5',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	six={x=18,xs=6,y=8,ys=3,text='6',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	seven={x=2,xs=6,y=12,ys=3,text='7',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	eight={x=10,xs=6,y=12,ys=3,text='8',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	nine={x=18,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	zero={x=10,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	back={x=2,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	enternumber={x=18,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	number={x=26,xs=24,y=8,ys=3,text='',tx=10,ty=1,bg=0x303030,fg=0x68f029},
+	select={x=26,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	set={x=18,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	totalprice={x=26,xs=8,y=16,ys=3,text='',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	acceptbuy={x=26,xs=24,y=19,ys=3,text='accept buy',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	cancel={x=26,xs=10,y=20,ys=1,text='cancel',tx=2,ty=0,bg=0x303030,fg=0x68f029},
+	dot={x=26,xs=6,y=16,ys=3,text='.',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=0x303030,fg=0x68f029},
+	entrance={x=12,xs=48,y=5,ys=19,text='Go on PIM',tx=22,ty=6,bg=0x303030,fg=0x68f029},
+	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,func='pimm',bg=0x303030,fg=0x68f029},
+	shopUp={x=3,xs=10,y=7,ys=5,text='UP',tx=4,ty=2,bg=0x303030,fg=0x68f029},
+	shopDown={x=3,xs=10,y=13,ys=5,text='DOWN',tx=3,ty=2,bg=0x303030,fg=0x68f029},
 	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items                          count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
-	shopFillRight={x=12,xs=29,y=1,ys=18,text=' ',tx=0,ty=0,bg=0xc49029,fg=0x4cb01e},
-	shopVert={x=65,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x4cb01e,fg=0x303030}
+	shopFillRight={x=12,xs=29,y=1,ys=18,text=' ',tx=0,ty=0,bg=0x303030,fg=0x68f029},
+	shopVert={x=65,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x303030,fg=0x68f029}
 }
 --позаимствованная у BrightYC таблица цветов.добавлен мутно-зелёный
-market.color = {
+local color = {
     pattern = "%[0x(%x%x%x%x%x%x)]",
     background = 0x000000,
     pim = 0x46c8e3,
@@ -120,7 +120,7 @@ market.screenActions.dot=function()market.number=market.number..'.' return marke
 market.screenActions.back=function()if #market.number > 0 then
 	market.number=string.sub(market.number,1,#market.number-1) return market.inputNumber('-') end end
 market.screenActions.enternumber=function() return market.inputNumber('n')  end
-market.screenActions.acceptbuy=function() return market.acceptBuy(true) end
+market.screenActions.acceptbuy=function() return market.finalizeSell() end
 --================================================================
 market.screenActions.shopTopRight=function() end
 market.screenActions.shopVert=function() end
@@ -217,10 +217,8 @@ end
 
 --запрашивает подтверждение выбора и количества
 --осуществляет вызов продажи либо продаёт изымая нал/баланс
-market.acceptBuy=function(accept)
-	if accept then return market.finalizeSell() end
+market.acceptBuy=function()
 	local player_money= tonumber(market.player.cash) + tonumber(market.player.balance)
-	if market.player.name == 'Taoshi' then player_money = 80 end
 	if player_money >= tonumber(market.button.totalprice.text) then
 		market.place({'acceptbuy'})
 		market.screen[1+#market.screen]='acceptbuy'
@@ -381,7 +379,7 @@ function market.pimWho(who,uid)
 	market.button.name.text=who
 	market.button.name.xs=#who+4
 	market.button.name.x=19-#who/2
-	market.screen={'name','welcome'}
+	market.screen={'sell','bye'}
 	market.clear(2345)
 	market.place(market.screen)
 	

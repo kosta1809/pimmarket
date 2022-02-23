@@ -73,8 +73,8 @@ market.button={
 	status={x=3,xs=8,y=1,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	mode={x=3,xs=8,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	totalitems={x=3,xs=19,y=19,ys=1,text=#market.inumList..'items',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	cash={x=3,xs=8,y=2,ys=1,text='cash:'..tostring(market.player.cash),tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	balance={x=3,xs=8,y=2,ys=1,text='bal: '..tostring(market.player.balance),tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	cash={x=3,xs=8,y=4,ys=1,text='cash:'..tostring(market.player.cash),tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	balance={x=3,xs=8,y=5,ys=1,text='bal: '..tostring(market.player.balance),tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	
 	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	two={x=10,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -100,11 +100,11 @@ market.button={
 
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	entrance={x=3,xs=60,y=2,ys=20,text='',tx=1,ty=1,bg=0x141414,fg=color.blackLime},
-	pim1={x=20,xs=32,y=6,ys=12,text='',tx=1,ty=1,bg=0x203090,fg=0x68f029},
+	entrance={x=3,xs=68,y=2,ys=22,text='',tx=1,ty=1,bg=0x141414,fg=color.blackLime},
+	pim1={x=20,xs=32,y=6,ys=12,text='',tx=1,ty=1,bg=0x000929,fg=0x68f029},
 	pim2={x=22,xs=28,y=7,ys=10,text='Go on PIM',tx=10,ty=4,bg=0x202020,fg=0x68f029},
-	buy={x=32,xs=16,y=8,ys=3,text='Купить',tx=5,ty=1,bg=0x303030,fg=0x68f029},
-	sell={x=32,xs=16,y=12,ys=3,text='Продать',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+	buy={x=28,xs=16,y=8,ys=3,text='Купить',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+	sell={x=28,xs=16,y=12,ys=3,text='Продать',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	
 	shopUp={x=3,xs=10,y=7,ys=5,text='UP',tx=4,ty=2,bg=0x303030,fg=0x68f029},
 	shopDown={x=3,xs=10,y=13,ys=5,text='DOWN',tx=3,ty=2,bg=0x303030,fg=0x68f029},
@@ -141,12 +141,16 @@ market.screenActions.shopUp=function()if market.shopLine > 10 then
 	market.shopLine=market.shopLine-10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
 market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shopLine then
 	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
-market.screenActions.shopFillRight=function(_,y)
+market.screenActions.shopFillRight=function(_,y)--ловит выбор игроком предмета
 	market.selectedLine = y+market.shopLine-2
+	if market.selectedLine <= #market.inumList then
 	market.select=market.inumList[market.selectedLine]
 	market.button.select.text=market.itemlist[market.select].display_name
 	market.button.select.xs=#market.itemlist[market.select].display_name+4
 	return market[market.mode](market.selectedLine)
+	else
+
+	end
 end
 market.screenActions.set=function()return market.inputNumber('set') end
 market.screenActions.cancel=function()
@@ -185,7 +189,6 @@ market.edit=function()
 	'nine','zero','back','set','dot','cancel'}
 	market.replace()
 	return market.place({'mode','number','select','cash','balance'})
-
 end
 
 --меню владельца для наименования

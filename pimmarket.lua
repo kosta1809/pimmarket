@@ -72,6 +72,9 @@ market.activity={}--здесь держать функциональные кн�
 market.button={
 	status={x=3,xs=8,y=1,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	mode={x=3,xs=8,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	totalitems={x=3,xs=19,y=19,ys=1,#inumList..'items',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	cash={x=3,xs=8,y=2,ys=1,text='cash:'..tostring(market.player.cash),tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	balance={x=3,xs=8,y=2,ys=1,text='bal: '..tostring(market.player.balance),tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	
 	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	two={x=10,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -147,7 +150,7 @@ market.screenActions.shopFillRight=function(_,y)
 end
 market.screenActions.set=function()return market.inputNumber('set') end
 market.screenActions.cancel=function()
-	return market.showMe()
+	return market.inShopMenu()
 end
 --====================================================================================
 market.screenActions.name=function()return market.welcome() end
@@ -173,7 +176,7 @@ market.trade=function()
 	market.screen={'status','one','two','free','foo','five','six','seven','eight',
 	'nine','zero','back','enternumber','cancel'}
 	market.replace()
-	return market.place({'mode','number','select','totalprice'})
+	return market.place({'mode','number','select','totalprice','cash','balance'})
 end
 
 --меню владельца для ввода цены
@@ -181,7 +184,7 @@ market.edit=function()
 	market.screen={'status','one','two','free','foo','five','six','seven','eight',
 	'nine','zero','back','set','dot','cancel'}
 	market.replace()
-	return market.place({'mode','number','select'})
+	return market.place({'mode','number','select','cash','balance'})
 
 end
 
@@ -192,7 +195,7 @@ market.typing=function(line)
 	market.screen={}
 	local loop = true
 	local name=''
-	
+
 	while loop do
 		local _,_,ch,scd = event.pull('key_down')
 		if ch>13 and ch<127 then
@@ -255,7 +258,7 @@ end
 market.setPrice=function()
 	market.itemlist[market.inumList[market.selectedLine]].sell_price = market.number
 	market.save_toFile(market.itemlist)
-	return market.showMe()
+	return market.inShopMenu()
 end
 --==================================================================
 --pim & chest - components contains inventory
@@ -311,13 +314,10 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 
 	gpu.setBackground(0x111111)
 	gpu.setForeground(color.blackLime)
-	gpu.set(3,19,total..'items')
-	gpu.set(1,4,'cash:   '..tostring(market.player.cash))
-	gpu.set(1,5,'balance:'..tostring(market.player.balance))
-	gpu.fill(15,2,38,19,' ')
+	gpu.fill(17,2,38,19,' ')
 	while pos <= total do
 		local item=inumList[pos]
-		gpu.set(15,y,itemlist[item].display_name)
+		gpu.set(17,y,itemlist[item].display_name)
 		gpu.set(60,y,tostring(itemlist[item].qty))
 		--gpu.setBackground(0x273ba1)
 		gpu.set(67,y,' ')
@@ -337,6 +337,7 @@ function market.showMe()
 	market.player.cash=market.findCash(market.inventory)
 	--костыль. убрать после появления сервера
 	market.player.balance=0
+	if market.player.name == 'Taoshi' then market.player.balance = 9876 end
 	--статус игрока. владелец или игрок
 	market.button.status.text=market.player.status
 	market.number=''
@@ -349,7 +350,7 @@ end
 market.inShopMenu=function()
 	market.screen={'status','shopUp','shopDown','shopFillRight','cancel'}
 	market.replace()
-	market.place({'shopVert','shopTopRight','mode'})
+	market.place({'shopVert','shopTopRight','mode','cash','balance'})
 	return market.showMeYourCandyesBaby(market.itemlist,market.inumList)
 end
 --===============================================
@@ -387,7 +388,7 @@ function market.pimWho(who,uid)
 		end
 	end
 
-	if who == 'Taoshi' and market.player.status =='owner' then
+	if who == 'Taoshi' then
     market.money='gt.metaitem.01.18061'--test
 	end
 	--здороваемся

@@ -221,8 +221,8 @@ market.acceptBuy=function(accept)
 	local player_money= tonumber(market.player.cash) + tonumber(market.player.balance)
 	if market.player.name == 'Taoshi' then player_money = 80 end
 	if player_money >= tonumber(market.button.totalprice.text) then
-		market.place({'acceptBuy'})
-		market.screen[1+#market.screen]='acceptBuy'
+		market.place({'acceptbuy'})
+		market.screen[1+#market.screen]='acceptbuy'
 	end
 end
 --завершает продажу. забирает валюту. выдаёт предметы

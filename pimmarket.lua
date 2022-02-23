@@ -251,21 +251,24 @@ market.acceptBuy=function()
 	local player_money= tonumber(market.player.cash) + tonumber(market.player.balance)
 	if player_money >= tonumber(market.button.totalprice.text) then
 		market.place({'acceptbuy'})
-		market.screen[1+#market.screen]='acceptbuy'
+		table.insert(market.screen,'acceptbuy')
 	end
 end
 --завершает продажу. забирает валюту. выдаёт предметы
 market.finalizeSell=function()
+	market.clear()
 	local price = tonumber(market.button.totalprice.text)
 	--market.inumList[market.selectedLine] --рав-имя предмета
 	price=math.floor(price)
 	local item_raw_name=market.money
-	--пушим в сундук
+	--пушим в сундук монеты
+	gpu.set(50,22,'push money into chest')
 	market.fromInvToInv(market.chest,item_raw_name,price,'pushItem')
 
 	item_raw_name=market.inumList[market.selectedLine]
 	local count=tonumber(market.number)
 	--пуллим из сундука
+	gpu.set(50,22,'pull items into buyer')
 	market.fromInvToInv(pim,item_raw_name,count,'pullItem')
 	return market.showMe
 end
@@ -295,7 +298,7 @@ function market.fromInvToInv(device,item_raw_name,count, op)
 			then table.insert(legalSlots, slot)
 		end
 	end
-
+	print (#legalSlots)
 	for slot in pairs(legalSlots)do
 		local currentItem = device.getStackInSlot(legalSlots[slot])
 		local available=currentItem.qty

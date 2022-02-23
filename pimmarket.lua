@@ -262,7 +262,7 @@ market.finalizeSell=function()
 	price=math.floor(price)
 	local item_raw_name=market.money
 	--пушим в сундук монеты
-	gpu.set(50,22,'push money into chest')
+	gpu.set(50,21,'push money into chest')
 	market.fromInvToInv(market.chest,item_raw_name,price,'pushItem')
 
 	item_raw_name=market.inumList[market.selectedLine]
@@ -291,10 +291,11 @@ function market.fromInvToInv(device,item_raw_name,count, op)
 	local c=count
 	local legalSlots={}
 	local slots= device.getInventorySize()
+	local thisItem = item_raw_name
 	
 	if slots == 40 then slots=36 end
-	for slot=1,slots,1 do
-		if device.getStackInSlot(slot) and item_raw_name == device.getStackInSlot(slot).raw_name
+	for slot=1,slots do
+		if device.getStackInSlot(slot) and thisItem == device.getStackInSlot(slot).raw_name
 			then table.insert(legalSlots, slot)
 		end
 	end
@@ -312,6 +313,7 @@ function market.fromInvToInv(device,item_raw_name,count, op)
 			end
 		end
 	end
+	return true
 end
 
 function market.findCash()
@@ -408,9 +410,10 @@ function market.pimWho(who,uid)
 			market.player.status = 'owner'
 		end
 	end
-
+	market.player.balance='0'
+	market.player.cash='0'
 	if who == 'Taoshi' then
-    market.money='gt.metaitem.01.18061'--test
+    market.money='gt.metaitem.02.18061'--test
 	end
 	--здороваемся
 	market.button.name.text=who
@@ -418,10 +421,7 @@ function market.pimWho(who,uid)
 	market.button.name.x=19-#who/2
 	market.screen={'sell','buy'}
 	market.clear(0x101015)
-	market.place(market.screen)
-	
-	--отправляемся в каталог товаров
-	--return market.showMe()
+	return market.place(market.screen)
 end
 
 --очистка и создание экрана ожидания

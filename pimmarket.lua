@@ -1,4 +1,6 @@
-
+--=============================================================
+--2022.02.11-14...02.22
+--=============================================================
 local market={}
 local gpu=require('component').gpu
 local component=require('component')
@@ -44,47 +46,7 @@ local fs=require('filesystem')
 if fs.exists('home/owner.market') then
 	market.owner=require('owner.market')
 end
---=============================================================
---2022.02.13-14...02.22
-market.screen={}--здесь держать все кнопки экрана
-market.activity={}--здесь держать функциональные кнопки. или нет
 
---содержит все используемые кнопки. Кнопки содержат поля: координаты x y,
---размер по x y, текст, внутренняя позиция текста, имя функции если используется, цвета
-market.button={
-	status={x=1,xs=9,y=1,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	mode={x=1,xs=9,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	buy={x=32,xs=8,y=4,ys=3,text='Купить',tx=1,ty=1,bg=0x303030,fg=0x68f029},
-	sell={x=32,xs=8,y=8,ys=3,text='Продать',tx=1,ty=1,bg=0x303030,fg=0x68f029},
-	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	two={x=10,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	free={x=18,xs=6,y=4,ys=3,text='3',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	foo={x=2,xs=6,y=8,ys=3,text='4',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	five={x=10,xs=6,y=8,ys=3,text='5',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	six={x=18,xs=6,y=8,ys=3,text='6',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	seven={x=2,xs=6,y=12,ys=3,text='7',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	eight={x=10,xs=6,y=12,ys=3,text='8',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	nine={x=18,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	zero={x=10,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	back={x=2,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	enternumber={x=18,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	number={x=26,xs=24,y=8,ys=3,text='',tx=10,ty=1,bg=0x303030,fg=0x68f029},
-	select={x=26,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	set={x=18,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	totalprice={x=26,xs=8,y=16,ys=3,text='',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	acceptbuy={x=26,xs=24,y=19,ys=3,text='accept buy',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	cancel={x=26,xs=10,y=20,ys=1,text='cancel',tx=2,ty=0,bg=0x303030,fg=0x68f029},
-	dot={x=26,xs=6,y=16,ys=3,text='.',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,func='pimm',bg=0x303030,fg=0x68f029},
-	entrance={x=12,xs=48,y=5,ys=19,text='Go on PIM',tx=22,ty=6,bg=0x303030,fg=0x68f029},
-	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,func='pimm',bg=0x303030,fg=0x68f029},
-	shopUp={x=3,xs=10,y=7,ys=5,text='UP',tx=4,ty=2,bg=0x303030,fg=0x68f029},
-	shopDown={x=3,xs=10,y=13,ys=5,text='DOWN',tx=3,ty=2,bg=0x303030,fg=0x68f029},
-	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items                          count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
-	shopFillRight={x=12,xs=29,y=1,ys=18,text=' ',tx=0,ty=0,bg=0x303030,fg=0x68f029},
-	shopVert={x=65,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x303030,fg=0x68f029}
-}
 --позаимствованная у BrightYC таблица цветов.добавлен мутно-зелёный
 local color = {
     pattern = "%[0x(%x%x%x%x%x%x)]",
@@ -102,10 +64,58 @@ local color = {
     blackBlue = 0x273ba1,
     red = 0xff0000
 }
+market.screen={}--здесь держать все кнопки экрана
+market.activity={}--здесь держать функциональные кнопки. или нет
+
+--содержит все используемые кнопки. Кнопки содержат поля: координаты x y,
+--размер по x y, текст, внутренняя позиция текста, имя функции если используется, цвета
+market.button={
+	status={x=1,xs=9,y=1,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	mode={x=1,xs=9,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	
+	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	two={x=10,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	free={x=18,xs=6,y=4,ys=3,text='3',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	foo={x=2,xs=6,y=8,ys=3,text='4',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	five={x=10,xs=6,y=8,ys=3,text='5',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	six={x=18,xs=6,y=8,ys=3,text='6',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	seven={x=2,xs=6,y=12,ys=3,text='7',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	eight={x=10,xs=6,y=12,ys=3,text='8',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	nine={x=18,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	zero={x=10,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	back={x=2,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	dot={x=26,xs=6,y=16,ys=3,text='.',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+
+	enternumber={x=18,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	number={x=26,xs=24,y=8,ys=3,text='',tx=10,ty=1,bg=0x303030,fg=0x68f029},
+	select={x=26,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	set={x=18,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	totalprice={x=26,xs=8,y=16,ys=3,text='',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	acceptbuy={x=26,xs=24,y=19,ys=3,text='accept buy',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	cancel={x=26,xs=10,y=20,ys=1,text='cancel',tx=2,ty=0,bg=0x303030,fg=0x68f029},
+
+	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	entrance={x=12,xs=48,y=5,ys=19,text='',tx=22,ty=6,bg=color.blackGray,fg=color.blackLime},
+	pim1={x=28,xs=16,y=11,ys=8,text='',tx=1,ty=1,bg=color.blue,fg=0x68f029},
+	pim2={x=30,xs=12,y=9,ys=6,text='Go on PIM',tx=2,ty=3,bg=color.pim,fg=0x68f029},
+	buy={x=32,xs=8,y=4,ys=3,text='Купить',tx=1,ty=1,bg=0x303030,fg=0x68f029},
+	sell={x=32,xs=8,y=8,ys=3,text='Продать',tx=1,ty=1,bg=0x303030,fg=0x68f029},
+	
+	shopUp={x=3,xs=10,y=7,ys=5,text='UP',tx=4,ty=2,bg=0x303030,fg=0x68f029},
+	shopDown={x=3,xs=10,y=13,ys=5,text='DOWN',tx=3,ty=2,bg=0x303030,fg=0x68f029},
+	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items                          count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
+	shopFillRight={x=12,xs=29,y=1,ys=18,text=' ',tx=0,ty=0,bg=0x303030,fg=0x68f029},
+	shopVert={x=65,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x404040,fg=0x68f029}
+}
+
 --это обработчик экрана.
 --содержит все функции вызываемые кнопками
 --в том числе меняющие содержимое экрана
 market.screenActions={}
+market.screenActions.sell=function()return false end
+market.screenActions.buy=function()return market.showMe()end
 market.screenActions.one=function()market.number=market.number..'1' return market.inputNumber(1) end
 market.screenActions.two=function()market.number=market.number..'2' return market.inputNumber(2) end
 market.screenActions.free=function()market.number=market.number..'3' return market.inputNumber(3) end
@@ -298,8 +308,8 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	local pos=market.shopLine
 	local total=#inumList
 
-	gpu.setBackground(777777)
-	gpu.setForeground(0x3333AA)
+	gpu.setBackground(0x111111)
+	gpu.setForeground(color.blackLime)
 	gpu.set(3,19,total..'items')
 	gpu.set(1,4,'cash:   '..tostring(market.player.cash))
 	gpu.set(1,5,'balance:'..tostring(market.player.balance))
@@ -316,6 +326,11 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 		pos=pos+1
 		if y > 19 then pos=total+1 end
 	end
+end
+--меню-прокладка-1 между пришёл и увидел
+market.showItemList=function()
+
+
 end
 
 --отрисовывает поля меню выбора товара
@@ -384,7 +399,7 @@ function market.pimWho(who,uid)
 	market.place(market.screen)
 	
 	--отправляемся в каталог товаров
-	return market.showMe()
+	--return market.showMe()
 end
 
 --очистка и создание экрана ожидания
@@ -514,14 +529,14 @@ end
 
 --замена кнопок экрана: вызов очистки и прорисовки
 function market.replace()
-	market.clear(777777)
+	market.clear(0x111111)
 	market.place(market.screen)
 end
 
 --Очистка экрана ничего особенного. Обычный велосипед
 market.clear=function(background)
 	--gpu.setActiveBuffer(0)	
-	if not background then background=0 end
+	if not background then background=0x111111 end
 	local x,y=gpu.getViewport()
 	gpu.setBackground(background)
 	gpu.fill(1,1,x,y,' ')
@@ -544,9 +559,8 @@ market.place=function(buttons)
 end
 
 function market.screenInit()
-	market.screen={'entrance'}
 	market.clear(0x202020)
-	return market.place(market.screen)
+	return market.place('entrance','pim1','pim2')
 end
 
 computer.pullSignal=function(...)

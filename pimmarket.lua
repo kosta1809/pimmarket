@@ -72,7 +72,7 @@ market.activity={}--здесь держать функциональные кн�
 market.button={
 	status={x=3,xs=8,y=1,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	mode={x=3,xs=8,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	totalitems={x=3,xs=19,y=19,ys=1,text=#market.inumList..'items',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	totalitems={x=3,xs=19,y=19,ys=1,text=tostring(#market.inumList)..'items',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	cash={x=3,xs=8,y=4,ys=1,text='cash:'..tostring(market.player.cash),tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	balance={x=3,xs=8,y=5,ys=1,text='bal: '..tostring(market.player.balance),tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	
@@ -110,7 +110,7 @@ market.button={
 	shopUp={x=3,xs=10,y=7,ys=5,text='UP',tx=4,ty=2,bg=0x303030,fg=0x68f029},
 	shopDown={x=3,xs=10,y=13,ys=5,text='DOWN',tx=3,ty=2,bg=0x303030,fg=0x68f029},
 	shopTopRight={x=17,xs=36,y=1,ys=1,text='Available items                         count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
-	shopFillRight={x=17,xs=29,y=2,ys=20,text=' ',tx=0,ty=0,bg=0x303030,fg=0x68f029},
+	shopFillRight={x=17,xs=40,y=2,ys=20,text=' ',tx=1,ty=1,bg=0x303030,fg=0x68f029},
 	shopVert={x=65,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x404040,fg=0x68f029}
 }
 
@@ -144,7 +144,7 @@ market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shop
 	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
 market.screenActions.shopFillRight=function(_,y)--ловит выбор игроком предмета
 	market.selectedLine = y+market.shopLine-2
-	gpu.set(68,23,market.selectedLine)
+	gpu.set(68,23,tostring(market.selectedLine))
 	if market.selectedLine <= #market.inumList then
 	market.select=market.inumList[market.selectedLine]
 	market.button.select.text=market.itemlist[market.select].display_name

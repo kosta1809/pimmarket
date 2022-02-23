@@ -97,11 +97,11 @@ market.button={
 
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	entrance={x=12,xs=48,y=5,ys=19,text='',tx=22,ty=6,bg=0x141414,fg=color.blackLime},
-	pim1={x=20,xs=32,y=4,ys=12,text='',tx=1,ty=1,bg=0x203090,fg=0x68f029},
-	pim2={x=22,xs=28,y=5,ys=10,text='Go on PIM',tx=6,ty=5,bg=0x202020,fg=0x68f029},
-	buy={x=32,xs=8,y=4,ys=3,text='Купить',tx=1,ty=1,bg=0x303030,fg=0x68f029},
-	sell={x=32,xs=8,y=8,ys=3,text='Продать',tx=1,ty=1,bg=0x303030,fg=0x68f029},
+	entrance={x=3,xs=60,y=2,ys=20,text='',tx=1,ty=1,bg=0x141414,fg=color.blackLime},
+	pim1={x=20,xs=32,y=6,ys=12,text='',tx=1,ty=1,bg=0x203090,fg=0x68f029},
+	pim2={x=22,xs=28,y=7,ys=10,text='Go on PIM',tx=10,ty=4,bg=0x202020,fg=0x68f029},
+	buy={x=32,xs=16,y=8,ys=3,text='Купить',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+	sell={x=32,xs=16,y=12,ys=3,text='Продать',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	
 	shopUp={x=3,xs=10,y=7,ys=5,text='UP',tx=4,ty=2,bg=0x303030,fg=0x68f029},
 	shopDown={x=3,xs=10,y=13,ys=5,text='DOWN',tx=3,ty=2,bg=0x303030,fg=0x68f029},
@@ -189,11 +189,10 @@ end
 market.typing=function(line)
 	market.clear(0x202020)
 	market.place({'select','newname'})
-	market.screen={'cancel'}
-	market.place(market.screen)
+	market.screen={}
 	local loop = true
 	local name=''
-  market.itemlist[market.inumList[line]].display_name = name
+	
 	while loop do
 		local _,_,ch,scd = event.pull('key_down')
 		if ch>13 and ch<127 then

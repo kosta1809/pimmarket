@@ -290,7 +290,7 @@ function market.fromInvToInv(device,item_raw_name,count, op)
 	
 	if slots == 40 then slots=36 end
 	for slot=1,slots,1 do
-		if device.getStackInSlot and item_raw_name == device.getStackInSlot(slot).raw_name
+		if device.getStackInSlot() and item_raw_name == device.getStackInSlot(slot).raw_name
 			then table.insert(legalSlots, slot)
 		end
 	end
@@ -411,7 +411,7 @@ function market.pimWho(who,uid)
 	market.button.name.xs=#who+4
 	market.button.name.x=19-#who/2
 	market.screen={'sell','buy'}
-	market.clear(2345)
+	market.clear(0x101015)
 	market.place(market.screen)
 	
 	--отправляемся в каталог товаров

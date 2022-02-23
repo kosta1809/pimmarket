@@ -560,7 +560,7 @@ end
 
 function market.screenInit()
 	market.clear(0x202020)
-	return market.place('entrance','pim1','pim2')
+	return market.place({'entrance','pim1','pim2'})
 end
 
 computer.pullSignal=function(...)

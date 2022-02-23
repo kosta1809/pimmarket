@@ -97,7 +97,7 @@ market.button={
 
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	acceptbuy={x=26,xs=24,y=19,ys=3,text='accept buy',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	cancel={x=26,xs=10,y=22,ys=1,text='cancel',tx=2,ty=0,bg=0x303030,fg=0x68f029},
+	cancel={x=26,xs=10,y=23,ys=1,text='cancel',tx=2,ty=0,bg=0x303030,fg=0x68f029},
 
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -110,8 +110,8 @@ market.button={
 	shopUp={x=3,xs=10,y=7,ys=5,text='UP',tx=4,ty=2,bg=0x303030,fg=0x68f029},
 	shopDown={x=3,xs=10,y=13,ys=5,text='DOWN',tx=3,ty=2,bg=0x303030,fg=0x68f029},
 	shopTopRight={x=17,xs=36,y=1,ys=1,text='Available items                         count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
-	shopFillRight={x=17,xs=40,y=2,ys=20,text=' ',tx=1,ty=1,bg=0x303030,fg=0x68f029},
-	shopVert={x=65,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x404040,fg=0x68f029}
+	shopFillRight={x=17,xs=40,y=2,ys=20,text='',tx=0,ty=0,bg=0x303030,fg=0x68f029},
+	shopVert={x=65,xs=2,y=2,ys=20,text=' ',tx=0,ty=0,bg=0x404040,fg=0x68f029}
 }
 
 --это обработчик экрана.
@@ -213,6 +213,7 @@ market.typing=function(line)
 		market.button.newname.xs=#name+4
 		market.place({'newname'})
 	end
+	market.button.newname.text=''
 	market.itemlist[market.inumList[line]].display_name = name
 	market.save_toFile(market.itemlist)
 	return market.inShopMenu()
@@ -227,7 +228,7 @@ market.inputNumber=function(n)
 			market.number=string.sub(market.number,1,#market.number-1)
 		end
 	end
-	market.button.number.text=market.number
+	market.button.number.text=tostring(market.number)
 	market.button.number.xs= #market.itemlist[market.inumList[market.selectedLine]]+4
 	local items= tonumber(market.number) or 0
 	local count= tonumber(market.itemlist[market.inumList[market.selectedLine]].sell_price) or 0

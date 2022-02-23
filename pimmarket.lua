@@ -70,8 +70,8 @@ market.activity={}--здесь держать функциональные кн�
 --содержит все используемые кнопки. Кнопки содержат поля: координаты x y,
 --размер по x y, текст, внутренняя позиция текста, имя функции если используется, цвета
 market.button={
-	status={x=1,xs=9,y=1,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	mode={x=1,xs=9,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	status={x=3,xs=8,y=1,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	mode={x=3,xs=8,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	
 	one={x=2,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	two={x=10,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -97,16 +97,16 @@ market.button={
 
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	entrance={x=12,xs=48,y=5,ys=19,text='',tx=22,ty=6,bg=0x202020,fg=color.blackLime},
-	pim1={x=28,xs=16,y=8,ys=8,text='',tx=1,ty=1,bg=0x203090,fg=0x68f029},
-	pim2={x=30,xs=12,y=9,ys=6,text='Go on PIM',tx=2,ty=3,bg=0x202020,fg=0x68f029},
+	entrance={x=12,xs=48,y=5,ys=19,text='',tx=22,ty=6,bg=0x141414,fg=color.blackLime},
+	pim1={x=20,xs=32,y=4,ys=12,text='',tx=1,ty=1,bg=0x203090,fg=0x68f029},
+	pim2={x=22,xs=28,y=5,ys=10,text='Go on PIM',tx=6,ty=5,bg=0x202020,fg=0x68f029},
 	buy={x=32,xs=8,y=4,ys=3,text='Купить',tx=1,ty=1,bg=0x303030,fg=0x68f029},
 	sell={x=32,xs=8,y=8,ys=3,text='Продать',tx=1,ty=1,bg=0x303030,fg=0x68f029},
 	
 	shopUp={x=3,xs=10,y=7,ys=5,text='UP',tx=4,ty=2,bg=0x303030,fg=0x68f029},
 	shopDown={x=3,xs=10,y=13,ys=5,text='DOWN',tx=3,ty=2,bg=0x303030,fg=0x68f029},
-	shopTopRight={x=16,xs=35,y=1,ys=1,text='Available items                          count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
-	shopFillRight={x=12,xs=29,y=1,ys=18,text=' ',tx=0,ty=0,bg=0x303030,fg=0x68f029},
+	shopTopRight={x=17,xs=36,y=1,ys=1,text='Available items                         count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
+	shopFillRight={x=17,xs=29,y=1,ys=18,text=' ',tx=0,ty=0,bg=0x303030,fg=0x68f029},
 	shopVert={x=65,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x404040,fg=0x68f029}
 }
 
@@ -187,8 +187,10 @@ end
 
 --меню владельца для наименования
 market.typing=function(line)
-	market.clear(777777)
+	market.clear(0x202020)
 	market.place({'select','newname'})
+	market.screen={'cancel'}
+	market.place(market.screen)
 	local loop = true
 	local name=''
   market.itemlist[market.inumList[line]].display_name = name

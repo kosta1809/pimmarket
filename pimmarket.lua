@@ -72,7 +72,7 @@ market.activity={}--здесь держать функциональные кн�
 market.button={
 	status={x=3,xs=8,y=1,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	mode={x=3,xs=8,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	totalitems={x=3,xs=19,y=19,ys=1,#inumList..'items',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	totalitems={x=3,xs=19,y=19,ys=1,text=#market.inumList..'items',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	cash={x=3,xs=8,y=2,ys=1,text='cash:'..tostring(market.player.cash),tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	balance={x=3,xs=8,y=2,ys=1,text='bal: '..tostring(market.player.balance),tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	

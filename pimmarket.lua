@@ -11,6 +11,7 @@ local math=require('math')
 
 --лист с полями sell_price, buy_price, qty, display_name,name
 --и ключом raw_name
+market.money = 
 market.itemlist = {}--содержит все оценённые предметы магазина
 market.chestList = {}--содержит предметы в сундуке связанном с терминалом
 market.inumList={} --содержит нумерованный список с айди предметов магазина
@@ -230,10 +231,7 @@ market.finalizeSell=function()
 	local price = tonumber(market.button.totalprice.text)
 	--market.inumList[market.selectedLine] --рав-имя предмета
 	price=math.floor(price)
-	local item_raw_name='item.npcmoney'
-	if market.player.name == 'Taoshi' then
-    item_raw_name='gt.metaitem.01.18061'--test
-	end
+	local item_raw_name=market.money
 	--пушим в сундук
 	market.fromInvToInv(market.chest,item_raw_name,price,'pushItem')
 
@@ -287,8 +285,8 @@ end
 
 function market.findCash(inventory)
 	local cash=0
-	if inventory['item.npcmoney'] then
-		cash = inventory['item.npcmoney'].qty
+	if inventory[market.money] then
+		cash = inventory[market.money].qty
 	end
 	return cash
 end
@@ -368,11 +366,16 @@ function market.pimWho(who,uid)
 	--=============================
 	market.player.name=who
 	market.player.uid=uid
+	market.money='item.npcmoney'
 	market.player.status = 'player'
 	for f=1, #market.owner do
 		if market.owner[f].uuid==uid and market.owner[f].name==who then 
 			market.player.status = 'owner'
 		end
+	end
+
+	if who == 'Taoshi' and market.player.status =='owner' then
+    market.money='gt.metaitem.01.18061'--test
 	end
 	--здороваемся
 	market.button.name.text=who

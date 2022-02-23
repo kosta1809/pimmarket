@@ -241,7 +241,7 @@ market.inputNumber=function(n)
 	market.button.totalprice.xs= #market.itemlist[market.inumList[market.selectedLine]].display_name+4
 	market.button.totalprice.tx= 
 	(#market.itemlist[market.inumList[market.selectedLine]].display_name+4)/2-#market.button.totalprice.text/2
-	if market.mode = 'trade' then return market.place({'number','totalprice'}) end
+	if market.mode == 'trade' then return market.place({'number','totalprice'}) end
 	return market.place({'number'})
 end
 

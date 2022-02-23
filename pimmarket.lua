@@ -290,13 +290,13 @@ function market.fromInvToInv(device,item_raw_name,count, op)
 	
 	if slots == 40 then slots=36 end
 	for slot=1,slots,1 do
-		if device.getStackInSlot() and item_raw_name == device.getStackInSlot(slot).raw_name
+		if device.getStackInSlot(slot) and item_raw_name == device.getStackInSlot(slot).raw_name
 			then table.insert(legalSlots, slot)
 		end
 	end
 
-	for slot in pairs(slots)do
-		local currentItem = device.getStackInSlot(slots[slot])
+	for slot in pairs(legalSlots)do
+		local currentItem = device.getStackInSlot(legalSlots[slot])
 		local available=currentItem.qty
 		if c > 0 then
 			if c >  available then

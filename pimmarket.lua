@@ -11,7 +11,7 @@ local math=require('math')
 
 --лист с полями sell_price, buy_price, qty, display_name,name
 --и ключом raw_name
-market.money = 
+market.money = ''
 market.itemlist = {}--содержит все оценённые предметы магазина
 market.chestList = {}--содержит предметы в сундуке связанном с терминалом
 market.inumList={} --содержит нумерованный список с айди предметов магазина

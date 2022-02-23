@@ -119,7 +119,7 @@ market.button={
 --в том числе меняющие содержимое экрана
 market.screenActions={}
 market.screenActions.sell=function()return false end
-market.screenActions.buy=function()return market.showMe()end
+market.screenActions.buy=function()return market.inShopMenu()end
 market.screenActions.one=function()market.number=market.number..'1' return market.inputNumber(1) end
 market.screenActions.two=function()market.number=market.number..'2' return market.inputNumber(2) end
 market.screenActions.free=function()market.number=market.number..'3' return market.inputNumber(3) end
@@ -311,7 +311,7 @@ function market.fromInvToInv(device,item_raw_name,count, op)
 	end
 end
 
-function market.findCash(inventory)
+function market.findCash()
 	local cash=0
 	if market.inventory[market.money] then
 		cash = market.inventory[market.money].qty
@@ -363,7 +363,7 @@ market.inShopMenu=function()
 	--заглядываем в инвентарь игрока. просто любопытство, не более
 	market.inventory=market.get_inventoryitemlist(pim)
 	--находим наличку в инвентаре игрока
-	market.player.cash=market.findCash(market.inventory)
+	market.player.cash=market.findCash()
 	market.button.cash.text=tostring(market.player.cash)
 	market.button.balance.text=tostring(market.player.balance)
 	market.screen={'status','shopUp','shopDown','shopFillRight','cancel'}

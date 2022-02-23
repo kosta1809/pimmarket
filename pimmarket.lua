@@ -208,7 +208,7 @@ market.typing=function(line)
 	end
 	market.itemlist[market.inumList[line]].display_name = name
 	market.save_toFile(market.itemlist)
-	return market.showMe()
+	return market.inShopMenu()
 end
 
 --скромно перерисовывает поле цифрового ввода и следит за ним
@@ -329,11 +329,6 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 		if y > 19 then pos=total+1 end
 	end
 end
---меню-прокладка-1 между пришёл и увидел
-market.showItemList=function()
-
-
-end
 
 --отрисовывает поля меню выбора товара
 function market.showMe()
@@ -349,6 +344,10 @@ function market.showMe()
 	market.mode='trade'
 	market.button.number.text=''
 	market.button.mode.text='trade'
+	return market.inShopMenu()
+end
+
+market.inShopMenu=function()
 	market.screen={'status','shopUp','shopDown','shopFillRight','cancel'}
 	market.replace()
 	market.place({'shopVert','shopTopRight','mode'})

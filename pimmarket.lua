@@ -13,7 +13,7 @@ local math=require('math')
 
 --лист с полями sell_price, buy_price, qty, display_name,name
 --и ключом raw_name
-market.money = ''
+market.money = 'item.npcmoney'
 market.itemlist = {}--содержит все оценённые предметы магазина
 market.chestList = {}--содержит предметы в сундуке связанном с терминалом
 market.inumList={} --содержит нумерованный список с айди предметов магазина
@@ -102,8 +102,8 @@ market.button={
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	entrance={x=3,xs=68,y=2,ys=22,text='',tx=1,ty=1,bg=0x141414,fg=color.blackLime},
-	pim1={x=20,xs=32,y=6,ys=12,text='',tx=1,ty=1,bg=0x000929,fg=0x68f029},
-	pim2={x=22,xs=28,y=7,ys=10,text='Go on PIM',tx=10,ty=4,bg=0x202020,fg=0x68f029},
+	pim1={x=24,xs=24,y=6,ys=12,text='',tx=1,ty=1,bg=0x404040,fg=0x68f029},
+	pim2={x=26,xs=20,y=7,ys=10,text='Встаньте на PIM',tx=6,ty=4,bg=0x202020,fg=0x68f029},
 	buy={x=28,xs=16,y=8,ys=3,text='Купить',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	sell={x=28,xs=16,y=12,ys=3,text='Продать',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	
@@ -312,8 +312,8 @@ end
 
 function market.findCash(inventory)
 	local cash=0
-	if inventory[market.money] then
-		cash = inventory[market.money].qty
+	if market.inventory[market.money] then
+		cash = market.inventory[market.money].qty
 	end
 	return cash
 end

@@ -228,7 +228,7 @@ market.inputNumber=function(n)
 		end
 	end
 	market.button.number.text=market.number
-	market.button.number.xs= market.itemlist[market.inumList[market.selectedLine]]+4
+	market.button.number.xs= #market.itemlist[market.inumList[market.selectedLine]]+4
 	local items= tonumber(market.number) or 0
 	local count= tonumber(market.itemlist[market.inumList[market.selectedLine]].sell_price) or 0
 	market.button.totalprice.text= tostring(items*count)

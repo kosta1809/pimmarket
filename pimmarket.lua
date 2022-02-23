@@ -97,7 +97,7 @@ market.button={
 
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	acceptbuy={x=26,xs=24,y=19,ys=3,text='accept buy',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	cancel={x=26,xs=10,y=20,ys=1,text='cancel',tx=2,ty=0,bg=0x303030,fg=0x68f029},
+	cancel={x=26,xs=10,y=22,ys=1,text='cancel',tx=2,ty=0,bg=0x303030,fg=0x68f029},
 
 	welcome={x=10,xs=24,y=12,ys=3,text='Welcome to PimMarket',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	name={x=10,xs=24,y=8,ys=3,text='name',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -110,7 +110,7 @@ market.button={
 	shopUp={x=3,xs=10,y=7,ys=5,text='UP',tx=4,ty=2,bg=0x303030,fg=0x68f029},
 	shopDown={x=3,xs=10,y=13,ys=5,text='DOWN',tx=3,ty=2,bg=0x303030,fg=0x68f029},
 	shopTopRight={x=17,xs=36,y=1,ys=1,text='Available items                         count  price',tx=3,ty=0,bg=0xc49029,fg=0x000000},
-	shopFillRight={x=17,xs=29,y=1,ys=18,text=' ',tx=0,ty=0,bg=0x303030,fg=0x68f029},
+	shopFillRight={x=17,xs=29,y=2,ys=20,text=' ',tx=0,ty=0,bg=0x303030,fg=0x68f029},
 	shopVert={x=65,xs=2,y=1,ys=19,text=' ',tx=0,ty=0,bg=0x404040,fg=0x68f029}
 }
 
@@ -144,6 +144,7 @@ market.screenActions.shopDown=function()if market.itemlist.size-10 > market.shop
 	market.shopLine=market.shopLine+10 end return market.showMeYourCandyesBaby(market.itemlist,market.inumList) end
 market.screenActions.shopFillRight=function(_,y)--ловит выбор игроком предмета
 	market.selectedLine = y+market.shopLine-2
+	gpu.set(68,23,market.selectedLine)
 	if market.selectedLine <= #market.inumList then
 	market.select=market.inumList[market.selectedLine]
 	market.button.select.text=market.itemlist[market.select].display_name
@@ -331,7 +332,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 		gpu.set(68,y,tostring(itemlist[item].sell_price))
 		y=y+1
 		pos=pos+1
-		if y > 19 then pos=total+1 end
+		if y > 21 then pos=total+1 end
 	end
 end
 

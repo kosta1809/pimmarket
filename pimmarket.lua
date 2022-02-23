@@ -165,7 +165,7 @@ market.screenActions.status=function()
 	if market.player.status=='owner' then
 		if market.mode=='trade' then market.mode = 'edit'	
 		else 
-			if market.mode == 'edit' then market.mode = 'typing'
+			if market.mode == 'edit' then market.mode = 'rename'
 			else
 				market.mode = 'trade'
 			end
@@ -194,7 +194,7 @@ market.edit=function()
 end
 
 --меню владельца для наименования
-market.typing=function(line)
+market.rename=function(line)
 	market.clear(0x202020)
 	market.place({'select','newname'})
 	market.screen={}

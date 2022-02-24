@@ -2,14 +2,18 @@
 --2022.02.11-14...02.22
 --=============================================================
 local market={}
+market.version='0.9'
 local gpu=require('component').gpu
 local component=require('component')
 local computer=require('computer')
 local pullSignal=computer.pullSignal
 local pim=require('component').pim
 local event=require('event')
+local modem=require('component').modem
 local table=require('table')
 local math=require('math')
+local port = 0xffef
+local send = 0xfffe
 
 --лист с полями sell_price, buy_price, qty, display_name,name
 --и ключом raw_name
@@ -72,9 +76,9 @@ market.activity={}--здесь держать функциональные кн�
 market.button={
 	status={x=3,xs=8,y=1,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	mode={x=3,xs=8,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	totalitems={x=3,xs=19,y=19,ys=1,text=tostring(#market.inumList)..'items',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	cash={x=3,xs=8,y=4,ys=1,text='cash:'..tostring(market.player.cash),tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	balance={x=3,xs=8,y=5,ys=1,text='bal: '..tostring(market.player.balance),tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	totalitems={x=1,xs=19,y=24,ys=1,text=tostring(#market.inumList)..'items',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	cash={x=3,xs=8,y=4,ys=1,text='cash:',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	balance={x=3,xs=8,y=5,ys=1,text='bal: ',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	
 	one={x=14,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	two={x=22,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -106,6 +110,7 @@ market.button={
 	pim2={x=26,xs=20,y=7,ys=10,text='Встаньте на PIM',tx=2,ty=4,bg=0x202020,fg=0x68f029},
 	buy={x=28,xs=16,y=8,ys=3,text='Купить',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	sell={x=28,xs=16,y=12,ys=3,text='Продать',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+	full={x=16,xs=39,y=10,ys=3,text='Ваш инвентарь полон. Доступ закрыт.',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	
 	shopUp={x=3,xs=10,y=7,ys=5,text='UP',tx=4,ty=2,bg=0x303030,fg=0x68f029},
 	shopDown={x=3,xs=10,y=13,ys=5,text='DOWN',tx=3,ty=2,bg=0x303030,fg=0x68f029},
@@ -156,6 +161,10 @@ market.screenActions.shopFillRight=function(_,y)--ловит выбор игро
 end
 market.screenActions.set=function()return market.inputNumber('set') end
 market.screenActions.cancel=function()
+	market.number = '0'
+	market.totalprice = '0'
+	market.button.number.text=''
+	market.button.totalprice.text=''
 	return market.inShopMenu()
 end
 --====================================================================================
@@ -270,7 +279,7 @@ market.finalizeSell=function()
 	--пуллим из сундука
 	gpu.set(50,22,'pull items into buyer')
 	market.fromInvToInv(pim,item_raw_name,count,'pullItem')
-	return market.showMe
+	return market.showMe()
 end
 
 --завершает сессию установки цены овнером
@@ -292,23 +301,22 @@ function market.fromInvToInv(device,item_raw_name,count, op)
 	local legalSlots={}
 	local slots= device.getInventorySize()
 	local thisItem = item_raw_name
-	
 	if slots == 40 then slots=36 end
 	for slot=1,slots do
 		if device.getStackInSlot(slot) and thisItem == device.getStackInSlot(slot).raw_name
 			then table.insert(legalSlots, slot)
 		end
 	end
-	print (#legalSlots)
+
 	for slot in pairs(legalSlots)do
 		local currentItem = device.getStackInSlot(legalSlots[slot])
 		local available=currentItem.qty
 		if c > 0 then
 			if c >  available then
 				c=c-available
-				pim[op]('down',slot,available)--из слота в назначение
+				pim[op]('down',legalSlots[slot],available)--из слота в назначение
 			else
-				pim[op]('down',slot,c)--остатки меньше стака
+				pim[op]('down',legalSlots[slot],c)--остатки меньше стака
 				c=0
 			end
 		end
@@ -335,14 +343,13 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 
 	gpu.setBackground(0x111111)
 	gpu.setForeground(color.blackLime)
-	gpu.fill(17,2,38,19,' ')
+	gpu.fill(17,2,40,20,' ')
+	gpu.fill(60,2,5,20,' ')
+	gpu.fill(68,2,5,20,' ')
 	while pos <= total do
 		local item=inumList[pos]
 		gpu.set(17,y,itemlist[item].display_name)
 		gpu.set(60,y,tostring(itemlist[item].qty))
-		--gpu.setBackground(0x273ba1)
-		gpu.set(67,y,' ')
-		--gpu.setBackground(0x202020)
 		gpu.set(68,y,tostring(itemlist[item].sell_price))
 		y=y+1
 		pos=pos+1
@@ -366,15 +373,26 @@ end
 
 market.inShopMenu=function()
 	--заглядываем в инвентарь игрока. просто любопытство, не более
-	market.inventory=market.get_inventoryitemlist(pim)
+	market.inventory = market.get_inventoryitemlist(pim)
+	--проверка на наличие свободных слотов
+	local emptySlot=false
+	for slot = 1,36 do
+		if not pim.getStackInSlot(slot) then emptySlot = true end
+	end
+	if not emptySlot then return market.full() end
 	--находим наличку в инвентаре игрока
 	market.player.cash=market.findCash()
-	market.button.cash.text=tostring(market.player.cash)
-	market.button.balance.text=tostring(market.player.balance)
+	market.button.cash.text='cash:'..tostring(market.player.cash)
+	market.button.balance.text=' bal:'..tostring(market.player.balance)
+	market.button.totalitems.text=#market.inumList..' type of items available'
 	market.screen={'status','shopUp','shopDown','shopFillRight','cancel'}
 	market.replace()
-	market.place({'shopVert','shopTopRight','mode','cash','balance'})
+	market.place({'shopVert','shopTopRight','mode','cash','balance','totalitems'})
 	return market.showMeYourCandyesBaby(market.itemlist,market.inumList)
+end
+market.full=function()
+	market.clear()
+	return market.place({'full'})
 end
 --===============================================
 --==--==--==--==--==--==--==--==--==--==--==--
@@ -385,7 +403,7 @@ end
 --если имя в эвенте совпадает с именем инвентаря на пим
 function market.screenDriver(x,y,name)
 	if name == market.player.name then
-	local list=market.screen
+	local list = market.screen
 		for f in pairs (list) do
 			local button=market.button[list[f]]
 			local a=(x >= button.x and x <= (button.xs+button.x-1)) and (y >= (button.y) and y <= (button.ys+button.y-1))
@@ -569,13 +587,10 @@ market.place=function(buttons)
 	--gpu.setActiveBuffer(0)
 	for n in pairs(buttons)do
 		local b=market.button[buttons[n]]
-		-- bg,fg=gpu.getBackground(),gpu.getForeground()
-		gpu.setBackground(tonumber(b.bg))
-		gpu.fill(tonumber(b.x),tonumber(b.y),tonumber(b.xs),tonumber(b.ys),' ')
-		gpu.setForeground(tonumber(b.fg))
-		gpu.set(tonumber(b.x)+tonumber(b.tx),tonumber(b.y)+tonumber(b.ty),b.text)
-		--gpu.setBackground(bg)
-		--gpu.setForeground(fg)
+		gpu.setBackground(b.bg)
+		gpu.fill((b.x),(b.y),(b.xs),(b.ys),' ')
+		gpu.setForeground(b.fg)
+		gpu.set((b.x)+(b.tx),(b.y)+(b.ty),b.text)
 	end
 	--gpu.setActiveBuffer(1)
 end
@@ -596,8 +611,18 @@ computer.pullSignal=function(...)
 	if e[1]=='touch'then
 		return market.screenDriver(e[3],e[4],e[6])
 	end
+	if e[1]=='modem_message' then return market.modem(e[6])
+	end
 	return table.unpack(e) 
 end
+--modem
+function market.modem(msg)
+
+end
+function market.broadcast()
+
+end
+
 --инициализация
 function market.init()
 	--надо сперва чекать сундук, затем на его основе подтягивать поля с ценой из файла
@@ -616,7 +641,6 @@ function market.init()
 	--потом сортировка нумерного листа торговли
 	print('sorting available items...')
 	market.sort()
-	--for item in pairs(market.inumList) do print (market.inumList[item]) end
 	print('save current database...')
 	market.save_toFile(market.itemlist)
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен

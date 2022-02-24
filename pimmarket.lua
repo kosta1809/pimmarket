@@ -272,13 +272,13 @@ market.finalizeSell=function()
 	local item_raw_name=market.money
 	--пушим в сундук монеты
 	gpu.set(50,21,'push money into chest')
-	market.fromInvToInv(market.chest,item_raw_name,price,'pushItem')
+	market.fromInvToInv(pim,item_raw_name,price,'pushItem')
 
 	item_raw_name=market.inumList[market.selectedLine]
 	local count=tonumber(market.number)
 	--пуллим из сундука
 	gpu.set(50,22,'pull items into buyer')
-	market.fromInvToInv(pim,item_raw_name,count,'pullItem')
+	market.fromInvToInv(market.chest,item_raw_name,count,'pullItem')
 	return market.showMe()
 end
 

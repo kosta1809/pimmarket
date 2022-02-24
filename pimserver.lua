@@ -58,7 +58,17 @@ function pimserver.broadcast(msg)
 	local post = serialization.serialize({msg.number,msg.sender,msg.name,db[name]})
 	modem.broadcast(send,post)
 	if not log[msg.sender] then log[msg.sender]={} end
-	log[msg.sender][msg.msgnumber]={name=msg.name,op=msg.op,val=msg.value}
+	log[msg.sender][msg.number]={name=msg.name,op=msg.op,val=msg.value}
+
+	dbs=io.open('db.pimserver')
+	dbs:write(serialization.serialize(db))
+	dbs:close()
+
+	local line='['..serialization.serialize(msg.sender)..']'..'['..serialization.serialize(msg.number)..']'..serialization.serialize(log[msg.sender][msg.mnumber])
+	logs=io.open('logs.pimserver','w','a')
+	logs:write(line)
+	logs:close()
+
 	return true
 end
 
@@ -81,14 +91,14 @@ function pimserver.init()
 	db=dbs:read()
 	db=serialization.unserialize(db)
 	dbs:close()
-	if not fs.exists('home/log.pimserver')then
-		local lg=io.open('log.pimserver','w')
+	if not fs.exists('home/logs.pimserver')then
+		local lg=io.open('logs.pimserver','w')
 		log.fakesender={}
 		log.fakesender[1]={name='Taoshi',op='init',val='1'}
 		lg:write(serialization.serialize(log))
 		lg:close()
 	end
-	lg=io.open(log.pimserver)
+	lg=io.open('logs.pimserver')
 	log=lg:read()
 	log=serialization.unserialize(log)
 	lg:close()

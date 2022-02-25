@@ -655,7 +655,7 @@ market.serverResponse=function(e)
 	msg=serialization.unserialize(e)
 	for f in pairs(msg)do print (f..'='..msg(f))end
 	--а нам ли сообщение?
-	if not msg.sender==modem.address then return true end
+	if msg.sender and msg.sender==modem.address then return true end
 		--msg.number,msg.name,msg.value
 		-- =name of player
 		--msg.op = enter|buy|sell|balanceIn|balanceOut
@@ -667,7 +667,7 @@ market.serverResponse=function(e)
 	end
 	return market.modem[msg.op](msg)
 end
-
+market.modem={}
 market.modem.buy=function(msg)
 
 	market.finalizeBuy()

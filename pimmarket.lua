@@ -653,8 +653,9 @@ end
 --пытаемся получить сообщение подтверждающее операцию
 market.serverResponse=function(e)
 	msg=serialization.unserialize(e)
-	for f in pairs(msg)do print (f..'='..msg(f))end
+	if msg then for f in pairs(msg)do print(f..'='..msg[f])end end
 	--а нам ли сообщение?
+	print(msg.sender,modem.address)
 	if msg.sender and msg.sender==modem.address then return true end
 		--msg.number,msg.name,msg.value
 		-- =name of player

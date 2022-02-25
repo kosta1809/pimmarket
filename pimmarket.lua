@@ -14,10 +14,12 @@ local table=require('table')
 local math=require('math')
 local port = 0xffef
 local send = 0xfffe
+local serialization=require("serialization")
 
---лист с полями sell_price, buy_price, qty, display_name,name
---и ключом raw_name
+modem.setWakeUpMessage='sender'
+market.msgnum=14041
 market.money = 'item.npcmoney'
+--лист с полями sell_price, buy_price, qty, display_name, и ключом raw_name
 market.itemlist = {}--содержит все оценённые предметы магазина
 market.chestList = {}--содержит предметы в сундуке связанном с терминалом
 market.inumList={} --содержит нумерованный список с айди предметов магазина
@@ -25,7 +27,8 @@ market.inventory = {}--содержит список предметов теку
 market.select='' --raw_name выбранного предмета
 market.mode='trade'
 market.chest=''--используемый сундук. содержит ссылку на компонет сундук
-market.number= ''--используется при выборе количества и установки цен
+market.number= ''--означает число товара в покупке. также поле в установке цен
+market.substract =''--содержит число для вычета наличных
 market.owner={
 	{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"},
 	{uuid="0b448076-a810-3a82-8bb8-2913bdfb2ae5",name="Taoshi"},
@@ -77,8 +80,8 @@ market.button={
 	status={x=3,xs=8,y=1,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	mode={x=3,xs=8,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	totalitems={x=1,xs=19,y=24,ys=1,text=tostring(#market.inumList)..'items',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	cash={x=3,xs=8,y=4,ys=1,text='cash:',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	balance={x=3,xs=8,y=5,ys=1,text='bal: ',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	cash={x=3,xs=8,y=4,ys=1,text='NPC money:',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	balance={x=3,xs=8,y=5,ys=1,text='lua coins:',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	
 	one={x=14,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	two={x=22,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -139,7 +142,7 @@ market.screenActions.dot=function()market.number=market.number..'.' return marke
 market.screenActions.back=function()if #market.number > 0 then
 	market.number=string.sub(market.number,1,#market.number-1) return market.inputNumber('-') end end
 market.screenActions.enternumber=function() return market.inputNumber('n')  end
-market.screenActions.acceptbuy=function() return market.finalizeSell() end
+market.screenActions.acceptbuy=function() return market.getNewBalance() end
 --================================================================
 market.screenActions.shopTopRight=function() end
 market.screenActions.shopVert=function() end
@@ -161,7 +164,7 @@ market.screenActions.shopFillRight=function(_,y)--ловит выбор игро
 end
 market.screenActions.set=function()return market.inputNumber('set') end
 market.screenActions.cancel=function()
-	market.number = '0'
+	market.number = ''
 	market.totalprice = '0'
 	market.button.number.text=''
 	market.button.totalprice.text=''
@@ -235,10 +238,13 @@ end
 market.inputNumber=function(n)
 	if n == 'set' then return market.setPrice() end
 	if n == 'n' then return market.acceptBuy() end
+	if tonumber(market.number) > market.itemlist[market.select].qty then
+			market.number=tostring(market.itemlist[market.select].qty)
+	end
 	if #market.number>3 then
 		if tonumber(market.number) > 999 then
-			market.number=string.sub(market.number,1,#market.number-1)
-		end
+			market.number=tostring(math.floor(999))
+		end	
 	end
 	market.button.number.text=market.number..' '
 	market.button.number.xs= #market.itemlist[market.inumList[market.selectedLine]].display_name+4
@@ -257,29 +263,53 @@ end
 --запрашивает подтверждение выбора и количества
 --осуществляет вызов продажи либо продаёт изымая нал/баланс
 market.acceptBuy=function()
-	local player_money= tonumber(market.player.cash) + tonumber(market.player.balance)
+	--узнаём суммарную платёжеспособность покупателя
+	local player_money= tonumber(market.player.cash)*10 + tonumber(market.player.balance)
 	if player_money >= tonumber(market.button.totalprice.text) then
 		market.place({'acceptbuy'})
 		table.insert(market.screen,'acceptbuy')
 	end
 end
---завершает продажу. забирает валюту. выдаёт предметы
-market.finalizeSell=function()
-	market.clear()
-	local price = tonumber(market.button.totalprice.text)
-	--market.inumList[market.selectedLine] --рав-имя предмета
-	price=math.floor(price)
-	local item_raw_name=market.money
-	--пушим в сундук монеты
-	gpu.set(50,21,'push money into chest')
-	market.fromInvToInv(pim,item_raw_name,price,'pushItem')
+--на основе объёма покупки производим действия с балансом
+market.getNewBalance=function()
+	totalprice = tonumber(market.button.totalprice.text)
+	balance = market.player.balance
+	if balance > 0 then
+		--если баланс не ниже суммы покупки
+		if balance >= totalprice then
+				market.substract=0	
+			else --баланс ниже суммы покупки, но не 0
+				--число монет к изъятию
+				market.substract=math.floor((totalprice-balance)/10)+1
+				--сумма вычета с баланса
+				market.balanceOP=market.substract*10-totalprice
+		end
+	else
+		market.substract=math.floor(totalprice/10)+1
+		--для автозачисления сдачи на баланс
+		market.balanceOP=market.substract*10-totalprice
+	end
+	local msg={name=market.player.name,op='buy',number=market.msgnum,value=market.balanceOP}
+	return market.serverPost(msg)
+			
+end
 
-	item_raw_name=market.inumList[market.selectedLine]
+--завершает продажу. забирает валюту. выдаёт предметы
+market.finalizeBuy=function()
+	market.clear()
+	local price = market.substract
+	--пушим в сундук монеты
+	gpu.set(50,23,'push money into chest')
+	market.fromInvToInv(pim,market.money,price,'pushItem')
+
+	item_raw_name=market.inumList[market.selectedLine]--рав-имя предмета
 	local count=tonumber(market.number)
-	--пуллим из сундука
-	gpu.set(50,22,'pull items into buyer')
+	--пуллим из сундука.
+	gpu.set(50,24,'pull items into buyer')
 	market.fromInvToInv(market.chest,item_raw_name,count,'pullItem')
-	return market.showMe()
+
+	market.itemlist[item_raw_name].qty=market.itemlist[item_raw_name].qty - count
+	return market.inShopMenu()
 end
 
 --завершает сессию установки цены овнером
@@ -349,7 +379,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	while pos <= total do
 		local item=inumList[pos]
 		gpu.set(17,y,itemlist[item].display_name)
-		gpu.set(60,y,tostring(itemlist[item].qty))
+		gpu.set(60,y,tostring(math.floor(itemlist[item].qty)))
 		gpu.set(68,y,tostring(itemlist[item].sell_price))
 		y=y+1
 		pos=pos+1
@@ -357,33 +387,45 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	end
 end
 
---отрисовывает поля меню выбора товара
+
 function market.showMe()
 	--костыль. убрать после появления сервера
-	market.player.balance=0
-	if market.player.name == 'Taoshi' then market.player.balance = 9876 end
-	--статус игрока. владелец или игрок
-	market.button.status.text=market.player.status
-	market.number=''
-	market.mode='trade'
-	market.button.number.text=''
-	market.button.mode.text='trade'
+
 	return market.inShopMenu()
 end
 
+--отрисовывает поля меню выбора товара
 market.inShopMenu=function()
+	--обновляем список предметов
+	--market.chestList=market.get_inventoryitemlist(market.chest)
+	--market.merge()
+
 	--заглядываем в инвентарь игрока. просто любопытство, не более
 	market.inventory = market.get_inventoryitemlist(pim)
-	--проверка на наличие свободных слотов
+	--проверка на наличие свободных слотов. если их нет - прощаемся
 	local emptySlot=false
 	for slot = 1,36 do
 		if not pim.getStackInSlot(slot) then emptySlot = true end
 	end
 	if not emptySlot then return market.full() end
+	--обновляем список товаров в магазине
+	market.inumList={}
+	market.chestList=market.get_inventoryitemlist(market.chest)
+	market.merge()
+	market.sort()
+	--здесь добавлю часть запроса баланса с сервера. или нет
+	--надо новую функцию
+
+
+	market.number=''
+	market.button.number.text=''
+	
+
 	--находим наличку в инвентаре игрока
 	market.player.cash=market.findCash()
 	market.button.cash.text='cash:'..tostring(market.player.cash)
 	market.button.balance.text=' bal:'..tostring(market.player.balance)
+	market.button.totalprice.text='0'
 	market.button.totalitems.text=#market.inumList..' type of items available'
 	market.screen={'status','shopUp','shopDown','shopFillRight','cancel'}
 	market.replace()
@@ -413,6 +455,7 @@ function market.screenDriver(x,y,name)
 		end
 	end
 end
+
 --==--==--==--==--==--==--==--==--==--==--==--
 --сюда попадает получая эвент player_on
 function market.pimWho(who,uid)
@@ -421,6 +464,8 @@ function market.pimWho(who,uid)
 	--=============================
 	market.player.name=who
 	market.player.uid=uid
+	market.mode='trade'
+	market.button.mode.text='trade'
 	market.money='item.npcmoney'
 	market.player.status = 'player'
 	for f=1, #market.owner do
@@ -428,6 +473,7 @@ function market.pimWho(who,uid)
 			market.player.status = 'owner'
 		end
 	end
+	market.button.status.text=market.player.status
 	market.player.balance='0'
 	market.player.cash='0'
 	if who == 'Taoshi' then
@@ -437,9 +483,10 @@ function market.pimWho(who,uid)
 	market.button.name.text=who
 	market.button.name.xs=#who+4
 	market.button.name.x=19-#who/2
-	market.screen={'sell','buy'}
-	market.clear(0x101015)
-	return market.place(market.screen)
+	market.replace('welcome','name')
+	--делаем запрос баланса на сервер
+	local msg={name=market.player.name,op='enter',number=market.msgnum,value='0'}
+	return market.serverPost(msg)
 end
 
 --очистка и создание экрана ожидания
@@ -524,6 +571,7 @@ function market.get_inventoryitemlist(device)
 	end
 	return inventory
 end
+
 --load itemlist from file
 function market.load_fromFile()
 	local itemlist = {}
@@ -600,7 +648,59 @@ function market.screenInit()
 	return market.place({'entrance','pim1','pim2'})
 end
 
-computer.pullSignal=function(...)
+
+
+--пытаемся получить сообщение подтверждающее операцию
+market.serverResponse=function(e)
+	msg=serialization.unserialize(e)
+	for f in pairs(msg)do print (f..'='..msg(f))end
+	--а нам ли сообщение?
+	if not msg.sender==modem.address then return true end
+		--msg.number,msg.name,msg.value
+		-- =name of player
+		--msg.op = enter|buy|sell|balanceIn|balanceOut
+		-- = value of operation
+	if msg.name and msg.name == market.player.name then 
+		market.player.balance = msg.balance
+		market.msgnum = market.msgnum + 1
+
+	end
+	return market.modem[msg.op](msg)
+end
+
+market.modem.buy=function(msg)
+
+	market.finalizeBuy()
+end
+market.modem.sell=function(msg)
+
+end
+market.modem.balanceIn=function(msg)
+
+end
+market.modem.balanceOut=function(msg)
+	
+end
+market.modem.enter=function(msg)
+	--выводим меню магазина
+	market.screen={'sell','buy'}
+	return market.replace(market.screen)
+end
+
+
+
+
+--сигнал побудки?
+market.serverPost=function(msg)
+	msg=serialization.serialize(msg)
+	modem.broadcast(0xfffe,msg)
+
+end
+
+
+
+
+computer.pullSignal=function (...)
 	local e={pullSignal(...)}
 	if e[1]=='player_on' then
 		return market.pimWho(e[2],e[3])
@@ -611,16 +711,9 @@ computer.pullSignal=function(...)
 	if e[1]=='touch'then
 		return market.screenDriver(e[3],e[4],e[6])
 	end
-	if e[1]=='modem_message' then return market.modem(e[6])
+	if e[1]=='modem_message' then return market.serverResponse(e[6])
 	end
 	return table.unpack(e) 
-end
---modem
-function market.modem(msg)
-
-end
-function market.broadcast()
-
 end
 
 --инициализация

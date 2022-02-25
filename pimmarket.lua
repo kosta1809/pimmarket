@@ -2,7 +2,7 @@
 --2022.02.11-14...02.22
 --=============================================================
 local market={}
-market.version='0.9'
+market.version='0.99'
 local gpu=require('component').gpu
 local component=require('component')
 local computer=require('computer')
@@ -16,6 +16,7 @@ local port = 0xffef
 local send = 0xfffe
 local serialization=require("serialization")
 
+modem.open(port)
 modem.setWakeUpMessage='sender'
 market.msgnum=14041
 market.money = 'item.npcmoney'
@@ -273,7 +274,7 @@ end
 --на основе объёма покупки производим действия с балансом
 market.getNewBalance=function()
 	totalprice = tonumber(market.button.totalprice.text)
-	balance = market.player.balance
+	balance = tonumber(market.player.balance)
 	if balance > 0 then
 		--если баланс не ниже суммы покупки
 		if balance >= totalprice then
@@ -653,10 +654,8 @@ end
 --пытаемся получить сообщение подтверждающее операцию
 market.serverResponse=function(e)
 	msg=serialization.unserialize(e)
-	if msg then for f in pairs(msg)do print(f..'='..msg[f])end end
 	--а нам ли сообщение?
-	print(msg.sender,modem.address)
-	if msg.sender and msg.sender==modem.address then return true end
+	if msg.sender and not msg.sender==modem.address then return true end
 		--msg.number,msg.name,msg.value
 		-- =name of player
 		--msg.op = enter|buy|sell|balanceIn|balanceOut

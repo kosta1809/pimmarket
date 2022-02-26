@@ -499,7 +499,7 @@ function market.pimWho(who,uid)
 	market.button.name.xs=#who+4
 	market.button.name.x=38-#who/2
 	market.clear()
-	market.place('welcome','name','wait')
+	market.place({'welcome','name','wait'})
 	--делаем запрос баланса на сервер
 	local msg={name=market.player.name,op='enter',number=market.msgnum,value='0'}
 	return market.serverPost(msg)

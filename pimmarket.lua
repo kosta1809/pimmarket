@@ -51,7 +51,8 @@ for chest in pairs(market.component)do
 		market.chest=require('component')[market.component[chest]]
 	end
 end
---получаем список админов из рабочей дирректории 
+--получаем список админов из рабочей дирректории
+--
 local fs=require('filesystem')
 if fs.exists('home/owner.market') then
 	market.owner=require('owner.market')
@@ -74,11 +75,10 @@ local color = {
     blackBlue = 0x273ba1,
     red = 0xff0000
 }
-market.screen={}--здесь держать все кнопки экрана
-market.activity={}--здесь держать функциональные кнопки. или нет
 
+market.screen={}--здесь держать все функциональные кнопки экрана
 --содержит все используемые кнопки. Кнопки содержат поля: координаты x y,
---размер по x y, текст, внутренняя позиция текста, имя функции если используется, цвета
+--размер по x y, текст, внутренняя позиция текста, цвета
 market.button={
 	eula1={x=5,xs=67,y=3,ys=1,text='Здравствуйте! Рады видеть вас!',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	eula2={x=5,xs=67,y=5,ys=1,text='Вас приветствует электронный магазин ПимМаркет.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
@@ -90,10 +90,10 @@ market.button={
 	eula8={x=5,xs=67,y=17,ys=1,text='Все цены в магазине указаны в Пимах.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	eula9={x=5,xs=67,y=19,ys=1,text='Если вы согласны с предоставленными условиями пользования',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	eula10={x=5,xs=67,y=21,ys=1,text='подтвердите согласием',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	eula11={x=27,xs=19,y=24,ys=1,text='СОГЛАСЕН/СОГЛАСНА',tx=1,ty=0,bg=0xf2b233,fg=0x111111},
+	eula11={x=30,xs=19,y=24,ys=1,text='СОГЛАСЕН/СОГЛАСНА',tx=1,ty=0,bg=0xf2b233,fg=0x111111},
 	eula12={x=51,xs=26,y=24,ys=1,text='discord автора:taoshi#2664',tx=0,ty=0,bg=0x103010,fg=0xf2b233},
-	eula13={x=0,xs=28,y=24,ys=1,text='пишите владельцу kosta1809',tx=0,ty=0,bg=0x103010,fg=0xf2b233},
-	eula14={x=0,xs=28,y=23,ys=1,text='по всем вопросам о товаре',tx=0,ty=0,bg=0x103010,fg=0xf2b233},
+	eula13={x=1,xs=28,y=24,ys=1,text='пишите владельцу kosta1809',tx=0,ty=0,bg=0x103010,fg=0xf2b233},
+	eula14={x=1,xs=28,y=23,ys=1,text='по всем вопросам о товаре',tx=0,ty=0,bg=0x103010,fg=0xf2b233},
 
 	player={x=3,xs=10,y=1,ys=1,text='name',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	status={x=3,xs=10,y=2,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
@@ -130,6 +130,7 @@ market.button={
 	acceptbuy={x=41,xs=24,y=16,ys=3,text='подтвердить',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	cancel={x=34,xs=10,y=24,ys=1,text='отмена',tx=2,ty=0,bg=0x303030,fg=0x68f029},
 	search={x=48,xs=10,y=24,ys=1,text='поиск',tx=2,ty=0,bg=0x303030,fg=0x68f029},
+	searchInput={x=60,xs=10,y=24,ys=1,text='Найти:',tx=2,ty=0,bg=0x303030,fg=0x68f029},
 
 	welcome={x=24,xs=32,y=12,ys=3,text='добро пожаловать в ПимМаркет',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	name={x=32,xs=24,y=8,ys=3,text='name',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -236,9 +237,14 @@ market.rename=function(line)
 	market.clear(0x202020)
 	market.place({'select','newname'})
 	market.screen={}
+	market.itemlist[market.inumList[line]].display_name = market.inputString()
+	market.save_toFile(market.itemlist)
+	return market.inShopMenu()
+end
+
+market.inputString=function()
 	local loop = true
 	local name=''
-
 	while loop do
 		local _,_,ch,scd = event.pull('key_down')
 		if ch then
@@ -249,23 +255,23 @@ market.rename=function(line)
 			if ch == 8 then name=string.sub(name,1,#name-1) end
 			if ch==0 and scd==211 then name=string.sub(name,1,#name-1) end
 			if ch==13 then loop = false end
-		market.button.newname.text=name
+		market.button.newname.text=name..' '
 		market.button.newname.xs=#name+4
 		market.place({'newname'})
 		end
 	end
 	market.button.newname.text=''
-	market.itemlist[market.inumList[line]].display_name = name
-	market.save_toFile(market.itemlist)
-	return market.inShopMenu()
+	market.button.newname.xs=2
+	return name 
 end
+
 
 --скромно перерисовывает поле цифрового ввода и следит за ним
 market.inputNumber=function(n)
 	if n == 'set' then return market.setPrice() end
 	if n == 'n' then return market.acceptBuy() end
-	if tonumber(market.number) and tonumber(market.number)> market.itemlist[market.select].qty then
-			market.number=tostring(market.itemlist[market.select].qty)
+	if tonumber(market.number) and tonumber(market.number)> market.itemlist[market.select].qty-1 then
+			market.number=tostring(market.itemlist[market.select].qty-1)
 	end
 	if #market.number>3 then
 		if tonumber(market.number) > 999 then
@@ -348,7 +354,10 @@ end
 
 market.search = function()
 
+--market.place({'searchInput'})
+--local name = market.inputString()
 
+return true
 
 end
 
@@ -416,7 +425,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	while pos <= total do
 		local item=inumList[pos]
 		gpu.set(21,y,itemlist[item].display_name)
-		gpu.set(64,y,tostring(math.floor(itemlist[item].qty)))
+		gpu.set(64,y,tostring(math.floor(itemlist[item].qty-1)))
 		gpu.set(72,y,tostring(itemlist[item].sell_price))
 		y=y+1
 		pos=pos+1
@@ -723,24 +732,22 @@ market.modem.enter=function(msg)
 end
 
 market.eula=function()
-market.clear()
-market.place({'eula1','eula2','eula3','eula4','eula5','eula6','eula7','eula8','eula9','eula10','eula12','eula13','eula14'})
-market.screen={'eula11'}
-return market.place(market.screen)
+	market.clear()
+	market.place({'eula1','eula2','eula3','eula4','eula5','eula6','eula7','eula8','eula9','eula10','eula12','eula13','eula14'})
+	market.screen={'eula11'}
+	return market.place(market.screen)
 end
 
 
 
---сигнал побудки?
+--отправка сообщений на сервер
 market.serverPost=function(msg)
 	msg=serialization.serialize(msg)
 	modem.broadcast(0xfffe,msg)
 
 end
 
-
-
-
+--перехват ивентов. надстройка над ОС
 computer.pullSignal=function (...)
 	local e={pullSignal(...)}
 	if e[1]=='player_on' then

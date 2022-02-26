@@ -16,7 +16,7 @@ local port = 0xffef
 local send = 0xfffe
 local serialization=require("serialization")
 local zero, one = 0, 1
-local un=require('unicode')
+local unicode=require('unicode')
 
 modem.open(port)
 modem.setWakeUpMessage='name'

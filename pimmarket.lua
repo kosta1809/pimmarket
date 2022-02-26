@@ -92,15 +92,15 @@ market.button={
 	eula11={x=27,xs=19,y=24,ys=1,text='СОГЛАСЕН/СОГЛАСНА',tx=1,ty=0,bg=0xf2b233,fg=0x111111},
 	eula12={x=51,xs=26,y=24,ys=1,text='discord автора:taoshi#2664',tx=0,ty=0,bg=0x103010,fg=0xf2b233},
 
-	player={x=3,xs=16,y=1,ys=1,text='name',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	player={x=3,xs=10,y=1,ys=1,text='name',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	status={x=3,xs=10,y=2,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	mode={x=3,xs=16,y=3,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	mode={x=3,xs=10,y=3,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	totalitems={x=1,xs=19,y=24,ys=1,text=tostring(#market.inumList)..'items',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	cash={x=3,xs=10,y=7,ys=1,text='NPC money:',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	balance={x=3,xs=10,y=9,ys=1,text='lua coins:',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	cashname={x=3,xs=10,y=6,ys=1,text='НПЦ монеты',tx=0,ty=0,bg=0x303030,fg=0x68f029},
-	balancename={x=3,xs=10,y=9,ys=1,text='ПИМ-мани:',tx=0,ty=0,bg=0x303030,fg=0x68f029},
-	ratio={x=3,xs=10,y=10,ys=1,text='1нпс=10пим',tx=0,ty=0,bg=0x303030,fg=0x68f029},
+	cashname={x=3,xs=10,y=5,ys=1,text='НПЦ монеты',tx=0,ty=0,bg=0x303030,fg=0x68f029},
+	cash={x=3,xs=10,y=6,ys=1,text='NPC money:',tx=0,ty=0,bg=0x303030,fg=0x68f029},
+	balancename={x=3,xs=10,y=7,ys=1,text='ПИМ-мани:',tx=0,ty=0,bg=0x303030,fg=0x68f029},
+	balance={x=3,xs=10,y=8,ys=1,text='lua coins:',tx=0,ty=0,bg=0x303030,fg=0x68f029},
+	ratio={x=3,xs=10,y=9,ys=1,text='1нпс=10пим',tx=0,ty=0,bg=0x303030,fg=0x68f029},
 
 
 	one={x=17,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -189,8 +189,8 @@ market.screenActions.set=function()return market.inputNumber('set') end
 market.screenActions.cancel=function()
 	market.number = ''
 	market.totalprice = '0'
-	market.button.number.text=''
-	market.button.totalprice.text=''
+	market.button.number.text=' '
+	market.button.totalprice.text=' '
 	return market.inShopMenu()
 end
 --====================================================================================
@@ -259,8 +259,7 @@ end
 market.inputNumber=function(n)
 	if n == 'set' then return market.setPrice() end
 	if n == 'n' then return market.acceptBuy() end
-	if not market.number then market.number = '0' end
-	if tonumber(market.number) > market.itemlist[market.select].qty then
+	if tonumber(market.number) and tonumber(market.number)> market.itemlist[market.select].qty then
 			market.number=tostring(market.itemlist[market.select].qty)
 	end
 	if #market.number>3 then
@@ -274,7 +273,7 @@ market.inputNumber=function(n)
 	(#market.itemlist[market.inumList[market.selectedLine]].display_name+4)/2-#market.button.number.text/2
 	local items= tonumber(market.number) or 0
 	local count= tonumber(market.itemlist[market.inumList[market.selectedLine]].sell_price) or 0
-	market.button.totalprice.text= tostring(math.floor(items*count))..' '
+	market.button.totalprice.text= tostring(math.floor(items*count))..'   '
 	market.button.totalprice.xs= #market.itemlist[market.inumList[market.selectedLine]].display_name+4
 	market.button.totalprice.tx= 
 	(#market.itemlist[market.inumList[market.selectedLine]].display_name+4)/2-#market.button.totalprice.text/2

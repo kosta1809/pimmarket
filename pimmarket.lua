@@ -16,6 +16,7 @@ local port = 0xffef
 local send = 0xfffe
 local serialization=require("serialization")
 local zero, one = 0, 1
+local un=require('unicode')
 
 modem.open(port)
 modem.setWakeUpMessage='name'
@@ -131,8 +132,8 @@ market.button={
 	name={x=32,xs=24,y=8,ys=3,text='name',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	wait={x=27,xs=24,y=16,ys=3,text='ждём ответ сервера...',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	entrance={x=3,xs=72,y=2,ys=22,text='',tx=1,ty=1,bg=0x141414,fg=color.blackLime},
-	pim1={x=24,xs=24,y=6,ys=12,text='',tx=1,ty=1,bg=0x404040,fg=0x68f029},
-	pim2={x=26,xs=20,y=7,ys=10,text='Встаньте на PIM',tx=2,ty=4,bg=0x202020,fg=0x68f029},
+	pim1={x=26,xs=24,y=6,ys=12,text='',tx=1,ty=1,bg=0x404040,fg=0x68f029},
+	pim2={x=28,xs=20,y=7,ys=10,text='Встаньте на PIM',tx=2,ty=4,bg=0x202020,fg=0x68f029},
 	buy={x=30,xs=16,y=8,ys=3,text='Купить',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	sell={x=30,xs=16,y=12,ys=3,text='Продать',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	full={x=16,xs=39,y=10,ys=3,text='Ваш инвентарь полон. Доступ закрыт.',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -141,7 +142,7 @@ market.button={
 	shopDown={x=3,xs=10,y=18,ys=5,text='ВНИЗ',tx=3,ty=2,bg=0x303030,fg=0x68f029},
 	shopTopRight={x=21,xs=36,y=1,ys=1,text='Available items                            к-во    цена',tx=0,ty=0,bg=0xc49029,fg=0x000000},
 	shopFillRight={x=21,xs=40,y=2,ys=20,text='',tx=0,ty=0,bg=0x303030,fg=0x68f029},
-	shopVert={x=70,xs=1,y=2,ys=20,text=' ',tx=0,ty=0,bg=0x404040,fg=0x68f029}
+	shopVert={x=70,xs=1,y=2,ys=20,text=' ',tx=0,ty=0,bg=0xc49029,fg=0x111111}
 }
 
 --это обработчик экрана.
@@ -273,7 +274,7 @@ market.inputNumber=function(n)
 	(#market.itemlist[market.inumList[market.selectedLine]].display_name+4)/2-#market.button.number.text/2
 	local items= tonumber(market.number) or 0
 	local count= tonumber(market.itemlist[market.inumList[market.selectedLine]].sell_price) or 0
-	market.button.totalprice.text= tostring(math.floor(items*count))..'   '
+	market.button.totalprice.text= tostring((items*count))..'   '
 	market.button.totalprice.xs= #market.itemlist[market.inumList[market.selectedLine]].display_name+4
 	market.button.totalprice.tx= 
 	(#market.itemlist[market.inumList[market.selectedLine]].display_name+4)/2-#market.button.totalprice.text/2
@@ -502,7 +503,7 @@ function market.pimWho(who,uid)
 	--здороваемся
 	market.button.name.text=who
 	market.button.name.xs=#who+4
-	market.button.name.x=38-#who/2
+	market.button.name.x=36-#who/2
 	market.clear()
 	market.place({'welcome','name','wait'})
 	--делаем запрос баланса на сервер

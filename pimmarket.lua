@@ -90,7 +90,7 @@ market.button={
 	eula9={x=5,xs=38,y=19,ys=1,text='Если вы согласны с предоставленными условиями пользования',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	eula10={x=5,xs=38,y=21,ys=1,text='подтвердите ваше решение',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	eula11={x=14,xs=21,y=24,ys=1,text='СОГЛАСЕН/СОГЛАСНА',tx=1,ty=0,bg=0xf2b233,fg=0x111111},
-	eula12={x=56,xs=19,y=24,ys=1,text='discord:taoshi#2664',tx=0,ty=0,bg=0x305030,fg=0xf2b233},
+	eula12={x=56,xs=19,y=24,ys=1,text='discord автора:taoshi#2664',tx=0,ty=0,bg=0x305030,fg=0xf2b233},
 
 	status={x=3,xs=8,y=1,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	mode={x=3,xs=8,y=2,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},

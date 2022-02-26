@@ -71,7 +71,7 @@ function pimserver.broadcast(msg)
   local sender, balance, number, name, op = msg.sender, db[msg.name].balance, msg.number, msg.name, msg.op
 	
 	local post={sender=sender,number=number,name=name,balance=balance,op=op}
-	if msg.new then post.new='new'
+	if msg.new then post.new='new' end
 	local post = serialization.serialize(post)
 	print('I push message')
 	modem.broadcast(send,post)

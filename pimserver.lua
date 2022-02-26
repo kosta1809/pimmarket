@@ -23,8 +23,7 @@ end
 
 function pimserver.modem(e) ---1type 2respondent 3sender 4port 5distance 6message
 	local sender=e[3]
-	print('I  get new message!!!')
-	os.sleep(0.7)
+	os.sleep(0.5)
 	--want to msg fields:
 	--msg.number
 	--msg.name =name of player
@@ -32,7 +31,6 @@ function pimserver.modem(e) ---1type 2respondent 3sender 4port 5distance 6messag
 	--msg.value = value of operation
 	local msg = serialization.unserialize(e[6])
   msg.sender = sender
-  print(msg.op)
 	--если такого игрока нет, то запись нового игрока в бд
 	if msg.name and not db[msg.name] then pimserver.newUser(msg.name) end
 	--если в сообщении есть имя игрока отправляем по типу операции
@@ -46,7 +44,7 @@ end
 function pimserver.enter(msg)
 	if not db[msg.name] then pimserver.newUser(msg.name)
 		print('new user'..msg.name)
-	
+		msg.new='new'
 	end
 	return pimserver.broadcast(msg)
 end
@@ -71,7 +69,9 @@ end
 --отправка результата с указанием адреса пославшего
 function pimserver.broadcast(msg)
   local sender, balance, number, name, op = msg.sender, db[msg.name].balance, msg.number, msg.name, msg.op
+	
 	local post={sender=sender,number=number,name=name,balance=balance,op=op}
+	if msg.new then post.new='new'
 	local post = serialization.serialize(post)
 	print('I push message')
 	modem.broadcast(send,post)
@@ -87,7 +87,7 @@ function pimserver.broadcast(msg)
 	logs:write(line)
 	logs:close()]]--
 
-	return true
+	return pimserver.saveFile()
 end
 
 function pimserver.newUser(name)
@@ -100,7 +100,7 @@ end
 function pimserver.saveFile()
 	local dbs=io.open('db.pimserver','w')
 	for player in pairs(db)do
-		dbs:write(player..'\n')
+		dbs:write(tostring(player)..'\n')
 		dbs:write(tostring(db[player].ban..'\n'))
 		dbs:write(tostring(db[player].balance..'\n'))
 		dbs:write(tostring(db[player].income..'\n'))

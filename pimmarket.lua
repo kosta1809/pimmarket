@@ -152,6 +152,7 @@ market.button={
 --содержит все функции вызываемые кнопками
 --в том числе меняющие содержимое экрана
 market.screenActions={}
+market.screenActions.search=function()return market.search() end
 market.screenActions.eula11=function()market.screen={'sell','buy'} return market.replace() end
 market.screenActions.sell=function()return false end
 market.screenActions.buy=function()return market.inShopMenu()end
@@ -344,6 +345,15 @@ market.setPrice=function()
 	market.save_toFile(market.itemlist)
 	return market.inShopMenu()
 end
+
+market.search = function()
+
+
+
+end
+
+
+
 --==================================================================
 --pim & chest - components contains inventory
 --inventoryList - itemlist of csanning inventory
@@ -714,7 +724,7 @@ end
 
 market.eula=function()
 market.clear()
-market.place({'eula1','eula2','eula3','eula4','eula5','eula6','eula7','eula8','eula9','eula10','eula12'})
+market.place({'eula1','eula2','eula3','eula4','eula5','eula6','eula7','eula8','eula9','eula10','eula12','eula13','eula14'})
 market.screen={'eula11'}
 return market.place(market.screen)
 end

@@ -127,6 +127,7 @@ market.button={
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	acceptbuy={x=41,xs=24,y=16,ys=3,text='подтвердить',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	cancel={x=34,xs=10,y=24,ys=1,text='отмена',tx=2,ty=0,bg=0x303030,fg=0x68f029},
+	search={x=48,xs=10,y=24,ys=1,text='поиск',tx=2,ty=0,bg=0x303030,fg=0x68f029},
 
 	welcome={x=24,xs=32,y=12,ys=3,text='добро пожаловать в ПимМаркет',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	name={x=32,xs=24,y=8,ys=3,text='name',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -238,8 +239,8 @@ market.rename=function(line)
 	while loop do
 		local _,_,ch,scd = event.pull('key_down')
 		if ch then
-			if ch>32 then 
-				name=name..string.char(ch)
+			if ch>30 then 
+				name=name..unicode.char(ch)
 			end
 
 			if ch == 8 then name=string.sub(name,1,#name-1) end
@@ -447,7 +448,7 @@ market.inShopMenu=function()
 	market.button.balance.text=tostring(market.player.balance)
 	market.button.totalprice.text='0'
 	market.button.totalitems.text=#market.inumList..' type of items available'
-	market.screen={'status','shopUp','shopDown','shopFillRight','cancel'}
+	market.screen={'status','shopUp','shopDown','shopFillRight','cancel','search'}
 	market.replace()
 	market.place({'shopVert','shopTopRight','mode','ratio','totalitems','cash','cashname','balancename','balance','player'})
 	return market.showMeYourCandyesBaby(market.itemlist,market.inumList)

@@ -135,7 +135,7 @@ function pimserver.init()
 		pimserver.newUser('Taoshi')
 		pimserver.saveFile()
 	end
-		
+		pimserver.loadFile()
 	--[[if not fs.exists('home/logs.pimserver')then
 		local lg=io.open('logs.pimserver','w')
 		log.fakesender={}

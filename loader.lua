@@ -1,4 +1,4 @@
-local loader_v='0.5.0'--for check version
+local loader_v='0.9.5'--for check version
 local inet=require'internet'
 --download files
 wget=function(url,name)

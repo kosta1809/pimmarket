@@ -18,6 +18,8 @@ local serialization=require("serialization")
 local zero, one = 0, 1
 local unicode=require('unicode')
 
+market.link = 'unlinked'
+market.serverAddress = ''
 modem.open(port)
 modem.setWakeUpMessage='name'
 market.msgnum=14041
@@ -693,17 +695,32 @@ function market.screenInit()
 	return market.place({'entrance','pim1','pim2'})
 end
 
+market.unlinked=function(address)
+	market.serverAddress = address
+	market.link = 'linked'
+	return market.screenInit()
+end
 
+market.linked=function() return 'server already linked' end
 
 --пытаемся получить сообщение подтверждающее операцию
-market.serverResponse=function(e)
+market.serverResponse=function(e,address)
 	msg=serialization.unserialize(e)
 	--а нам ли сообщение?
-	if msg.sender and not msg.sender==modem.address then return true end
+	if msg.sender and not msg.sender==modem.address then return true 
+	end
 		--msg.number,msg.name,msg.value
 		-- =name of player
 		--msg.op = enter|buy|sell|balanceIn|balanceOut
 		-- = value of operation
+
+		--процедура регистрации терминала
+	if msg.op=='connect'  then 
+		return market[market.link](address)
+	end
+	if not market.serverAddress==address then 
+		return "undefined server. access blocked"
+	end
 	if msg.name and msg.name == market.player.name then 
 		market.player.balance = msg.balance
 		market.msgnum = market.msgnum + 1
@@ -738,13 +755,17 @@ market.eula=function()
 	return market.place(market.screen)
 end
 
-
-
 --отправка сообщений на сервер
-market.serverPost=function(msg)
+	market.serverPost=function(msg)
 	msg=serialization.serialize(msg)
 	modem.broadcast(0xfffe,msg)
+	return true
+end
 
+function market.serverAccess( )
+	market.msgnum=tonumber('0x'..string.sub(modem.address,1,6))
+	local msg={name='pimmarket',op='connect',number=market.msgnum,value=0}
+	return market.serverPost(msg)
 end
 
 --перехват ивентов. надстройка над ОС
@@ -759,7 +780,7 @@ computer.pullSignal=function (...)
 	if e[1]=='touch'then
 		return market.screenDriver(e[3],e[4],e[6])
 	end
-	if e[1]=='modem_message' then return market.serverResponse(e[6])
+	if e[1]=='modem_message' then return market.serverResponse(e[6],e[3])
 	end
 	return table.unpack(e) 
 end
@@ -768,6 +789,8 @@ end
 function market.init()
 	--надо сперва чекать сундук, затем на его основе подтягивать поля с ценой из файла
 	--либо наоборот. в любом случае сундук апдейдит лист в файле и сохраняет его
+	gpu.setResolution(76,24)
+	gpu.allocateBuffer(1,1)
 	market.mode='trade'
 	print('load database from file...')
 	market.itemlist=market.load_fromFile()
@@ -787,9 +810,7 @@ function market.init()
 	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
 	--table.sort(table)
 	print('initialization complete')
-	gpu.setResolution(76,24)
-	gpu.allocateBuffer(1,1)
-	--gpu.setActiveBuffer(1)
-	return market.screenInit()
+	print('waiting for server access..')
+	return market.serverAccess()
 end
 return market

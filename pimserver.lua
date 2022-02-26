@@ -8,15 +8,22 @@ local pullSignal=computer.pullSignal
 local port = 0xfffe
 local send = 0xffef
 local fs = require('filesystem')
-local log={}
+--local log={}
 local serialization = require('serialization')
+local terminals={}
+local unregistered={}
+local gpu = require('component').gpu
 
 modem.open(port)
 modem.setWakeMessage="{name="
+
 computer.pullSignal=function(...)
 	local e={pullSignal(...)}
 	if e[1]=='modem_message' then
 		return pimserver.modem(e)
+	end
+	if e[1]=='touch' then
+		return pimserver.accept(e)
 	end
 	return table.unpack(e) 
 end
@@ -31,6 +38,12 @@ function pimserver.modem(e) ---1type 2respondent 3sender 4port 5distance 6messag
 	--msg.value = value of operation
 	local msg = serialization.unserialize(e[6])
   msg.sender = sender
+  --регистрация терминалов
+  if msg.name and msg.name=='pimmarket' then
+  	if msg.op == 'connect' then
+  		return pimserver.registration(sender)
+  	end
+  end
 	--если такого игрока нет, то запись нового игрока в бд
 	if msg.name and not db[msg.name] then pimserver.newUser(msg.name) end
 	--если в сообщении есть имя игрока отправляем по типу операции
@@ -40,6 +53,51 @@ function pimserver.modem(e) ---1type 2respondent 3sender 4port 5distance 6messag
 	--остальные события нас не интересуют
 	return true
 end
+
+--постановка терминала в список ожидания регистрации
+function pimserver.registration(sender)
+	table.insert(unregistered,sender)
+	return pimserver.place()
+end
+
+--отсылка подтверждения регистрации
+function pimserver.accept(msg)
+	local x,y = msg[3],msg[4]
+	--if msg[6]==adminname then
+	
+	if y < 13 then return true end
+	y=y-12
+	if x == 3 and y <= #unregistered then
+		table.remove(unregistered,y)
+	end
+	if x == 43 and y <= #unregistered then
+		local sender=table.remove(unregistered,y)
+		table.insert(terminals, sender)
+		local post={sender=sender,number=1,name='pimmarket',balance=0,op='connect'}
+		modem.broadcast(send,post)
+		return pimserver.place()
+	end
+	--end
+end
+
+function pimserver.place()
+	local x,y = gpu.getResolution()
+	gpu.setBackground(0x113311)
+	gpu.setForeground(0x58f029)
+	gpu.fill(1,1,x,y,' ')
+	gpu.set(5,1,'Registered terminals:')
+	for t in pairs(terminals) do
+		gpu.set(5,t+1,terminals[t])
+	end
+
+	gpu.set(5,12,'Unregistered terminals:')
+	for t in pairs(unregistered) do
+		gpu.set(5,t+12,unregistered[t])
+		gpu.set(3,t+12,'X')
+		gpu.set(43,t+12,'V')
+	end
+end
+
 --первичная регистрация игрока
 function pimserver.enter(msg)
 	if not db[msg.name] then pimserver.newUser(msg.name)
@@ -73,12 +131,7 @@ function pimserver.broadcast(msg)
 	local post={sender=sender,number=number,name=name,balance=balance,op=op}
 	if msg.new then post.new='new' end
 	local post = serialization.serialize(post)
-	print('I push message')
 	modem.broadcast(send,post)
-	
-	local dbs=io.open('db.pimserver')
-	dbs:write(serialization.serialize(db))
-	dbs:close()
 
 	--[[if not log[msg.sender] then log[msg.sender]={} end
 		log[msg.sender][msg.number]={name=msg.name,op=msg.op,val=msg.value}
@@ -147,5 +200,7 @@ function pimserver.init()
 end
 
 pimserver.init()
-print('Сервер поднят')
+gpu.setResolution(76,24)
+print('Сервер поднят. Бужу терминалы.')
+modem.broadcast(port,'name')
 return pimserver

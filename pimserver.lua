@@ -1,6 +1,6 @@
 --pimserver
 local pimserver={}
-pimserver.version='1.0'
+pimserver.version='1.00'
 local db={}
 local modem=require('component').modem
 local computer=require('computer')

@@ -10,7 +10,7 @@ local send = 0xffef
 local fs = require('filesystem')
 --local log={}
 local serialization = require('serialization')
-local terminals={}
+local terminal={}
 local unregistered={}
 local gpu = require('component').gpu
 
@@ -44,6 +44,12 @@ function pimserver.modem(e) ---1type 2respondent 3sender 4port 5distance 6messag
   		return pimserver.registration(sender)
   	end
   end
+  --проверка валидности адреса посылки
+  local valid = false
+  for n in pairs(terminal) do
+  	if terminal[n]==sender then valid = true end
+  end
+	if not valid then return true end
 	--если такого игрока нет, то запись нового игрока в бд
 	if msg.name and not db[msg.name] then pimserver.newUser(msg.name) end
 	--если в сообщении есть имя игрока отправляем по типу операции
@@ -72,7 +78,7 @@ function pimserver.accept(msg)
 	end
 	if x == 43 and y <= #unregistered then
 		local sender=table.remove(unregistered,y)
-		table.insert(terminals, sender)
+		table.insert(terminal, sender)
 		local post={sender=sender,number=1,name='pimmarket',balance=0,op='connect'}
 		modem.broadcast(send,post)
 		return pimserver.place()
@@ -86,8 +92,8 @@ function pimserver.place()
 	gpu.setForeground(0x58f029)
 	gpu.fill(1,1,x,y,' ')
 	gpu.set(5,1,'Registered terminals:')
-	for t in pairs(terminals) do
-		gpu.set(5,t+1,terminals[t])
+	for t in pairs(terminal) do
+		gpu.set(5,t+1,terminal[t])
 	end
 
 	gpu.set(5,12,'Unregistered terminals:')

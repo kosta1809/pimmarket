@@ -18,7 +18,7 @@ local serialization=require("serialization")
 local zero, one = 0, 1
 
 modem.open(port)
-modem.setWakeUpMessage='sender'
+modem.setWakeUpMessage='name'
 market.msgnum=14041
 market.money = 'item.npcmoney'
 --лист с полями sell_price, buy_price, qty, display_name, и ключом raw_name
@@ -79,53 +79,53 @@ market.activity={}--здесь держать функциональные кн�
 --содержит все используемые кнопки. Кнопки содержат поля: координаты x y,
 --размер по x y, текст, внутренняя позиция текста, имя функции если используется, цвета
 market.button={
-	eula1={x=5,xs=70,y=3,ys=1,text='Здравствуйте! Рады видеть вас!',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	eula2={x=5,xs=70,y=5,ys=1,text='Вас приветствует электронный магазин ПимМаркет.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	eula3={x=5,xs=70,y=7,ys=1,text='Все покупки в магазине производятся за НПЦ монеты.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	eula4={x=5,xs=70,y=9,ys=1,text='Если цена товара не равна целому числу НПЦ монет -',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	eula5={x=5,xs=70,y=11,ys=1,text='остаток от операции зачислится на Пим-счёт игрока.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	eula6={x=5,xs=70,y=13,ys=1,text='Этот счёт автоматически используется при последующих покупках.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	eula7={x=5,xs=70,y=15,ys=1,text='Курс Пим к НПЦ составляет 10 к 1.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	eula8={x=5,xs=70,y=17,ys=1,text='Все цены в магазине указаны в Пимах.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	eula9={x=5,xs=70,y=19,ys=1,text='Если вы согласны с предоставленными условиями пользования',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	eula10={x=5,xs=70,y=21,ys=1,text='подтвердите согласием',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	eula1={x=5,xs=67,y=3,ys=1,text='Здравствуйте! Рады видеть вас!',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	eula2={x=5,xs=67,y=5,ys=1,text='Вас приветствует электронный магазин ПимМаркет.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	eula3={x=5,xs=67,y=7,ys=1,text='Все покупки в магазине производятся за НПЦ монеты.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	eula4={x=5,xs=67,y=9,ys=1,text='Если цена товара не равна целому числу НПЦ монет -',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	eula5={x=5,xs=67,y=11,ys=1,text='остаток от операции зачислится на Пим-счёт игрока.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	eula6={x=5,xs=67,y=13,ys=1,text='Этот счёт автоматически используется при последующих покупках.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	eula7={x=5,xs=67,y=15,ys=1,text='Курс Пим к НПЦ составляет 10 к 1.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	eula8={x=5,xs=67,y=17,ys=1,text='Все цены в магазине указаны в Пимах.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	eula9={x=5,xs=67,y=19,ys=1,text='Если вы согласны с предоставленными условиями пользования',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	eula10={x=5,xs=67,y=21,ys=1,text='подтвердите согласием',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	eula11={x=27,xs=19,y=24,ys=1,text='СОГЛАСЕН/СОГЛАСНА',tx=1,ty=0,bg=0xf2b233,fg=0x111111},
 	eula12={x=51,xs=26,y=24,ys=1,text='discord автора:taoshi#2664',tx=0,ty=0,bg=0x103010,fg=0xf2b233},
 
 	player={x=3,xs=16,y=1,ys=1,text='name',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	status={x=3,xs=10,y=2,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	mode={x=3,xs=16,y=3,ys=1,text='trade',tx=5,ty=0,bg=0x303030,fg=0x68f029},
+	mode={x=3,xs=16,y=3,ys=1,text='trade',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	totalitems={x=1,xs=19,y=24,ys=1,text=tostring(#market.inumList)..'items',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	cash={x=3,xs=10,y=7,ys=1,text='NPC money:',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	balance={x=3,xs=10,y=9,ys=1,text='lua coins:',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	cashname={x=3,xs=10,y=6,ys=1,text='НПЦ монеты',tx=0,ty=0,bg=0x303030,fg=0x68f029},
-	balancename={x=3,xs=8,y=9,ys=1,text='ПИМ-мани:',tx=0,ty=0,bg=0x303030,fg=0x68f029},
-	ratio={x=3,xs=10,y=10,ys=1,text='1нпс=10пим',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	balancename={x=3,xs=10,y=9,ys=1,text='ПИМ-мани:',tx=0,ty=0,bg=0x303030,fg=0x68f029},
+	ratio={x=3,xs=10,y=10,ys=1,text='1нпс=10пим',tx=0,ty=0,bg=0x303030,fg=0x68f029},
 
 
-	one={x=14,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	two={x=22,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	free={x=30,xs=6,y=4,ys=3,text='3',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	foo={x=14,xs=6,y=8,ys=3,text='4',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	five={x=22,xs=6,y=8,ys=3,text='5',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	six={x=30,xs=6,y=8,ys=3,text='6',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	seven={x=14,xs=6,y=12,ys=3,text='7',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	eight={x=22,xs=6,y=12,ys=3,text='8',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	nine={x=30,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	zero={x=22,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	back={x=14,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	dot={x=30,xs=6,y=16,ys=3,text='.',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	enternumber={x=30,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	set={x=38,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	one={x=17,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	two={x=25,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	free={x=33,xs=6,y=4,ys=3,text='3',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	foo={x=17,xs=6,y=8,ys=3,text='4',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	five={x=25,xs=6,y=8,ys=3,text='5',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	six={x=33,xs=6,y=8,ys=3,text='6',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	seven={x=17,xs=6,y=12,ys=3,text='7',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	eight={x=25,xs=6,y=12,ys=3,text='8',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	nine={x=33,xs=6,y=12,ys=3,text='9',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	zero={x=25,xs=6,y=16,ys=3,text='0',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	back={x=17,xs=6,y=16,ys=3,text='<-',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	dot={x=33,xs=6,y=16,ys=3,text='.',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	enternumber={x=33,xs=6,y=16,ys=3,text='OK',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	set={x=41,xs=6,y=16,ys=3,text='ok',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 
-	number={x=38,xs=12,y=8,ys=3,text='',tx=10,ty=1,bg=0x303030,fg=0x68f029},
-	select={x=38,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	totalprice={x=38,xs=12,y=12,ys=3,text='',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	incorrect={x=38,xs=20,y=12,ys=3,text='нехватка средств',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	number={x=41,xs=12,y=8,ys=3,text='',tx=10,ty=1,bg=0x303030,fg=0x68f029},
+	select={x=41,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	totalprice={x=41,xs=12,y=12,ys=3,text='',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	incorrect={x=41,xs=20,y=12,ys=3,text='нехватка средств',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	acceptbuy={x=38,xs=24,y=16,ys=3,text='подтвердить',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	cancel={x=34,xs=10,y=23,ys=1,text='отмена',tx=2,ty=0,bg=0x303030,fg=0x68f029},
+	acceptbuy={x=41,xs=24,y=16,ys=3,text='подтвердить',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	cancel={x=34,xs=10,y=24,ys=1,text='отмена',tx=2,ty=0,bg=0x303030,fg=0x68f029},
 
 	welcome={x=24,xs=32,y=12,ys=3,text='добро пожаловать в ПимМаркет',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	name={x=32,xs=24,y=8,ys=3,text='name',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -139,9 +139,9 @@ market.button={
 	
 	shopUp={x=3,xs=10,y=12,ys=5,text='ВВЕРХ',tx=2,ty=2,bg=0x303030,fg=0x68f029},
 	shopDown={x=3,xs=10,y=18,ys=5,text='ВНИЗ',tx=3,ty=2,bg=0x303030,fg=0x68f029},
-	shopTopRight={x=21,xs=36,y=1,ys=1,text='Available items                         к-во     цена',tx=3,ty=0,bg=0xc49029,fg=0x000000},
+	shopTopRight={x=21,xs=36,y=1,ys=1,text='Available items                            к-во    цена',tx=0,ty=0,bg=0xc49029,fg=0x000000},
 	shopFillRight={x=21,xs=40,y=2,ys=20,text='',tx=0,ty=0,bg=0x303030,fg=0x68f029},
-	shopVert={x=65,xs=2,y=2,ys=20,text=' ',tx=0,ty=0,bg=0x404040,fg=0x68f029}
+	shopVert={x=70,xs=1,y=2,ys=20,text=' ',tx=0,ty=0,bg=0x404040,fg=0x68f029}
 }
 
 --это обработчик экрана.
@@ -259,6 +259,7 @@ end
 market.inputNumber=function(n)
 	if n == 'set' then return market.setPrice() end
 	if n == 'n' then return market.acceptBuy() end
+	if not market.number then market.number = '0' end
 	if tonumber(market.number) > market.itemlist[market.select].qty then
 			market.number=tostring(market.itemlist[market.select].qty)
 	end
@@ -448,7 +449,7 @@ market.inShopMenu=function()
 	market.button.totalitems.text=#market.inumList..' type of items available'
 	market.screen={'status','shopUp','shopDown','shopFillRight','cancel'}
 	market.replace()
-	market.place({'shopVert','shopTopRight','mode','cash','balance','ratio','totalitems'})
+	market.place({'shopVert','shopTopRight','mode','ratio','totalitems','cash','cashname','balancename','balance','player'})
 	return market.showMeYourCandyesBaby(market.itemlist,market.inumList)
 end
 --если инвентарь игрока полон
@@ -493,6 +494,7 @@ function market.pimWho(who,uid)
 		end
 	end
 	market.button.status.text=market.player.status
+	market.button.player.text=market.player.name
 	market.player.balance='0'
 	market.player.cash='0'
 	if who == 'Taoshi' then

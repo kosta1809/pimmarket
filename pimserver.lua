@@ -80,6 +80,7 @@ function pimserver.accept(msg)
 		local sender=table.remove(unregistered,y)
 		table.insert(terminal, sender)
 		local post={sender=sender,number=1,name='pimmarket',balance=0,op='connect'}
+		local post = serialization.serialize(post)
 		modem.broadcast(send,post)
 		return pimserver.place()
 	end
@@ -207,6 +208,6 @@ end
 
 pimserver.init()
 gpu.setResolution(76,24)
-print('Сервер поднят. Бужу терминалы.')
-modem.broadcast(port,'name')
+print('Сервер поднят.')
+modem.broadcast(send,'name')
 return pimserver

@@ -21,7 +21,7 @@ local unicode=require('unicode')
 market.link = 'unlinked'
 market.serverAddress = ''
 modem.open(port)
-modem.setWakeUpMessage='name'
+modem.setWakeMessage='name'
 market.msgnum=14041
 market.money = 'item.npcmoney'
 --лист с полями sell_price, buy_price, qty, display_name, и ключом raw_name

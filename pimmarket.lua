@@ -493,6 +493,7 @@ end
 --вызывает одноименный кнопке метод в том случае,
 --если имя в эвенте совпадает с именем инвентаря на пим
 function market.screenDriver(x,y,name)
+	local x,y,name = e[3],e[4],e[6]
 	if name == market.player.name then
 	local list = market.screen
 		for f in pairs (list) do
@@ -506,10 +507,12 @@ function market.screenDriver(x,y,name)
 end
 --==--==--==--==--==--==--==--==--==--==--==--
 --сюда попадает получая эвент player_on
-function market.pimWho(who,uid)
+function market.pimWho(e)
 	--=================================
-	--need connect to server for get player info
-	--=============================
+	market.events.touch='screenDriver'
+	market.events.player_on=nil
+	market.events.player_off='pimByeBye'
+	local who,uid=e[2],e[3]
 	market.player.name=who
 	market.player.uid=uid
 	market.mode='trade'
@@ -542,6 +545,9 @@ end
 --очистка и создание экрана ожидания
 --сюда попадаем получая эвент player_off
 function market.pimByeBye()
+	market.events.touch=nil
+	market.events.player_off=nil
+	market.events.player_on='pimWho'
 	market.player={}
 	market.inventory={}
 	market.screen={}
@@ -708,18 +714,22 @@ end
 market.linked=function() return 'server already linked' end
 
 --пытаемся получить сообщение подтверждающее операцию
-market.serverResponse=function(e,address)
+market.serverResponse=function(e)
+
+	local msg,address = e[6],e[3]
 	--address - адрес отправителя
-	msg=serialization.unserialize(e)
+	msg=serialization.unserialize(msg)
 	--а нам ли сообщение?
-	if msg == 'name' or not msg.sender then return true end
-	if msg.sender and not msg.sender==modem.address then return true 
+	if msg == 'name' or not msg.sender then return true 
+	end
+	if msg.sender ~= modem.address then return true 
 	end
 		--msg.number,msg.name,msg.value
 		-- =name of player
 		--msg.op = enter|buy|sell|balanceIn|balanceOut
 		-- = value of operation
-
+	modem.close(port)
+	market.events.modem_message=nil
 		--процедура регистрации терминала
 	if msg.op=='connect'  then 
 		return market[market.link](address)
@@ -764,7 +774,9 @@ end
 --отправка сообщений на сервер
 	market.serverPost=function(msg)
 	msg=serialization.serialize(msg)
-	modem.broadcast(0xfffe,msg)
+	modem.broadcast(send,msg)
+	modem.open(port)
+	market.events.modem_message='serverResponse'
 	return true
 end
 
@@ -777,19 +789,16 @@ end
 --перехват ивентов. надстройка над ОС
 computer.pullSignal=function (...)
 	local e={pullSignal(...)}
-	if e[1]=='player_on' then
-		return market.pimWho(e[2],e[3])
-	end
-	if e[1]=='player_off'then
-		return market.pimByeBye()
-	end
-	if e[1]=='touch'then
-		return market.screenDriver(e[3],e[4],e[6])
-	end
-	if e[1]=='modem_message' then return market.serverResponse(e[6],e[3])
+	for event in pairs(market.events)do 
+		if event==e[1] then
+			return market[market.events[event]](e)
+		end
 	end
 	return table.unpack(e) 
 end
+
+market.events={player_on='pimWho',player_off='pimByeBye',touch='screenDriver',modem_message='serverResponse'}
+
 
 --инициализация
 function market.init()
@@ -817,6 +826,8 @@ function market.init()
 	--table.sort(table)
 	print('initialization complete')
 	print('waiting for server access..')
+	market.events.touch=nil
+	market.events.player_off=nil
 	return market.serverAccess()
 end
 market.init()

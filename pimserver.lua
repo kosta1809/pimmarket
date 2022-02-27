@@ -16,7 +16,6 @@ local gpu = require('component').gpu
 
 modem.open(port)
 modem.setWakeMessage="{name="
-
 computer.pullSignal=function(...)
 	local e={pullSignal(...)}
 	if e[1]=='modem_message' then
@@ -64,8 +63,9 @@ end
 function pimserver.registration(sender)
 	for n in pairs(terminal) do
 		--если такой терминал есть в списке валидных
+		print(terminal[n],sender)
   	if terminal[n]==sender then
-  		pimserver.returnAccept(sender)
+  		return pimserver.returnAccept(sender)
   	end
   end
 		table.insert(unregistered,sender)
@@ -107,7 +107,6 @@ function pimserver.place()
 	for t in pairs(terminal) do
 		gpu.set(5,t+1,terminal[t])
 	end
-
 	gpu.set(5,12,'Unregistered terminals:')
 	for t in pairs(unregistered) do
 		gpu.set(5,t+12,unregistered[t])
@@ -124,12 +123,14 @@ function pimserver.enter(msg)
 	end
 	return pimserver.broadcast(msg)
 end
+
 --вычитание с баланса при покупке
 function pimserver.buy(msg)
 	db[msg.name].balance=db[msg.name].balance - msg.value
 	return pimserver.broadcast(msg)
 end
---пополнение баланса при продаже
+
+--различные операции вызываемые по ключу в сообщении
 function pimserver.sell(msg)
 	db[msg.name].balance=db[msg.name].balance + msg.value
 	return pimserver.broadcast(msg)
@@ -145,7 +146,6 @@ end
 --отправка результата с указанием адреса пославшего
 function pimserver.broadcast(msg)
   local sender, balance, number, name, op = msg.sender, db[msg.name].balance, msg.number, msg.name, msg.op
-	
 	local post={sender=sender,number=number,name=name,balance=balance,op=op}
 	if msg.new then post.new='new' end
 	local post = serialization.serialize(post)
@@ -157,7 +157,6 @@ function pimserver.broadcast(msg)
 	local logs=io.open('logs.pimserver','w','a')
 	logs:write(line)
 	logs:close()]]--
-
 	return pimserver.saveFile()
 end
 
@@ -178,6 +177,7 @@ function pimserver.saveTerminalsToFile()
 	dbs:close()
 	return true
 end
+
 --загрузка терминалов из файла
 function pimserver.loadTerminalsFromFile()
 	terminal={}
@@ -185,10 +185,10 @@ function pimserver.loadTerminalsFromFile()
 		local loop = true
 		while loop do
 			local line=dbs:read('*line')
-			if not line then
-				loop = false	
-			else
+			if line then
 				table.insert(terminal,line)
+			else
+				loop = false
 			end
 		end
 		
@@ -207,13 +207,13 @@ function pimserver.saveFile()
 	dbs:close()
 	return true
 end
+
 function pimserver.loadFile()
 	db={}
 	local dbs=io.open('db.pimserver','r')
 		local loop = true
 		while loop do
 			local line=dbs:read('*line')
-
 			if not line then
 				loop = false	
 			else
@@ -224,7 +224,6 @@ function pimserver.loadFile()
 				db[name].income=tostring(dbs:read('*line'))
 			end
 		end
-		
 		dbs:close()
 		return true
 end
@@ -238,7 +237,6 @@ function pimserver.init()
 	if fs.exists('home/terminals.pimserver') then
 		pimserver.loadTerminalsFromFile()
 	end
-
 	--[[if not fs.exists('home/logs.pimserver')then
 		local lg=io.open('logs.pimserver','w')
 		log.fakesender={}

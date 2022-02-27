@@ -72,10 +72,9 @@ local function screenDriver(e3,e4)
 	return false
 end
 
-local x=gpu.getResolution()
+x=gpu.getViewport()
 for n in pairs(b)do
-	print (b[n])
-	b[n].x = x/2-b[n].x/2-1
+	b[n].x = x/2-b[n].xs/2-1
 end
 place(screen)
 return true

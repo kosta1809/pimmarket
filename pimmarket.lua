@@ -492,7 +492,7 @@ end
 --ориентируясь по списку в листе market.screen
 --вызывает одноименный кнопке метод в том случае,
 --если имя в эвенте совпадает с именем инвентаря на пим
-function market.screenDriver(x,y,name)
+function market.screenDriver(e)
 	local x,y,name = e[3],e[4],e[6]
 	if name == market.player.name then
 	local list = market.screen

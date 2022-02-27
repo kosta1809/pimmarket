@@ -18,6 +18,7 @@ local serialization=require("serialization")
 local zero, one = 0, 1
 local unicode=require('unicode')
 
+market.workmode='chest'
 market.link = 'unlinked'
 market.serverAddress = ''
 modem.open(port)
@@ -31,7 +32,7 @@ market.inumList={} --содержит нумерованный список с �
 market.inventory = {}--содержит список предметов текущего посетителя
 market.select='' --raw_name выбранного предмета
 market.mode='trade'
-market.chest=''--используемый сундук. содержит ссылку на компонет сундук
+market.chestShop=''--используемый сундук. содержит ссылку на компонет сундук или ме сеть
 market.number= ''--означает число товара в покупке. также поле в установке цен
 market.substract =''--содержит число для вычета наличных
 market.owner={
@@ -50,7 +51,7 @@ market.component = {'neutronium','iridium','osmium','chrome','wolfram','titanium
 
 for chest in pairs(market.component)do 
 	if component.isAvailable(market.component[chest]) then
-		market.chest=require('component')[market.component[chest]]
+		market.chestShop=require('component')[market.component[chest]]
 	end
 end
 --получаем список админов из рабочей дирректории
@@ -267,7 +268,6 @@ market.inputString=function()
 	return name 
 end
 
-
 --скромно перерисовывает поле цифрового ввода и следит за ним
 market.inputNumber=function(n)
 	if n == 'set' then return market.setPrice() end
@@ -333,15 +333,13 @@ end
 market.finalizeBuy=function()
 	market.clear()
 	local price = market.substract
-	--пушим в сундук монеты
-	gpu.set(50,23,'push money into chest')
-	market.fromInvToInv(pim,market.money,price,'pushItem')
+	--пушим в сундук монеты = оплата покупки
+	market.chest.fromInvToInv(pim,market.money,price,'pushItem')
 
 	item_raw_name=market.inumList[market.selectedLine]--рав-имя предмета
 	local count=tonumber(market.number)
-	--пуллим из сундука.
-	gpu.set(50,24,'pull items into buyer')
-	market.fromInvToInv(market.chest,item_raw_name,count,'pullItem')
+	--пуллим из сундука = выдача товара
+	market[market.workmode].fromInvToInv(market.chestShop,item_raw_name,count,'pullItem')
 
 	market.itemlist[item_raw_name].qty=market.itemlist[item_raw_name].qty - count
 	return market.inShopMenu()
@@ -373,7 +371,7 @@ end
 --device - определяет проверяемый инвентарь
 --передаёт выбранный предмет itemid в количестве count из целевого в назначенный инвентарь
 --параметр передачи задаётся агр. 'op'=itemPull or itemPush
-function market.fromInvToInv(device,item_raw_name,count, op)
+function market.chest.fromInvToInv(device,item_raw_name,count, op)
 	local c=count
 	local legalSlots={}
 	local slots= device.getInventorySize()
@@ -412,7 +410,7 @@ end
 --displayet items availabled for trading
 --where pos - position in itemlist for showing
 --and itemlist - numerated itemlist
---создание экрана со списком пердметов
+--создание экрана со списком предметов
 function market.showMeYourCandyesBaby(itemlist,inumList)
 	local y=2
 	local pos=market.shopLine
@@ -436,32 +434,29 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	gpu.setActiveBuffer(one)
 end
 
-
-function market.showMe()
-	--костыль. убрать после появления сервера
-
-	return market.inShopMenu()
-end
-
---отрисовывает поля меню выбора товара
-market.inShopMenu=function()
-	--обновляем список предметов
-	--market.chestList=market.get_inventoryitemlist(market.chest)
-	--market.merge()
-
-	--заглядываем в инвентарь игрока. просто любопытство, не более
-	market.inventory = market.get_inventoryitemlist(pim)
-	--проверка на наличие свободных слотов. если их нет - прощаемся
+market.isPlayerInventoryFull=function()
 	local emptySlot=false
 	for slot = 1,36 do
 		if not pim.getStackInSlot(slot) then emptySlot = true end
 	end
 	if not emptySlot then return market.full() end
-	--обновляем список товаров в магазине
+	return true
+end
+
+market.itemListReplace=function()
 	market.inumList={}
-	market.chestList=market.get_inventoryitemlist(market.chest)
+	market.chestList=market[market.workmode].get_inventoryitemlist(market.chestShop)
 	market.merge()
 	market.sort()
+end
+--отрисовывает поля меню выбора товара
+market.inShopMenu=function()
+	--заглядываем в инвентарь игрока. просто любопытство, не более
+	market.inventory = market.chest.get_inventoryitemlist(pim)
+	--проверка на наличие свободных слотов у покупателя. если их нет - прощаемся
+	market.isPlayerInventoryFull()
+	--обновляем список товаров в магазине
+	market.itemListReplace()
 	for n in pairs (market.inumList) do
 		if market.itemlist[market.inumList[n]].display_name=='gt.blockmetal4.12.name' then table.remove(market.inumList, n) end
  		if market.itemlist[market.inumList[n]].display_name=='Money' then table.remove(market.inumList, n) end
@@ -596,7 +591,7 @@ end
 --scan inventory. return items table.
 --из самостоятельной одноцелевой в многоцелевую
 --на вход подать используемый компонент: пим или сундук.
-function market.get_inventoryitemlist(device)
+function market.chest.get_inventoryitemlist(device)
 	local size=device.getInventorySize() --число слотов в инвентаре
 	local inventory={}
 	inventory.size=0
@@ -810,7 +805,7 @@ function market.init()
 	market.itemlist=market.load_fromFile()
 	print('file loading succesfull')
 	print('getting chest inventory...')
-	market.chestList=market.get_inventoryitemlist(market.chest)
+	market.chestList=market[market.workmode].get_inventoryitemlist(market.chestShop)
 	print('complite')
 	--теперь апдейт листа путем добавления полей с отсутствующими айди из сундука в итемлист
 	--а market.inumList будет содержать указатели присутствующих товаров в основном листе

@@ -223,7 +223,7 @@ market.trade=function()
 	market.screen={'status','one','two','free','foo','five','six','seven','eight',
 	'nine','zero','back','enternumber','cancel'}
 	market.replace()
-	return market.place({'mode','number','select','totalprice','cash','cashname','balancename','balance','player'})
+	return market.place({'mode','number','select','totalprice','balancename','balance','player'})
 end
 
 --меню владельца для ввода цены
@@ -231,7 +231,7 @@ market.edit=function()
 	market.screen={'status','one','two','free','foo','five','six','seven','eight',
 	'nine','zero','back','set','dot','cancel'}
 	market.replace()
-	return market.place({'mode','number','select','cash','cashname','balancename','balance','player'})
+	return market.place({'mode','number','select','balancename','balance','player'})
 end
 
 --меню владельца для наименования
@@ -462,6 +462,9 @@ market.inShopMenu=function()
 	market.chestList=market.get_inventoryitemlist(market.chest)
 	market.merge()
 	market.sort()
+	for n in pairs (inumList) do
+		if inumList[n]=='gt.blockmetal4.12.name' then table.remove(inumList, n) end
+  end
 	market.number=''
 	market.button.number.text=''
 	
@@ -473,7 +476,7 @@ market.inShopMenu=function()
 	market.button.totalitems.text=#market.inumList..' type of items available'
 	market.screen={'status','shopUp','shopDown','shopFillRight','cancel','search'}
 	market.replace()
-	market.place({'shopVert','shopTopRight','mode','ratio','totalitems','cash','cashname','balancename','balance','player'})
+	market.place({'shopVert','shopTopRight','mode','ratio','totalitems','balancename','balance','player'})
 	return market.showMeYourCandyesBaby(market.itemlist,market.inumList)
 end
 --если инвентарь игрока полон

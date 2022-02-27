@@ -30,7 +30,7 @@ end
 
 function pimserver.modem(e) ---1type 2respondent 3sender 4port 5distance 6message
 	local sender=e[3]
-	os.sleep(0.5)
+	os.sleep(0.05)
 	--want to msg fields:
 	--msg.number
 	--msg.name =name of player

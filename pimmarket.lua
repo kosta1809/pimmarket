@@ -495,9 +495,8 @@ end
 function market.screenDriver(e)
 	local x,y,name = e[3],e[4],e[6]
 	if name == market.player.name then
-	local list = market.screen
-		for f in pairs (list) do
-			local button=market.button[list[f]]
+		for f in pairs (market.screen) do
+			local button=market.button[market.screen[f]]
 			local a=(x >= button.x and x <= (button.xs+button.x-1)) and (y >= (button.y) and y <= (button.ys+button.y-1))
 			if a then
 				return market.screenActions[list[f]](x,y)

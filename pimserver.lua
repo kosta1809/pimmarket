@@ -3,8 +3,6 @@ local pimserver={}
 pimserver.version='1.00'
 local db={}
 local modem=require('component').modem
-local computer=require('computer')
-local pullSignal=computer.pullSignal
 local port = 0xfffe
 local send = 0xffef
 local fs = require('filesystem')
@@ -13,9 +11,11 @@ local serialization = require('serialization')
 local terminal={}
 local unregistered={}
 local gpu = require('component').gpu
-
 modem.open(port)
 modem.setWakeMessage="{name="
+
+local computer=require('computer')
+local pullSignal=computer.pullSignal	
 computer.pullSignal=function(...)
 	local e={pullSignal(...)}
 	if e[1]=='modem_message' then

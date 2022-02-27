@@ -39,3 +39,5 @@
 --market.unlinked=function(address) market.serverAddress = address 
 --market.link = linked
 --после чего меняет статус с unlinked на linked
+print ('empty in this time')
+return true

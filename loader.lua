@@ -12,5 +12,8 @@ end
 --in this place need add block: check updates available
 wget('https://raw.githubusercontent.com/Zardar/pimmarket/master/loader.lua','loader.lua')
 wget('https://raw.githubusercontent.com/Zardar/pimmarket/master/pimmarket.lua','market.lua')
+
+
+
+
 market=require('market')
-market.init()

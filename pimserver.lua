@@ -62,7 +62,13 @@ end
 
 --постановка терминала в список ожидания регистрации
 function pimserver.registration(sender)
-	table.insert(unregistered,sender)
+	for n in pairs(terminal) do
+		--если такой терминал есть в списке валидных
+  	if terminal[n]==sender then
+  		pimserver.returnAccept(sender)
+  	end
+  end
+		table.insert(unregistered,sender)
 	return pimserver.place()
 end
 
@@ -79,13 +85,18 @@ function pimserver.accept(msg)
 	if x == 43 and y <= #unregistered then
 		local sender=table.remove(unregistered,y)
 		table.insert(terminal, sender)
-		local post={sender=sender,number=1,name='pimmarket',balance=0,op='connect'}
-		local post = serialization.serialize(post)
-		modem.broadcast(send,post)
-		return pimserver.place()
+		pimserver.saveTerminalsToFile()
+		return pimserver.returnAccept(sender)
 	end
 	--end
 end
+
+function pimserver.returnAccept(sender)
+	local post={sender=sender,number=1,name='pimmarket',balance=0,op='connect'}
+		local post = serialization.serialize(post)
+		modem.broadcast(send,post)
+	return pimserver.place()
+	end
 
 function pimserver.place()
 	local x,y = gpu.getResolution()
@@ -157,6 +168,34 @@ function pimserver.newUser(name)
 	db[name].income='0'
 	return pimserver.saveFile()
 end
+
+--сохранение терминалов в файл
+function pimserver.saveTerminalsToFile()
+	local dbs=io.open('terminals.pimserver','w')
+	for n in pairs(terminal)do
+		dbs:write(tostring(terminal[n])..'\n')
+	end
+	dbs:close()
+	return true
+end
+--загрузка терминалов из файла
+function pimserver.loadTerminalsFromFile()
+	terminal={}
+	local dbs=io.open('terminals.pimserver','r')
+		local loop = true
+		while loop do
+			local line=dbs:read('*line')
+			if not line then
+				loop = false	
+			else
+				table.insert(terminal,line)
+			end
+		end
+		
+		dbs:close()
+		return terminal
+	end
+
 function pimserver.saveFile()
 	local dbs=io.open('db.pimserver','w')
 	for player in pairs(db)do
@@ -187,15 +226,19 @@ function pimserver.loadFile()
 		end
 		
 		dbs:close()
-		return db
-	end
+		return true
+end
 
 function pimserver.init()
 	if not fs.exists ('home/db.pimserver') then 
 		pimserver.newUser('Taoshi')
 		pimserver.saveFile()
 	end
-		pimserver.loadFile()
+	pimserver.loadFile()
+	if fs.exists('home/terminals.pimserver') then
+		pimserver.loadTerminalsFromFile()
+	end
+
 	--[[if not fs.exists('home/logs.pimserver')then
 		local lg=io.open('logs.pimserver','w')
 		log.fakesender={}

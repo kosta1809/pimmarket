@@ -63,12 +63,11 @@ end
 function pimserver.registration(sender)
 	for n in pairs(terminal) do
 		--если такой терминал есть в списке валидных
-		print(terminal[n],sender)
   	if terminal[n]==sender then
   		return pimserver.returnAccept(sender)
   	end
   end
-		table.insert(unregistered,sender)
+	table.insert(unregistered,sender)
 	return pimserver.place()
 end
 

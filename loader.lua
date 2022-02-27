@@ -5,11 +5,14 @@ local gpu=require(c).gpu
 local fs=require(c).filesystem
 local branch='https://raw.githubusercontent.com/Zardar/pimmarket/master/'
 local computer=require'computer'
+local events={'touch'}
 pullSignal=computer.pullSignal	
 computer.pullSignal=function(...)
 	local e={pullSignal(...)}
-	if e[1]=='touch' then
-		 return scrDr(e[3],e[4])
+	for k in pairs(events)do
+		if e[1]==events[k] then
+			 return scrDr(e[3],e[4])
+		end
 	end
 	return table.unpack(e) 
 end
@@ -64,6 +67,7 @@ function scrDr(e3,e4)
 		local btn=b[screen[f]]
 		local a=(x >= btn.x and x <=(btn.xs+btn.x-1))and(y >=(btn.y)and y <=(btn.ys+btn.y-1))
 		if a then
+			events={}
 			return sa[screen[f]]()
 		end
 	end

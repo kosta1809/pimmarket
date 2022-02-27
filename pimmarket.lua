@@ -231,7 +231,7 @@ market.edit=function()
 	market.screen={'status','one','two','free','foo','five','six','seven','eight',
 	'nine','zero','back','set','dot','cancel'}
 	market.replace()
-	return market.place({'mode','number','select','balancename','balance','cash','cashname','player'})
+	return market.place({'mode','number','select','balance','cash','cashname','player'})
 end
 
 --меню владельца для наименования
@@ -477,7 +477,7 @@ market.inShopMenu=function()
 	market.button.totalitems.text=#market.inumList..' type of items available'
 	market.screen={'status','shopUp','shopDown','shopFillRight','cancel','search'}
 	market.replace()
-	market.place({'shopVert','shopTopRight','mode','ratio','totalitems','balancename','balance','player'})
+	market.place({'shopVert','shopTopRight','mode','ratio','totalitems','balancename','balance','cash','cashname','player'})
 	return market.showMeYourCandyesBaby(market.itemlist,market.inumList)
 end
 --если инвентарь игрока полон
@@ -709,8 +709,10 @@ market.linked=function() return 'server already linked' end
 
 --пытаемся получить сообщение подтверждающее операцию
 market.serverResponse=function(e,address)
+	--address - адрес отправителя
 	msg=serialization.unserialize(e)
 	--а нам ли сообщение?
+	if msg == 'name' then return true end
 	if msg.sender and not msg.sender==modem.address then return true 
 	end
 		--msg.number,msg.name,msg.value

@@ -494,7 +494,7 @@ function market.screenDriver(e)
 			local button=market.button[market.screen[f]]
 			local a=(x >= button.x and x <= (button.xs+button.x-1)) and (y >= (button.y) and y <= (button.ys+button.y-1))
 			if a then
-				return market.screenActions[list[f]](x,y)
+				return market.screenActions[market.screen[f]](x,y)
 			end
 		end
 	end

@@ -712,7 +712,7 @@ market.serverResponse=function(e,address)
 	--address - адрес отправителя
 	msg=serialization.unserialize(e)
 	--а нам ли сообщение?
-	if msg == 'name' then return true end
+	if msg == 'name' or not msg.sender then return true end
 	if msg.sender and not msg.sender==modem.address then return true 
 	end
 		--msg.number,msg.name,msg.value

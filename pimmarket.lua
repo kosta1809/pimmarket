@@ -223,7 +223,7 @@ market.trade=function()
 	market.screen={'status','one','two','free','foo','five','six','seven','eight',
 	'nine','zero','back','enternumber','cancel'}
 	market.replace()
-	return market.place({'mode','number','select','totalprice','balancename','balance','player'})
+	return market.place({'mode','number','select','totalprice','balancename','balance','cash','cashname','player'})
 end
 
 --меню владельца для ввода цены
@@ -231,7 +231,7 @@ market.edit=function()
 	market.screen={'status','one','two','free','foo','five','six','seven','eight',
 	'nine','zero','back','set','dot','cancel'}
 	market.replace()
-	return market.place({'mode','number','select','balancename','balance','player'})
+	return market.place({'mode','number','select','balancename','balance','cash','cashname','player'})
 end
 
 --меню владельца для наименования
@@ -464,7 +464,8 @@ market.inShopMenu=function()
 	market.sort()
 	for n in pairs (market.inumList) do
 		if market.itemlist[market.inumList[n]].display_name=='gt.blockmetal4.12.name' then table.remove(market.inumList, n) end
-  end
+ 		if market.itemlist[market.inumList[n]].display_name=='Money' then table.remove(market.inumList, n) end
+  	end
 	market.number=''
 	market.button.number.text=''
 	
@@ -816,4 +817,5 @@ function market.init()
 	print('waiting for server access..')
 	return market.serverAccess()
 end
+market.init()
 return market

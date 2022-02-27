@@ -462,8 +462,8 @@ market.inShopMenu=function()
 	market.chestList=market.get_inventoryitemlist(market.chest)
 	market.merge()
 	market.sort()
-	for n in pairs (inumList) do
-		if inumList[n]=='gt.blockmetal4.12.name' then table.remove(inumList, n) end
+	for n in pairs (market.inumList) do
+		if market.itemlist[market.inumList[n]]=='gt.blockmetal4.12.name' then table.remove(market.inumList, n) end
   end
 	market.number=''
 	market.button.number.text=''

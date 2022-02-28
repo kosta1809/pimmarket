@@ -410,18 +410,18 @@ function market.buyCancel(price)
 end
 
 --!!!эта функция только выдаёт предметы!!!
-function market.me.fromInvToInv(device,raw_name,count, op, price)
+function market.me.fromInvToInv(_,raw_name,count, _, price)
 	local c=count
 	local item=market.me.getItemDetail(raw_name)
-	if not item then --предметы кончились. отмена покупки
+	if not item or item.size < count then --предметы кончились. отмена покупки
 		return market.buyCancel(price)
 	end
 
 	local available=item.size
+	local fp={id=item.name,raw_name=item.label}
 	while c > 0 do
 		if c > item.maxSize then
 			c=c-item.maxSize
-        	fp={id=item.name,raw_name=item.label}
 			me.exportItem(fp,'up',item.maxSize)
 		else
 			me.exportItem(fp,'up',c)

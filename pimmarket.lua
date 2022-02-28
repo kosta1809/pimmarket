@@ -340,6 +340,7 @@ end
 --завершает продажу. забирает валюту. выдаёт предметы
 market.finalizeBuy=function()
 	market.clear()
+	--число монет к изъятию
 	local price = market.substract
 	--пушим в сундук монеты = оплата покупки
 	market.chest.fromInvToInv(pim,market.money,price,'pushItem')
@@ -347,7 +348,7 @@ market.finalizeBuy=function()
 	item_raw_name=market.inumList[market.selectedLine]--рав-имя предмета
 	local count=tonumber(market.number)
 	--пуллим из сундука = выдача товара
-	market[market.workmode].fromInvToInv(market.chestShop,item_raw_name,count,'pullItem')
+	market[market.workmode].fromInvToInv(market.chestShop,item_raw_name,count,'pullItem',price)
 
 	market.itemlist[item_raw_name].qty=market.itemlist[item_raw_name].qty - count
 	return market.inShopMenu()
@@ -402,33 +403,45 @@ function market.chest.fromInvToInv(device,raw_name,count, op)
 	return true
 end
 
---!!!эта функция только выдаёт предметы!!!
-function market.me.fromInvToInv(device,raw_name,count, op)
-	local c, size,fp=count,0
-	local item=market.me.getItemDetail(raw_name)
+function market.buyCancel(price)
+	market.me.fromInvToInv(me, market.money, price)
+	--return market.sorry()
+	return true
+end
 
-	local available=item.qty
+--!!!эта функция только выдаёт предметы!!!
+function market.me.fromInvToInv(device,raw_name,count, op, price)
+	local c=count
+	local item=market.me.getItemDetail(raw_name)
+	if not item then --предметы кончились. отмена покупки
+		return market.buyCancel(price)
+	end
+
+	local available=item.size
 	while c > 0 do
-		if c > item.max_size then
-			c=c-item.max_size
-        	fp={id=id,dmg=dmg,raw_name=raw_name}
-			me.exportItem(fp,'up',item.max_size)
+		if c > item.maxSize then
+			c=c-item.maxSize
+        	fp={id=item.name,raw_name=item.label}
+			me.exportItem(fp,'up',item.maxSize)
 		else
 			me.exportItem(fp,'up',c)
 			c=0	
 		end
 	end
-	
 	return true
 end
 function market.me.getItemDetail(raw_name)
-	local size = market.getCapacity()
-	for n=1,size do 
-		if db.get(n) and raw_name == db.get(n).label then
-			fp={id=db.get(n).name,raw_name=db.get(n).label}
-			return me.getItemDetail(fp).basic()
+	local allItems=me.getItemsInNetwork()
+	local loop=#allItems
+	for n=1,loop do 
+		if raw_name == allItems[n].label then
+			local item = allItems[n]
+			allItems[n] = nil
+			loop=nil
+			return item
 		end
 	end
+	return false
 end
 
 function market.findCash()
@@ -643,11 +656,12 @@ function market.me.get_inventoryitemlist()
 	local inventory={}
 	inventory.size=0
 	local id,item='',''
-	num=#me.getItemsInNetwork()
-	for n=1,num do
-		item=me.getItemsInNetwork()[n]
-		inventory=market.me.setInventoryList(inventory,item)
-		
+	local available=me.getItemsInNetwork()
+	local loop=#available
+	
+	for n=1,loop do
+		item=available[n]
+		inventory=market.me.setInventoryList(inventory,item,n)
 	end
 	return inventory
 end
@@ -661,7 +675,7 @@ function market.me.setInventoryList(inventory,item,n)
 		inventory[id].buy_price='0'
 		inventory[id].name=item.name
 		inventory[id].qty=item.size
-		inventory[id].slots={-1}--номера слотов занимаемых предметом
+		inventory[id].slots={n}--индекс предмета в ме
 		inventory.size=inventory.size+1
 	else if item then
 		print('эта часть точно работает?')

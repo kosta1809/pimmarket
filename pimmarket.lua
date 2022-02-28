@@ -632,7 +632,7 @@ function market.chest.get_inventoryitemlist(device)
 end
 
 function market.me.get_inventoryitemlist()
-	size = tonumber(market.getCapacity())
+	local size = market.getCapacity()
 	local inventory={}
 	inventory.size=0
 	local id,item='',''
@@ -644,10 +644,10 @@ function market.me.get_inventoryitemlist()
 	end
 	return inventory
 end
-function getCapacity()
+function market.getCapacity()
   for _,v in pairs(computer.getDeviceInfo())do
     if v.description=='Object catalogue'
-      then return v.capacity 
+      then return tonumber(v.capacity) 
     end 
   end
   return 0

@@ -34,6 +34,9 @@ local function wget(url,name)
 	local file=io.open(name,'w')
 	file:write(result)
 	file:close()
+	file=nil
+	handle=nil
+	result=nil
 end
 
 local sa={}

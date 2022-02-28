@@ -94,9 +94,9 @@ market.screen={}--здесь держать все функциональные 
 market.button={
 	eula1={x=5,xs=67,y=3,ys=1,text='Здравствуйте! Рады видеть вас!',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	eula2={x=5,xs=67,y=5,ys=1,text='Вас приветствует электронный магазин ПимМаркет.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	eula3={x=5,xs=67,y=7,ys=1,text='Все покупки в магазине производятся за НПЦ монеты.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	eula4={x=5,xs=67,y=9,ys=1,text='Если цена товара не равна целому числу НПЦ монет -',tx=1,ty=0,bg=0x303030,fg=0x68f029},
-	eula5={x=5,xs=67,y=11,ys=1,text='остаток от операции зачислится на Пим-счёт игрока.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	eula3={x=5,xs=67,y=7,ys=1,text='Все покупки в магазине производятся за НПЦ мани.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	eula4={x=5,xs=67,y=9,ys=1,text='Обменник эмов на НПЦ мани стоит на спавне -',tx=1,ty=0,bg=0x303030,fg=0x68f029},
+	eula5={x=5,xs=67,y=11,ys=1,text='сдача от покупки зачислится на Пим-счёт игрока.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	eula6={x=5,xs=67,y=13,ys=1,text='Этот счёт автоматически используется при последующих покупках.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	eula7={x=5,xs=67,y=15,ys=1,text='Курс Пим к НПЦ составляет 10 к 1.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	eula8={x=5,xs=67,y=17,ys=1,text='Все цены в магазине указаны в Пимах.',tx=1,ty=0,bg=0x303030,fg=0x68f029},
@@ -136,6 +136,7 @@ market.button={
 	select={x=41,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	totalprice={x=41,xs=12,y=12,ys=3,text='',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	incorrect={x=41,xs=20,y=12,ys=3,text='нехватка средств',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	buyCancel={x=12,xs=45,y=10,ys=3,text='Извините, товар кончился. Средства возвращены',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	acceptbuy={x=41,xs=24,y=16,ys=3,text='подтвердить',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -405,8 +406,8 @@ end
 
 function market.buyCancel(price)
 	market.me.fromInvToInv(me, market.money, price)
-	--return market.sorry()
-	return true
+	market.screen={'buyCancel','cancel'}
+	return market.replace()
 end
 
 --!!!эта функция только выдаёт предметы!!!
@@ -636,7 +637,6 @@ function market.merge()
 	market.chestList.size=size
 end
 --=================================================
-
 --scan inventory. return items table.
 --из самостоятельной одноцелевой в многоцелевую
 --на вход подать используемый компонент: пим или сундук.

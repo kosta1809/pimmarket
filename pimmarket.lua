@@ -599,7 +599,8 @@ function market.sort()
 end
 --подшивает актульный список предметов к основному
 function market.merge()
-	local index=1
+	local index=1,size=market.chestList.size
+	market.chestList.size=nil
 	if not market.itemlist.size then market.itemlist.size=0 end
 	for id in pairs(market.chestList) do
 		market.inumList[index]=id
@@ -620,6 +621,7 @@ function market.merge()
 		end
 		index=index+1
 	end
+	market.chestList.size=size
 end
 --=================================================
 --scan inventory. return items table.

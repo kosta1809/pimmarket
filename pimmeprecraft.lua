@@ -37,9 +37,18 @@ return true
 --функции market.me.getInventoryItemList
 --market.me.fromInvToInv
 --на вход подать используемый компонент: пим или сундук.
-db=require'component'.database
+--[[db=require'component'.database
 capacity = 0
-
+--если вы захотите базу данных
+function market.getCapacity()
+  for _,v in pairs(computer.getDeviceInfo())do
+    if v.description=='Object catalogue'
+      then return tonumber(v.capacity) 
+    end 
+  end
+  return 0
+end
+]]
 
 function market.me.get_inventoryitemlist()
 	for _,v in pairs(computer.getDeviceInfo())do if v.description='Memory bank' then size = v.capacity end end

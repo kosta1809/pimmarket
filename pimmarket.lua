@@ -19,6 +19,8 @@ local zero, one = 0, 1
 local unicode=require('unicode')
 local me, db='',''
 
+
+
 market.workmode='chest'
 market.link = 'unlinked'
 market.serverAddress = ''
@@ -57,11 +59,10 @@ for chest in pairs(market.component)do
 		market.workmode='chest'
 	end
 end
-if component.isAvailable('me_interface') and component.isAvailable('database') then
+if component.isAvailable('me_interface') then
 	market.chestShop=require('component').me_interface
 	market.workmode='me'
 	me=market.chestShop
-	db=require('component').database
 end
 
 --получаем список админов из рабочей дирректории

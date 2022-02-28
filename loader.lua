@@ -40,11 +40,11 @@ local function wget(url,name)
 end
 
 local sa={}
-sa.c=function()if fs.exists('/home/'..b.c.f)then return dofile(b.c.f)end end
-sa.s=function()if fs.exists('/home/'..b.s.f)then return dofile(b.s.f)end end
+sa.c=function()if fs.exists('/home/'..b.c.f)then return require(b.c.f)end end
+sa.s=function()if fs.exists('/home/'..b.s.f)then return require(b.s.f)end end
 sa.us=function() wget(branch..b.s.f,b.s.f)return sa.s()end
 sa.uc=function() wget(branch..b.c.f,b.c.f)return sa.c()end
-sa.up=function() wget(branch..b.up.f,b.up.f)return dofile(b.up.f)end
+sa.up=function() wget(branch..b.up.f,b.up.f)return require(b.up.f)end
 
 clear=function()
 	local x,y=gpu.getViewport()

@@ -1,9 +1,7 @@
 --=============================================================
 --2022.02.11-14...02.22
 --=============================================================
-local market={}
-market.chest={}
-market.me={}
+local market={} market.chest={} market.me={}
 market.version='1.00'
 local gpu=require('component').gpu
 local component=require('component')
@@ -634,7 +632,7 @@ function market.chest.get_inventoryitemlist(device)
 end
 
 function market.me.get_inventoryitemlist()
-	size = market.getCapacity()
+	size = tonumber(market.getCapacity())
 	local inventory={}
 	inventory.size=0
 	local id,item='',''
@@ -646,12 +644,13 @@ function market.me.get_inventoryitemlist()
 	end
 	return inventory
 end
-function market.getCapacity()
+function getCapacity()
   for _,v in pairs(computer.getDeviceInfo())do
-    if v.description=='Memory bank'
+    if v.description=='Object catalogue'
       then return v.capacity 
     end 
   end
+  return 0
 end
 
 function market.setInventoryList(inventory,item)

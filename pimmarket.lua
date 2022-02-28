@@ -599,7 +599,7 @@ function market.sort()
 end
 --подшивает актульный список предметов к основному
 function market.merge()
-	local index=1,size=market.chestList.size
+	local index,size=1,market.chestList.size
 	market.chestList.size=nil
 	if not market.itemlist.size then market.itemlist.size=0 end
 	for id in pairs(market.chestList) do
@@ -624,6 +624,15 @@ function market.merge()
 	market.chestList.size=size
 end
 --=================================================
+--если вы захотите базу данных
+function market.getCapacity()
+  for _,v in pairs(computer.getDeviceInfo())do
+    if v.description=='Object catalogue'
+      then return tonumber(v.capacity) 
+    end 
+  end
+  return 0
+end
 --scan inventory. return items table.
 --из самостоятельной одноцелевой в многоцелевую
 --на вход подать используемый компонент: пим или сундук.
@@ -634,7 +643,7 @@ function market.chest.get_inventoryitemlist(device)
 	local id,item='',''
 	for n=1,size do
 		item=device.getStackInSlot(n) 
-		inventory=market.setInventoryList(inventory,item)
+		inventory=market.chest.setInventoryList(inventory,item,n)
 	end
 	return inventory
 end
@@ -644,25 +653,37 @@ function market.me.get_inventoryitemlist()
 	local inventory={}
 	inventory.size=0
 	local id,item='',''
-	for n=1,size do
-		if db.get(n) then
-			local fp={id=db.get(n).name,raw_name=db.get(n).label}
-		item=me.getItemDetail(fp).basic()
-		inventory=market.setInventoryList(inventory,item)
+	num=#me.getItemsInNetwork()
+	for n=1,num do
+		item=me.getItemsInNetwork()[n]
+		inventory=market.me.setInventoryList(inventory,item)
+		
+	end
+	return inventory
+end
+function market.me.setInventoryList(inventory,item,n)
+	if item and not inventory[item.label] then
+		id=item.label
+		inventory[id]={}
+		inventory[id].display_name=item.label
+		inventory[id].sell_price='9999'
+		inventory[id].buy_price='0'
+		inventory[id].name=item.name
+		inventory[id].qty=item.size
+		inventory[id].slots={-1}--номера слотов занимаемых предметом
+		inventory.size=inventory.size+1
+	else if item then
+		print('эта часть точно работает?')
+		id=item.label
+		inventory[id].qty=inventory[id].qty+item.size
+		inventory[id].slots[#inventory[id].slots+1]=n
 		end
 	end
 	return inventory
 end
-function market.getCapacity()
-  for _,v in pairs(computer.getDeviceInfo())do
-    if v.description=='Object catalogue'
-      then return tonumber(v.capacity) 
-    end 
-  end
-  return 0
-end
 
-function market.setInventoryList(inventory,item)
+
+function market.chest.setInventoryList(inventory,item,n)
 	if item and not inventory[item.raw_name] then
 		id=item.raw_name
 		inventory[id]={}
@@ -671,13 +692,12 @@ function market.setInventoryList(inventory,item)
 		inventory[id].buy_price=item.buy_price
 		inventory[id].name=item.name
 		inventory[id].qty=item.qty
-		inventory[id].slots={f}--номера слотов занимаемых предметом
+		inventory[id].slots={n}--номера слотов занимаемых предметом
 		inventory.size=inventory.size+1
 	else if item then
 		id=item.raw_name
 		inventory[id].qty=inventory[id].qty+item.qty
-		inventory[id].slots[#inventory[id].slots+1]=f
-		--table.insert(inventory[id].slots,f)--можно заменить на
+		inventory[id].slots[#inventory[id].slots+1]=n
 		end
 	end
 	return inventory
@@ -883,5 +903,6 @@ function market.init()
 	market.events.player_off=nil
 	return market.serverAccess()
 end
+
 market.init()
 return market

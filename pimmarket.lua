@@ -19,8 +19,6 @@ local zero, one = 0, 1
 local unicode=require('unicode')
 local me, db='',''
 
-
-
 market.workmode='chest'
 market.link = 'unlinked'
 market.serverAddress = ''
@@ -37,7 +35,7 @@ market.select='' --raw_name выбранного предмета
 market.mode='trade'
 market.chestShop=''--используемый сундук. содержит ссылку на компонет сундук или ме сеть
 market.device=''--используемый девайс. строковое название me или chest
-market.number= ''--означает число товара в покупке. также поле в установке цен
+market.number= '0'--означает число товара в покупке. также поле в установке цен
 market.substract =''--содержит число для вычета наличных
 market.owner={
 	{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"},
@@ -206,7 +204,7 @@ market.screenActions.shopFillRight=function(_,y)--ловит выбор игро
 end
 market.screenActions.set=function()return market.inputNumber('set') end
 market.screenActions.cancel=function()
-	market.number = ''
+	market.number = '0'
 	market.totalprice = '0'
 	market.button.number.text=' '
 	market.button.totalprice.text=' '
@@ -285,8 +283,8 @@ market.inputNumber=function(n)
 	if tonumber(market.number) and tonumber(market.number)> market.itemlist[market.select].qty-1 then
 			market.number=tostring(market.itemlist[market.select].qty-1)
 	end
-	if #market.number>3 then
-		if tonumber(market.number) > 999 then
+	if #market.number>5 then
+		if tonumber(market.number) and tonumber(market.number)> 999 then
 			market.number=tostring(math.floor(999))
 		end	
 	end
@@ -625,15 +623,7 @@ function market.merge()
 	market.chestList.size=size
 end
 --=================================================
---если вы захотите базу данных
-function market.getCapacity()
-  for _,v in pairs(computer.getDeviceInfo())do
-    if v.description=='Object catalogue'
-      then return tonumber(v.capacity) 
-    end 
-  end
-  return 0
-end
+
 --scan inventory. return items table.
 --из самостоятельной одноцелевой в многоцелевую
 --на вход подать используемый компонент: пим или сундук.
@@ -650,7 +640,6 @@ function market.chest.get_inventoryitemlist(device)
 end
 
 function market.me.get_inventoryitemlist()
-	local size = market.getCapacity()
 	local inventory={}
 	inventory.size=0
 	local id,item='',''
@@ -662,6 +651,7 @@ function market.me.get_inventoryitemlist()
 	end
 	return inventory
 end
+
 function market.me.setInventoryList(inventory,item,n)
 	if item and not inventory[item.label] then
 		id=item.label
@@ -682,7 +672,6 @@ function market.me.setInventoryList(inventory,item,n)
 	end
 	return inventory
 end
-
 
 function market.chest.setInventoryList(inventory,item,n)
 	if item and not inventory[item.raw_name] then

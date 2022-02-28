@@ -61,7 +61,7 @@ if component.isAvailable('me_interface') and component.isAvailable('database') t
 	market.chestShop=require('component').me_interface
 	market.workmode='me'
 	me=market.chestShop
-	db=require'component'.database
+	db=require('component').database
 end
 
 --получаем список админов из рабочей дирректории
@@ -426,7 +426,8 @@ function market.me.getItemDetail(raw_name)
 	local size = market.getCapacity()
 	for n=1,size do 
 		if db.get(n) and raw_name == db.get(n).label then
-			return me.getItemDetail({id=db.get(n).name,raw_name=db.get(n).label}).basic()
+			fp={id=db.get(n).name,raw_name=db.get(n).label}
+			return me.getItemDetail(fp).basic()
 		end
 	end
 end
@@ -602,16 +603,20 @@ function market.merge()
 	if not market.itemlist.size then market.itemlist.size=0 end
 	for id in pairs(market.chestList) do
 		market.inumList[index]=id
-		if not market.itemlist[id] then
-			market.itemlist[id]={}
-			market.itemlist[id].sell_price = '9999'
-			market.itemlist[id].buy_price = '0'	
-			market.itemlist[id].qty=market.chestList[id].qty
-			market.itemlist[id].display_name=market.chestList[id].display_name
-			market.itemlist.size=market.itemlist.size+1
+		if type (market.itemlist[id]) == 'number' then do end
 		else
-			market.itemlist[id].qty=market.chestList[id].qty
-			market.itemlist[id].slots=market.chestList[id].slots
+			if not market.itemlist[id] then
+				market.itemlist[id]={}
+				market.itemlist[id].sell_price = '9999'
+				market.itemlist[id].buy_price = '0'	
+				market.itemlist[id].qty=market.chestList[id].qty
+				market.itemlist[id].display_name=market.chestList[id].display_name
+				market.itemlist.size=market.itemlist.size+1
+				market.itemlist[id].slots=market.chestList[id].slots
+			else
+				market.itemlist[id].qty=market.chestList[id].qty
+				market.itemlist[id].slots=market.chestList[id].slots
+			end
 		end
 		index=index+1
 	end
@@ -639,7 +644,8 @@ function market.me.get_inventoryitemlist()
 	local id,item='',''
 	for n=1,size do
 		if db.get(n) then
-		item=me.getItemDetail({id=db.get(n).name,raw_name=db.get(n).label}).basic()
+			local fp={id=db.get(n).name,raw_name=db.get(n).label}
+		item=me.getItemDetail(fp).basic()
 		inventory=market.setInventoryList(inventory,item)
 		end
 	end

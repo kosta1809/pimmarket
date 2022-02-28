@@ -17,6 +17,7 @@ local send = 0xfffe
 local serialization=require("serialization")
 local zero, one = 0, 1
 local unicode=require('unicode')
+local me=''
 
 market.workmode='chest'
 market.link = 'unlinked'
@@ -33,6 +34,7 @@ market.inventory = {}--содержит список предметов теку
 market.select='' --raw_name выбранного предмета
 market.mode='trade'
 market.chestShop=''--используемый сундук. содержит ссылку на компонет сундук или ме сеть
+market.device=''--используемый девайс. строковое название me или chest
 market.number= ''--означает число товара в покупке. также поле в установке цен
 market.substract =''--содержит число для вычета наличных
 market.owner={
@@ -52,8 +54,15 @@ market.component = {'neutronium','iridium','osmium','chrome','wolfram','titanium
 for chest in pairs(market.component)do 
 	if component.isAvailable(market.component[chest]) then
 		market.chestShop=require('component')[market.component[chest]]
+		market.workmode='chest'
 	end
 end
+if component.isAvailable('me_interface') then
+	market.chestShop=require('component').me_interface
+	market.workmode='me'
+	me=market.chestShop
+end
+
 --получаем список админов из рабочей дирректории
 --
 local fs=require('filesystem')
@@ -371,14 +380,13 @@ end
 --device - определяет проверяемый инвентарь
 --передаёт выбранный предмет itemid в количестве count из целевого в назначенный инвентарь
 --параметр передачи задаётся агр. 'op'=itemPull or itemPush
-function market.chest.fromInvToInv(device,item_raw_name,count, op)
+function market.chest.fromInvToInv(device,raw_name,count, op)
 	local c=count
 	local legalSlots={}
 	local slots= device.getInventorySize()
-	local thisItem = item_raw_name
 	if slots == 40 then slots=36 end
 	for slot=1,slots do
-		if device.getStackInSlot(slot) and thisItem == device.getStackInSlot(slot).raw_name
+		if device.getStackInSlot(slot) and raw_name == device.getStackInSlot(slot).raw_name
 			then table.insert(legalSlots, slot)
 		end
 	end
@@ -387,7 +395,7 @@ function market.chest.fromInvToInv(device,item_raw_name,count, op)
 		local currentItem = device.getStackInSlot(legalSlots[slot])
 		local available=currentItem.qty
 		if c > 0 then
-			if c >  available then
+			if c > available then
 				c=c-available
 				pim[op]('down',legalSlots[slot],available)--из слота в назначение
 			else
@@ -397,6 +405,34 @@ function market.chest.fromInvToInv(device,item_raw_name,count, op)
 		end
 	end
 	return true
+end
+
+--!!!эта функция только выдаёт предметы!!!
+function market.me.fromInvToInv(device,raw_name,count, op)
+	local c, size,fp=count,0
+	local item=market.me.getItemDetail(raw_name)
+
+	local available=item.qty
+	while c > 0 do
+		if c > item.max_size then
+			c=c-item.max_size
+        	fp={id=id,dmg=dmg,raw_name=raw_name}
+			me.exportItem(fp,'up',item.max_size)
+		else
+			me.exportItem(fp,'up',c)
+			c=0	
+		end
+	end
+	
+	return true
+end
+function market.me.getItemDetail(raw_name)
+	local size = market.getCapacity()
+	for n=1,size do 
+		if db.get(n) and raw_name == db.get(n).label then
+			return me.getItemDetail({id=db.get(n).name,raw_name=db.get(n).label}).basic()
+		end
+	end
 end
 
 function market.findCash()
@@ -570,7 +606,6 @@ end
 function market.merge()
 	local index=1
 	if not market.itemlist.size then market.itemlist.size=0 end
-	market.chestList.size=nil
 	for id in pairs(market.chestList) do
 		market.inumList[index]=id
 		if not market.itemlist[id] then
@@ -596,28 +631,50 @@ function market.chest.get_inventoryitemlist(device)
 	local inventory={}
 	inventory.size=0
 	local id,item='',''
-	for f=1,size do
-		item=device.getStackInSlot(f) 
-	 	--заполняет таблицу инвентаря,
-	 	--добавляя поле slots для повторяющихся
-	 	--в инвентаре предметов. суммирует qty для них
-	 	--в поле id пишется raw_name
-		if item and not inventory[item.raw_name] then
-			id=item.raw_name
-			inventory[id]={}
-			inventory[id].display_name=item.display_name
-			inventory[id].sell_price=item.sell_price
-			inventory[id].buy_price=item.buy_price
-			inventory[id].name=item.name
-			inventory[id].qty=item.qty
-			inventory[id].slots={f}--номера слотов занимаемых предметом
-			inventory.size=inventory.size+1
-		else if item then
-			id=item.raw_name
-			inventory[id].qty=inventory[id].qty+item.qty
-			inventory[id].slots[#inventory[id].slots+1]=f
-			--table.insert(inventory[id].slots,f)--можно заменить на
-			end
+	for n=1,size do
+		item=device.getStackInSlot(n) 
+		inventory=market.setInventoryList(inventory,item)
+	end
+	return inventory
+end
+
+function market.me.get_inventoryitemlist()
+	size = market.getCapacity()
+	local inventory={}
+	inventory.size=0
+	local id,item='',''
+	for n=1,size do
+		if db.get(n) then
+		item=me.getItemDetail({id=db.get(n).name,raw_name=db.get(n).label}).basic()
+		inventory=market.setInventoryList(inventory,item)
+		end
+	end
+	return inventory
+end
+function market.getCapacity()
+  for _,v in pairs(computer.getDeviceInfo())do
+    if v.description=='Memory bank'
+      then return v.capacity 
+    end 
+  end
+end
+
+function market.setInventoryList(inventory,item)
+	if item and not inventory[item.raw_name] then
+		id=item.raw_name
+		inventory[id]={}
+		inventory[id].display_name=item.display_name
+		inventory[id].sell_price=item.sell_price
+		inventory[id].buy_price=item.buy_price
+		inventory[id].name=item.name
+		inventory[id].qty=item.qty
+		inventory[id].slots={f}--номера слотов занимаемых предметом
+		inventory.size=inventory.size+1
+	else if item then
+		id=item.raw_name
+		inventory[id].qty=inventory[id].qty+item.qty
+		inventory[id].slots[#inventory[id].slots+1]=f
+		--table.insert(inventory[id].slots,f)--можно заменить на
 		end
 	end
 	return inventory

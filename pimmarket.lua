@@ -136,7 +136,7 @@ market.button={
 	select={x=41,xs=24,y=4,ys=3,text='item',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	totalprice={x=41,xs=12,y=12,ys=3,text='',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	incorrect={x=41,xs=20,y=12,ys=3,text='нехватка средств',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	buyCancel={x=12,xs=45,y=10,ys=3,text='Извините, товар кончился. Средства возвращены',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	buyCancel={x=12,xs=45,y=10,ys=3,text='Извините, товар кончился. Вычтенные средства возвращены',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 
 	newname={x=26,xs=4,y=16,ys=3,text='newname',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	acceptbuy={x=41,xs=24,y=16,ys=3,text='подтвердить',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -156,9 +156,9 @@ market.button={
 	
 	shopUp={x=3,xs=10,y=12,ys=5,text='ВВЕРХ',tx=2,ty=2,bg=0x303030,fg=0x68f029},
 	shopDown={x=3,xs=10,y=18,ys=5,text='ВНИЗ',tx=3,ty=2,bg=0x303030,fg=0x68f029},
-	shopTopRight={x=21,xs=36,y=1,ys=1,text='Available items                            к-во    цена',tx=0,ty=0,bg=0xc49029,fg=0x000000},
+	shopTopRight={x=21,xs=55,y=1,ys=1,text='Available items                           к-во  цена',tx=0,ty=0,bg=0xc49029,fg=0x000000},
 	shopFillRight={x=21,xs=40,y=2,ys=20,text='',tx=0,ty=0,bg=0x303030,fg=0x68f029},
-	shopVert={x=70,xs=1,y=2,ys=20,text=' ',tx=0,ty=0,bg=0xc49029,fg=0x111111}
+	shopVert={x=68,xs=1,y=2,ys=20,text=' ',tx=0,ty=0,bg=0xc49029,fg=0x111111}
 }
 
 --это обработчик экрана.
@@ -281,13 +281,15 @@ end
 market.inputNumber=function(n)
 	if n == 'set' then return market.setPrice() end
 	if n == 'n' then return market.acceptBuy() end
-	if tonumber(market.number) and tonumber(market.number)> market.itemlist[market.select].qty-1 then
-			market.number=tostring(market.itemlist[market.select].qty-1)
-	end
-	if #market.number>5 then
-		if tonumber(market.number) and tonumber(market.number)> 999 then
-			market.number=tostring(math.floor(999))
-		end	
+	if market.mode == 'trade' then
+		if tonumber(market.number) and tonumber(market.number)> market.itemlist[market.select].qty-1 then
+				market.number=tostring(market.itemlist[market.select].qty-1)
+		end
+		if #market.number>5 then
+			if tonumber(market.number) and tonumber(market.number)> 999 then
+				market.number=tostring(math.floor(999))
+			end	
+		end
 	end
 	market.button.number.text=market.number..' '
 	market.button.number.xs= #market.itemlist[market.inumList[market.selectedLine]].display_name+4
@@ -463,7 +465,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	gpu.setActiveBuffer(zero)
 	gpu.setBackground(0x111111)
 	gpu.setForeground(color.blackLime)
-	gpu.fill(21,2,40,20,' ')
+	gpu.fill(21,2,42,20,' ')
 	gpu.fill(64,2,5,20,' ')
 	gpu.fill(72,2,5,20,' ')
 	while pos <= total do

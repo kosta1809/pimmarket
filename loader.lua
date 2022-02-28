@@ -62,7 +62,6 @@ end
 
 function scrDr(e3,e4)
 	local x,y=e3,e4
-	touch=' '
 	for f in pairs (screen) do
 		local btn=b[screen[f]]
 		local a=(x >= btn.x and x <=(btn.xs+btn.x-1))and(y >=(btn.y)and y <=(btn.ys+btn.y-1))
@@ -81,3 +80,4 @@ end
 wget(branch..b.ul.f,b.ul.f)
 clear()
 place(screen)
+return true

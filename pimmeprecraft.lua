@@ -39,15 +39,16 @@ return true
 --на вход подать используемый компонент: пим или сундук.
 db=require'component'.database
 capacity = 0
-for _,v in pairs(computer.getDeviceInfo())do if v.description='Memory bank' then capacity = v.capacity end end
+
 
 function market.me.get_inventoryitemlist()
-	
+	for _,v in pairs(computer.getDeviceInfo())do if v.description='Memory bank' then size = v.capacity end end
 	local inventory={}
 	inventory.size=0
 	local id,item='',''
+	
 	for f=1,size do
-		item=device.getStackInSlot(f) 
+		item=me.getItemDetail({id=db.get(n).name,raw_name=db.get(n).label}).basic()
 	 	--заполняет таблицу инвентаря,
 	 	--добавляя поле slots для повторяющихся
 	 	--в инвентаре предметов. суммирует qty для них
@@ -56,8 +57,8 @@ function market.me.get_inventoryitemlist()
 			id=item.raw_name
 			inventory[id]={}
 			inventory[id].display_name=item.display_name
-			inventory[id].sell_price=item.sell_price
-			inventory[id].buy_price=item.buy_price
+			inventory[id].sell_price=9999
+			inventory[id].buy_price=0
 			inventory[id].name=item.name
 			inventory[id].qty=item.qty
 			inventory[id].slots={f}--номера слотов занимаемых предметом
@@ -71,4 +72,32 @@ function market.me.get_inventoryitemlist()
 		end
 	end
 	return inventory
+end
+--!!!эта функция только выдаёт предметы!!!
+function market.me.fromInvToInv(device,raw_name,count, op)
+	local c=count
+	item=market.me.getItemDetail(raw_name)
+
+	local available=item.qty
+	while c > 0 do
+		if c > item.max_size then
+			if c <= available then
+				c=c-item.max_size
+				size= me.exportItem({id=id,dmg=dmg,raw.name=raw_name},'up',item.max_size).size
+			else
+				size= me.exportItem({id=id,dmg=dmg,raw.name=raw_name},'up',c).size
+				c=0
+			end
+		end
+	end
+	
+	return true
+end
+function market.me.getItemDetail(raw_name)
+	local size = market.getCapacity()
+	for n=1,size do 
+		if db.get(n) and raw_name == db.get(n).label then
+			return me.getItemDetail({id=db.get(n).name,raw_name=db.get(n).label}).basic()
+		end
+	end
 end

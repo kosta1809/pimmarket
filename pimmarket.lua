@@ -2,6 +2,8 @@
 --2022.02.11-14...02.22
 --=============================================================
 local market={}
+market.chest={}
+market.me={}
 market.version='1.00'
 local gpu=require('component').gpu
 local component=require('component')
@@ -116,7 +118,6 @@ market.button={
 	balancename={x=3,xs=10,y=7,ys=1,text='ПИМ-мани:',tx=0,ty=0,bg=0x303030,fg=0x68f029},
 	balance={x=3,xs=10,y=8,ys=1,text='lua coins:',tx=0,ty=0,bg=0x303030,fg=0x68f029},
 	ratio={x=3,xs=10,y=9,ys=1,text='1нпс=10пим',tx=0,ty=0,bg=0x303030,fg=0x68f029},
-
 
 	one={x=17,xs=6,y=4,ys=3,text='1',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 	two={x=25,xs=6,y=4,ys=3,text='2',tx=2,ty=1,bg=0x303030,fg=0x68f029},
@@ -362,15 +363,11 @@ market.setPrice=function()
 end
 
 market.search = function()
-
 --market.place({'searchInput'})
 --local name = market.inputString()
 
 return true
-
 end
-
-
 
 --==================================================================
 --pim & chest - components contains inventory
@@ -444,8 +441,6 @@ function market.findCash()
 end
 --=============================================================
 --displayet items availabled for trading
---where pos - position in itemlist for showing
---and itemlist - numerated itemlist
 --создание экрана со списком предметов
 function market.showMeYourCandyesBaby(itemlist,inumList)
 	local y=2
@@ -849,7 +844,6 @@ computer.pullSignal=function (...)
 end
 
 market.events={player_on='pimWho',player_off='pimByeBye',touch='screenDriver',modem_message='serverResponse'}
-
 
 --инициализация
 function market.init()

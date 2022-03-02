@@ -191,7 +191,7 @@ function pimserver.WaitToNewOwner()
 	player_on = true
 	return true
 end
-function pimmarket.regOwner(a)
+function pimmarket.regOwner(a) 
 	table.insert(owners,{UUID=a[3],name=a[2]})
 	print('Благодарю. владелец '..#owners..' '..a[2]..'  UUID:'..a[3]..'  зарегестрирован')
 	return pimserver.saveOwnersTable()

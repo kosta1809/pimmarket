@@ -252,12 +252,12 @@ function pimserver.loadFile()
 end
 
 function pimserver.loadOwnersTable()
-	local file=io.open('owners.pimmarket')
+	local file=io.open('owners.pimserver')
 	owners=serialization.unserialize(file:read('*a'))
 	return true
 end
 function pimserver.saveOwnersTable()
-	local file=io.open('owners.pimmarket','w')
+	local file=io.open('owners.pimserver','w')
 	local data=serialization.serialize(owners)
 	file:write(data)
 	file:close()

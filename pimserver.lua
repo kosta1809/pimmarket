@@ -15,7 +15,7 @@ local unregistered={}
 local gpu = require('component').gpu
 modem.open(port)
 modem.setWakeMessage="{name="
-
+local player_on = false
 local computer=require('computer')
 local pullSignal=computer.pullSignal	
 computer.pullSignal=function(...)
@@ -25,6 +25,9 @@ computer.pullSignal=function(...)
 	end
 	if e[1]=='touch' then
 		return pimserver.accept(e)
+	end
+	if e[1]=='player_on' then
+		return pimserver.regOwner(e)
 	end
 	return table.unpack(e) 
 end
@@ -167,7 +170,7 @@ function pimserver.broadcast(msg)
 end
 function pimserver.post(msg)
 local post = serialization.serialize(msg)
-	modem.broadcast(send,post)
+	return modem.broadcast(send,post)
 end
 
 
@@ -185,7 +188,10 @@ function pimserver.WaitToNewOwner()
 	else
 		print('Встаньте на ПИМ для регистрации следующего владельца')
 	end
-	local a={event.pull('player_on')}
+	player_on = true
+	return true
+end
+function pimmarket.regOwner(a)
 	table.insert(owners,{UUID=a[3],name=a[2]})
 	print('Благодарю. владелец '..#owners..' '..a[2]..'  UUID:'..a[3]..'  зарегестрирован')
 	return pimserver.saveOwnersTable()

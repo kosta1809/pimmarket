@@ -3,6 +3,7 @@
 --=============================================================
 local market={} market.chest={} market.me={}
 market.version='1.00'
+local fs=require('filesystem')
 local gpu=require('component').gpu
 local component=require('component')
 local computer=require('computer')
@@ -17,7 +18,7 @@ local send = 0xfffe
 local serialization=require("serialization")
 local zero, one = 0, 1
 local unicode=require('unicode')
-local me, db='',''
+local me=''
 
 market.workmode='chest'
 market.link = 'unlinked'
@@ -25,7 +26,7 @@ market.serverAddress = ''
 modem.open(port)
 modem.setWakeMessage='name'
 market.msgnum=14041
-market.money = 'item.npcmoney'
+market.pimmoney='item.npcmoney'
 --лист с полями sell_price, buy_price, qty, display_name, и ключом raw_name
 market.itemlist = {}--содержит все оценённые предметы магазина
 market.chestList = {}--содержит предметы в сундуке связанном с терминалом
@@ -38,10 +39,10 @@ market.device=''--используемый девайс. строковое на
 market.number= '0'--означает число товара в покупке. также поле в установке цен
 market.substract =''--содержит число для вычета наличных
 market.owner={
+	{uuid="9e5f1396-ad94-3b1a-8ab7-c7c150e2c6f5",name="kosta1809"},
 	{uuid="d2f4fce0-0f27-3a74-8f03-5d579a99988f",name="Vova77"},
 	{uuid="0b448076-a810-3a82-8bb8-2913bdfb2ae5",name="Taoshi"},
 	{uuid="2e1c3d2c-3c30-4424-a917-682cb9b9fd47",name="Velem77"},
-	{uuid="9e5f1396-ad94-3b1a-8ab7-c7c150e2c6f5",name="kosta1809"},
 	{uuid="d48a04c1-2aa0-302e-9363-1f83feb2b523",name="Imforceble"}
 }
 market.shopLine=1
@@ -63,13 +64,6 @@ if component.isAvailable('me_interface') then
 	me=market.chestShop
 end
 
---получаем список админов из рабочей дирректории
---
-local fs=require('filesystem')
-if fs.exists('home/owner.market') then
-	market.owner=require('owner.market')
-end
-
 --позаимствованная у BrightYC таблица цветов.добавлен мутно-зелёный
 local color = {
     pattern = "%[0x(%x%x%x%x%x%x)]",
@@ -87,8 +81,9 @@ local color = {
     blackBlue = 0x273ba1,
     red = 0xff0000
 }
-
-market.screen={}--здесь держать все функциональные кнопки экрана
+--список перехватываемых событий
+market.events={player_on='pimWho',player_off='pimByeBye',touch='screenDriver',modem_message='serverResponse'}
+market.screen={}--лист для функциональных кнопок экрана. остальные выводятся сбросом листа их названий в market.place
 --содержит все используемые кнопки. Кнопки содержат поля: координаты x y,
 --размер по x y, текст, внутренняя позиция текста, цвета
 market.button={
@@ -104,8 +99,8 @@ market.button={
 	eula10={x=5,xs=67,y=21,ys=1,text='подтвердите согласием',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	eula11={x=30,xs=19,y=24,ys=1,text='СОГЛАСЕН/СОГЛАСНА',tx=1,ty=0,bg=0xf2b233,fg=0x111111},
 	eula12={x=51,xs=26,y=24,ys=1,text='discord автора:taoshi#2664',tx=0,ty=0,bg=0x103010,fg=0xf2b233},
-	eula13={x=1,xs=28,y=24,ys=1,text='пишите владельцу kosta1809',tx=0,ty=0,bg=0x103010,fg=0xf2b233},
-	eula14={x=1,xs=28,y=23,ys=1,text='по всем вопросам о товаре',tx=0,ty=0,bg=0x103010,fg=0xf2b233},
+	eula13={x=1,xs=28,y=23,ys=1,text='по всем вопросам о товаре',tx=0,ty=0,bg=0x103010,fg=0xf2b233},
+	eula14={x=1,xs=28,y=24,ys=1,text='пишите владельцу kosta1809',tx=0,ty=0,bg=0x103010,fg=0xf2b233},
 
 	player={x=3,xs=10,y=1,ys=1,text='name',tx=1,ty=0,bg=0x303030,fg=0x68f029},
 	status={x=3,xs=10,y=2,ys=1,text='player',tx=1,ty=0,bg=0x303030,fg=0x68f029},
@@ -317,8 +312,8 @@ market.acceptBuy=function()
 end
 --на основе объёма покупки производим действия с балансом
 market.getNewBalance=function()
-	totalprice = tonumber(market.button.totalprice.text)
-	balance = tonumber(market.player.balance)
+	local totalprice = tonumber(market.button.totalprice.text)
+	local balance = tonumber(market.player.balance)
 	if balance > 0 then
 		--если баланс не ниже суммы покупки
 		if balance >= totalprice then
@@ -348,7 +343,7 @@ market.finalizeBuy=function()
 	--пушим в сундук монеты = оплата покупки
 	market.chest.fromInvToInv(pim,market.money,price,'pushItem')
 
-	item_raw_name=market.inumList[market.selectedLine]--рав-имя предмета
+	local item_raw_name=market.inumList[market.selectedLine]--рав-имя предмета
 	local count=tonumber(market.number)
 	--пуллим из сундука = выдача товара
 	market[market.workmode].fromInvToInv(market.chestShop,item_raw_name,count,'pullItem',price)
@@ -420,7 +415,6 @@ function market.me.fromInvToInv(_,raw_name,count, _, price)
 		return market.buyCancel(price)
 	end
 
-	local available=item.size
 	local fp={id=item.name,raw_name=item.label}
 	while c > 0 do
 		if c > item.maxSize then
@@ -549,34 +543,33 @@ end
 --сюда попадает получая эвент player_on
 function market.pimWho(e)
 	--=================================
+	local who,uid=e[2],e[3]
 	market.events.touch='screenDriver'
 	market.events.player_on=nil
 	market.events.player_off='pimByeBye'
-	local who,uid=e[2],e[3]
+	market.mode='trade'
+
 	market.player.name=who
 	market.player.uid=uid
-	market.mode='trade'
-	market.button.mode.text='trade'
-	market.money='item.npcmoney'
 	market.player.status = 'player'
 	for f=1, #market.owner do
 		if market.owner[f].uuid==uid and market.owner[f].name==who then 
 			market.player.status = 'owner'
 		end
 	end
+	market.button.mode.text='trade'
 	market.button.status.text=market.player.status
 	market.button.player.text=market.player.name
-	market.player.balance='0'
-	market.player.cash='0'
-	if who == 'Taoshi' then
-    market.money='gt.metaitem.02.18061'--test
+	if who == 'Taoshi' or who == 'Velem77' then
+    	market.money = 'gt.metaitem.02.18061'--test
+	else
+		market.money = market.pimmoney	
 	end
 	--здороваемся
 	market.button.name.text=who
 	market.button.name.xs=#who+4
 	market.button.name.x=36-#who/2
-	market.clear()
-	market.place({'welcome','name','wait'})
+	market.replace({'welcome','name','wait'})
 	--делаем запрос баланса на сервер
 	local msg={name=market.player.name,op='enter',number=market.msgnum,value='0'}
 	return market.serverPost(msg)
@@ -646,7 +639,7 @@ function market.chest.get_inventoryitemlist(device)
 	local size=device.getInventorySize() --число слотов в инвентаре
 	local inventory={}
 	inventory.size=0
-	local id,item='',''
+	local item=''
 	for n=1,size do
 		item=device.getStackInSlot(n) 
 		inventory=market.chest.setInventoryList(inventory,item,n)
@@ -657,7 +650,7 @@ end
 function market.me.get_inventoryitemlist()
 	local inventory={}
 	inventory.size=0
-	local id,item='',''
+	local item=''
 	local available=me.getItemsInNetwork()
 	local loop=#available
 	
@@ -669,6 +662,7 @@ function market.me.get_inventoryitemlist()
 end
 
 function market.me.setInventoryList(inventory,item,n)
+  local id=''
 	if item and not inventory[item.label] then
 		id=item.label
 		inventory[id]={}
@@ -690,6 +684,7 @@ function market.me.setInventoryList(inventory,item,n)
 end
 
 function market.chest.setInventoryList(inventory,item,n)
+  local id=''
 	if item and not inventory[item.raw_name] then
 		id=item.raw_name
 		inventory[id]={}
@@ -728,8 +723,8 @@ function market.load_fromFile()
 				itemlist[id].sell_price=tonumber(db:read('*line'))
 				itemlist[id].buy_price=tonumber(db:read('*line'))
 			end
-  end
-  db:close()
+		end
+		db:close()
 	end
 	return itemlist
 end
@@ -788,7 +783,8 @@ end
 market.unlinked=function(address)
 	market.serverAddress = address
 	market.link = 'linked'
-	return market.screenInit()
+	local msg={name='pimmarket',op='getOwners',number=market.msgnum,value=0}
+	return market.serverPost(msg)
 end
 
 market.linked=function() return 'server already linked' end
@@ -805,12 +801,10 @@ market.serverResponse=function(e)
 	if msg.sender ~= modem.address then return true 
 	end
 		--msg.number,msg.name,msg.value
-		-- =name of player
-		--msg.op = enter|buy|sell|balanceIn|balanceOut
-		-- = value of operation
+		--msg.op = enter|buy|sell|balanceIn|balanceOut|getOwners
 	modem.close(port)
 	market.events.modem_message=nil
-		--процедура регистрации терминала
+		--процедура регистрации терминала завершена. сохраняем адрес сервера
 	if msg.op=='connect'  then 
 		return market[market.link](address)
 	end
@@ -820,54 +814,58 @@ market.serverResponse=function(e)
 	if msg.name and msg.name == market.player.name then 
 		market.player.balance = msg.balance
 		market.msgnum = market.msgnum + 1
-
 	end
 	return market.modem[msg.op](msg)
 end
 market.modem={}
-market.modem.buy=function(msg)
-
+function market.modem.getOwners(msg)
+	market.owners=msg.owners
+	market.events.player_on='pimWho'
+	return market.screenInit()
+end
+function market.modem.buy(_)
 	market.finalizeBuy()
 end
-market.modem.sell=function(msg)
+function market.modem.sell(_)
 
 end
-market.modem.balanceIn=function(msg)
+function market.modem.balanceIn(_)
 
 end
-market.modem.balanceOut=function(msg)
+function market.modem.balanceOut(_)
 	
 end
-market.modem.enter=function(msg)
-	--выводим меню магазина
+--от сервера получен баланс игрока
+function market.modem.enter(_)
 	return market.eula()
-	
 end
 
-market.eula=function()
+function market.eula()
 	market.clear()
+	market.button.eula14.text='пишите владельцу'..market.owner[1].name
 	market.place({'eula1','eula2','eula3','eula4','eula5','eula6','eula7','eula8','eula9','eula10','eula12','eula13','eula14'})
 	market.screen={'eula11'}
 	return market.place(market.screen)
 end
 
 --отправка сообщений на сервер
-	market.serverPost=function(msg)
+function market.serverPost(msg)
 	msg=serialization.serialize(msg)
 	modem.broadcast(send,msg)
+	--включаем прослушивание порта и добавляем в список обрабатываемых эвентов
 	modem.open(port)
 	market.events.modem_message='serverResponse'
 	return true
 end
 
-function market.serverAccess( )
+function market.serverAccess()
 	market.msgnum=tonumber('0x'..string.sub(modem.address,1,6))
 	local msg={name='pimmarket',op='connect',number=market.msgnum,value=0}
 	return market.serverPost(msg)
 end
 
 --перехват ивентов. надстройка над ОС
-computer.pullSignal=function (...)
+function computer.pullSignal(...)
 	local e={pullSignal(...)}
 	for event in pairs(market.events)do 
 		if event==e[1] then
@@ -876,8 +874,6 @@ computer.pullSignal=function (...)
 	end
 	return table.unpack(e) 
 end
-
-market.events={player_on='pimWho',player_off='pimByeBye',touch='screenDriver',modem_message='serverResponse'}
 
 --инициализация
 function market.init()
@@ -891,22 +887,21 @@ function market.init()
 	print('file loading succesfull')
 	print('getting chest inventory...')
 	market.chestList=market[market.workmode].get_inventoryitemlist(market.chestShop)
-	print('complite')
 	--теперь апдейт листа путем добавления полей с отсутствующими айди из сундука в итемлист
 	--а market.inumList будет содержать указатели присутствующих товаров в основном листе
 	print('merge tables')
 	market.merge()
-	--потом сортировка нумерного листа торговли
+	--сортировка нумерного листа торговли в алфавитный порядок
 	print('sorting available items...')
 	market.sort()
 	print('save current database...')
+	--и сохранение нового листа на диск?. когда, если не сейчас?
 	market.save_toFile(market.itemlist)
-	--и сохранение нового листа на диск?. когда, если не сейчас? возможно, в админской функции сета цен
-	--table.sort(table)
 	print('initialization complete')
 	print('waiting for server access..')
 	market.events.touch=nil
 	market.events.player_off=nil
+	market.events.player_on=nil
 	return market.serverAccess()
 end
 

@@ -2,6 +2,8 @@
 local pimserver={}
 pimserver.version='1.00'
 local db={}
+local owners={}
+local event=require('event')
 local modem=require('component').modem
 local port = 0xfffe
 local send = 0xffef
@@ -39,16 +41,14 @@ function pimserver.modem(e) ---1type 2respondent 3sender 4port 5distance 6messag
   msg.sender = sender
   --регистрация терминалов
   if msg.name and msg.name=='pimmarket' then
-  	if msg.op == 'connect' then
-  		return pimserver.registration(sender)
-  	end
+  		return pimserver[msg.op](sender)
   end
   --проверка валидности адреса посылки
   local valid = false
   for n in pairs(terminal) do
   	if terminal[n]==sender then valid = true end
   end
-	if not valid then return true end
+	if not valid then return 'не знаем мы таких' end
 	--если такого игрока нет, то запись нового игрока в бд
 	if msg.name and not db[msg.name] then pimserver.newUser(msg.name) end
 	--если в сообщении есть имя игрока отправляем по типу операции
@@ -60,7 +60,7 @@ function pimserver.modem(e) ---1type 2respondent 3sender 4port 5distance 6messag
 end
 
 --постановка терминала в список ожидания регистрации
-function pimserver.registration(sender)
+function pimserver.connect(sender)
 	for n in pairs(terminal) do
 		--если такой терминал есть в списке валидных
   	if terminal[n]==sender then
@@ -70,12 +70,19 @@ function pimserver.registration(sender)
 	table.insert(unregistered,sender)
 	return pimserver.place()
 end
+function pimserver.getOwners(sender)
+	local msg={sender=sender,number=1,name='pimmarket',balance=0,op='getOwners'}
+	msg.owners=owners
+	pimserver.post(msg)
+end
 
 --отсылка подтверждения регистрации
 function pimserver.accept(msg)
 	local x,y = msg[3],msg[4]
 	--if msg[6]==adminname then
-	
+	if x < 4 and y == 1 then
+		return pimserver.WaitToNewOwner()
+	end
 	if y < 13 then return true end
 	y=y-12
 	if x == 3 and y <= #unregistered then
@@ -91,9 +98,8 @@ function pimserver.accept(msg)
 end
 
 function pimserver.returnAccept(sender)
-	local post={sender=sender,number=1,name='pimmarket',balance=0,op='connect'}
-		local post = serialization.serialize(post)
-		modem.broadcast(send,post)
+	local msg={sender=sender,number=1,name='pimmarket',balance=0,op='connect'}
+	pimserver.post(msg)
 	return pimserver.place()
 	end
 
@@ -102,6 +108,7 @@ function pimserver.place()
 	gpu.setBackground(0x113311)
 	gpu.setForeground(0x58f029)
 	gpu.fill(1,1,x,y,' ')
+	gpu.set(1,1,'REG')
 	gpu.set(5,1,'Registered terminals:')
 	for t in pairs(terminal) do
 		gpu.set(5,t+1,terminal[t])
@@ -112,6 +119,7 @@ function pimserver.place()
 		gpu.set(3,t+12,'X')
 		gpu.set(43,t+12,'V')
 	end
+	return true
 end
 
 --первичная регистрация игрока
@@ -147,8 +155,7 @@ function pimserver.broadcast(msg)
   local sender, balance, number, name, op = msg.sender, db[msg.name].balance, msg.number, msg.name, msg.op
 	local post={sender=sender,number=number,name=name,balance=balance,op=op}
 	if msg.new then post.new='new' end
-	local post = serialization.serialize(post)
-	modem.broadcast(send,post)
+	pimserver.post(msg)	
 
 	--[[if not log[msg.sender] then log[msg.sender]={} end
 		log[msg.sender][msg.number]={name=msg.name,op=msg.op,val=msg.value}
@@ -158,6 +165,11 @@ function pimserver.broadcast(msg)
 	logs:close()]]--
 	return pimserver.saveFile()
 end
+function pimserver.post(msg)
+local post = serialization.serialize(msg)
+	modem.broadcast(send,post)
+end
+
 
 function pimserver.newUser(name)
 	db[name]={}
@@ -165,6 +177,18 @@ function pimserver.newUser(name)
 	db[name].ban='-'
 	db[name].income='0'
 	return pimserver.saveFile()
+end
+
+function pimserver.WaitToNewOwner()
+	if not owners[1] then
+		print('Встаньте на ПИМ для регистрации первого владельца')
+	else
+		print('Встаньте на ПИМ для регистрации следующего владельца')
+	end
+	local a={event.pull('player_on')}
+	table.insert(owners,{UUID=a[3],name=a[2]})
+	print('Благодарю. владелец '..#owners..' '..a[2]..'  UUID:'..a[3]..'  зарегестрирован')
+	return pimserver.saveOwnersTable()
 end
 
 --сохранение терминалов в файл
@@ -227,8 +251,21 @@ function pimserver.loadFile()
 		return true
 end
 
+function pimserver.loadOwnersTable()
+	local file=io.open('owners.pimmarket')
+	owners=serialization.unserialize(file:read('*a'))
+	return true
+end
+function pimserver.saveOwnersTable()
+	local file=io.open('owners.pimmarket','w')
+	local data=serialization.serialize(owners)
+	file:write(data)
+	file:close()
+	return true
+end
+
 function pimserver.init()
-	if not fs.exists ('home/db.pimserver') then 
+	if not fs.exists ('home/db.pimserver') then
 		pimserver.newUser('Taoshi')
 		pimserver.saveFile()
 	end
@@ -236,6 +273,12 @@ function pimserver.init()
 	if fs.exists('home/terminals.pimserver') then
 		pimserver.loadTerminalsFromFile()
 	end
+	if fs.exists('home/owners.pimserver') then
+		pimserver.loadOwnersTable()
+	else
+		pimserver.WaitToNewOwner()
+	end
+	pimserver.place()
 	--[[if not fs.exists('home/logs.pimserver')then
 		local lg=io.open('logs.pimserver','w')
 		log.fakesender={}
@@ -245,9 +288,12 @@ function pimserver.init()
 	end]]
 	return true
 end
+--создание овнер-листа посредством пим
 
-pimserver.init()
 gpu.setResolution(76,24)
+pimserver.init()
+
 print('Сервер поднят.')
+print('Рота, подъёоом!')
 modem.broadcast(send,'name')
 return pimserver

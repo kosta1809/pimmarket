@@ -158,7 +158,7 @@ function pimserver.broadcast(msg)
   local sender, balance, number, name, op = msg.sender, db[msg.name].balance, msg.number, msg.name, msg.op
 	local post={sender=sender,number=number,name=name,balance=balance,op=op}
 	if msg.new then post.new='new' end
-	pimserver.post(msg)	
+	pimserver.post(post)	
 
 	--[[if not log[msg.sender] then log[msg.sender]={} end
 		log[msg.sender][msg.number]={name=msg.name,op=msg.op,val=msg.value}
@@ -258,12 +258,12 @@ function pimserver.loadFile()
 end
 
 function pimserver.loadOwnersTable()
-	local file=io.open('owners.pimmarket')
+	local file=io.open('owners.pimserver')
 	owners=serialization.unserialize(file:read('*a'))
 	return true
 end
 function pimserver.saveOwnersTable()
-	local file=io.open('owners.pimmarket','w')
+	local file=io.open('owners.pimserver','w')
 	local data=serialization.serialize(owners)
 	file:write(data)
 	file:close()

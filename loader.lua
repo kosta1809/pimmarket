@@ -3,7 +3,7 @@ local inet=require'internet'
 local c='component'
 local gpu=require(c).gpu
 local fs=require(c).filesystem
-local branch='https://raw.githubusercontent.com/Zardar/pimmarket/master/'
+local branch='https://raw.githubusercontent.com/Zardar/pimmarket/pimmarket_0.8/'
 local computer=require'computer'
 local events={'touch'}
 pullSignal=computer.pullSignal	
@@ -20,10 +20,10 @@ end
 local b={
 s={x=2,xs=20,y=2,ys=3,text='запустить сервер',tx=1,ty=1,bg=0x303030,fg=0x68f029,f='pimserver.lua'},
 c={x=2,xs=20,y=6,ys=3,text='запустить клиент',tx=1,ty=1,bg=0x303030,fg=0x68f029,f='pimmarket.lua'},
-us={x=2,xs=24,y=10,ys=3,text='апгрейд+запуск сервера',tx=1,ty=1,bg=0x303030,fg=0x68f029},
-uc={x=2,xs=24,y=14,ys=3,text='апгрейд+запуск клиента',tx=1,ty=1,bg=0x303030,fg=0x68f029},
+us={x=2,xs=24,y=10,ys=3,text='скачать+запустить сервер',tx=1,ty=1,bg=0x303030,fg=0x68f029},
+uc={x=2,xs=24,y=14,ys=3,text='скачать+запустить клиент',tx=1,ty=1,bg=0x303030,fg=0x68f029},
 ul={x=2,xs=20,y=22,ys=3,text='апгрейд загрузчика',tx=1,ty=1,bg=0x303030,fg=0x68f029,f='loader.lua'},
-up={x=2,xs=28,y=18,ys=3,text='апгрейд и запуск прекрафта',tx=1,ty=1,bg=0x303030,fg=0x68f029,f='pimmeprecraft.lua'}
+up={x=2,xs=28,y=18,ys=3,text='скачать и запустить Ме крафт',tx=1,ty=1,bg=0x303030,fg=0x68f029,f='pimmeprecraft.lua'}
 }
 local screen = {'s','c','us','uc','up'}
 

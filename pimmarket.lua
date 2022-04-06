@@ -142,7 +142,14 @@ market.button={
 	buy={x=30,xs=16,y=8,ys=3,text='Купить',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	sell={x=30,xs=16,y=12,ys=3,text='Продать',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	full={x=16,xs=39,y=10,ys=3,text='Ваш инвентарь полон. Доступ закрыт.',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	
+	transfer={x=30,xs=16,y=16,ys=3,text='Перевод другому игроку',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+
+	transfer_name={x=30,xs=16,y=10,ys=3,text='Введите имя  для перевода',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+	transfer_val={x=30,xs=16,y=10,ys=3,text='Введите сумму перевода',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+	transfer_not_registered={x=30,xs=16,y=18,ys=3,text='Нет в базе данных',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+	transfer_tooBig={x=30,xs=16,y=18,ys=3,text='У вас нет столько',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+	transferComplite={x=30,xs=16,y=18,ys=3,text='Перевод завершён',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+
 	shopUp={x=3,xs=10,y=12,ys=5,text='ВВЕРХ',tx=2,ty=2,bg=0x303030,fg=0x68f029},
 	shopDown={x=3,xs=10,y=18,ys=5,text='ВНИЗ',tx=3,ty=2,bg=0x303030,fg=0x68f029},
 	shopTopRight={x=21,xs=55,y=1,ys=1,text='Available items                           к-во  цена',tx=0,ty=0,bg=0xc49029,fg=0x000000},
@@ -155,9 +162,13 @@ market.button={
 --в том числе меняющие содержимое экрана
 market.screenActions={}
 market.screenActions.search=function()return market.search() end
-market.screenActions.eula11=function()market.screen={'sell','buy'} return market.replace() end
+market.screenActions.eula11=function()return market.mainMenu() end
 market.screenActions.sell=function()return false end
 market.screenActions.buy=function()return market.inShopMenu()end
+market.screenActions.transfer=function()return market.transfer()end
+market.screenActions.transfer_not_registered=function()return market.transfer()end
+market.screenActions.transfer_tooBig=function()return market.transferValue()end
+market.screenActions.transferComplite=function()return market.mainMenu()end
 market.screenActions.one=function()market.number=market.number..'1' return market.inputNumber(1) end
 market.screenActions.two=function()market.number=market.number..'2' return market.inputNumber(2) end
 market.screenActions.free=function()market.number=market.number..'3' return market.inputNumber(3) end
@@ -198,7 +209,7 @@ market.screenActions.cancel=function()
 	market.totalprice = '0'
 	market.button.number.text=' '
 	market.button.totalprice.text=' '
-	return market.inShopMenu()
+	return market.mainMenu()
 end
 --====================================================================================
 market.screenActions.status=function()
@@ -217,6 +228,11 @@ market.screenActions.status=function()
 	return market.place({'mode'})
 end
 --================================================================
+market.mainMenu=function()
+	market.screen={'sell','buy','transfer'}
+	return market.replace()
+end
+
 --вызов меню набора номера.
 market.trade=function()
 	market.screen={'status','one','two','free','foo','five','six','seven','eight',
@@ -272,23 +288,23 @@ market.inputNumber=function(n)
 	if n == 'n' then return market.acceptBuy() end
 	if market.mode == 'trade' then
 		if tonumber(market.number) and tonumber(market.number)> market.itemlist[market.select].qty-1 then
-				market.number=tostring(market.itemlist[market.select].qty-1)
+				market.number = tostring(market.itemlist[market.select].qty-1)
 		end
-		if #market.number>5 then
-			if tonumber(market.number) and tonumber(market.number)> 999 then
-				market.number=tostring(math.floor(999))
+		if #market.number > 5 then
+			if tonumber(market.number) and tonumber(market.number) > 999 then
+				market.number = tostring(math.floor(999))
 			end	
 		end
 	end
-	market.button.number.text=market.number..' '
-	market.button.number.xs= #market.itemlist[market.inumList[market.selectedLine]].display_name+4
-	market.button.number.tx=
+	market.button.number.text = market.number..' '
+	market.button.number.xs = #market.itemlist[market.inumList[market.selectedLine]].display_name+4
+	market.button.number.tx =
 	(#market.itemlist[market.inumList[market.selectedLine]].display_name+4)/2-#market.button.number.text/2
 	local items= tonumber(market.number) or 0
 	local count= tonumber(market.itemlist[market.inumList[market.selectedLine]].sell_price) or 0
-	market.button.totalprice.text= tostring((items*count))..'   '
-	market.button.totalprice.xs= #market.itemlist[market.inumList[market.selectedLine]].display_name+4
-	market.button.totalprice.tx= 
+	market.button.totalprice.text = tostring((items*count))..'   '
+	market.button.totalprice.xs = #market.itemlist[market.inumList[market.selectedLine]].display_name+4
+	market.button.totalprice.tx = 
 	(#market.itemlist[market.inumList[market.selectedLine]].display_name+4)/2-#market.button.totalprice.text/2
 	if market.mode == 'trade' then return market.place({'number','totalprice'}) end
 	return market.place({'number'})
@@ -311,20 +327,20 @@ market.getNewBalance=function()
 	if balance > 0 then
 		--если баланс не ниже суммы покупки
 		if balance >= totalprice then
-				market.substract=0
+				market.substract = 0
 				market.balanceOP=totalprice
 			else --баланс ниже суммы покупки, но не 0
 				--число монет к изъятию
-				market.substract=math.floor((totalprice-balance)/10)+1
+				market.substract = math.floor((totalprice-balance)/10)+1
 				--сумма вычета с баланса
-				market.balanceOP=totalprice-market.substract*10
+				market.balanceOP = totalprice-market.substract*10
 		end
 	else--если баланс 0, то он не может стать меньше!
-		market.substract=math.floor(totalprice/10)+1
+		market.substract = math.floor(totalprice/10)+1
 		--для автозачисления сдачи на баланс
-		market.balanceOP=totalprice-market.substract*10
+		market.balanceOP = totalprice-market.substract*10
 	end
-	local msg={name=market.player.name,op='buy',number=market.msgnum,value=market.balanceOP}
+	local msg = {name=market.player.name,op='buy',number=market.msgnum,value=market.balanceOP}
 	return market.serverPost(msg)
 			
 end
@@ -338,7 +354,7 @@ market.finalizeBuy=function()
 	market.chest.fromInvToInv(pim,market.money,price,'pushItem')
 
 	local item_raw_name=market.inumList[market.selectedLine]--рав-имя предмета
-	local count=tonumber(market.number)
+	local count = tonumber(market.number)
 	--пуллим из сундука = выдача товара
 	market[market.workmode].fromInvToInv(market.chestShop,item_raw_name,count,'pullItem',price)
 
@@ -347,7 +363,7 @@ market.finalizeBuy=function()
 end
 
 --завершает сессию установки цены овнером
-market.setPrice=function()
+market.setPrice = function()
 	market.itemlist[market.inumList[market.selectedLine]].sell_price = market.number
 	market.save_toFile(market.itemlist)
 	return market.inShopMenu()
@@ -359,7 +375,45 @@ market.search = function()
 
 return true
 end
-
+--проверка наличия аккаунта. 
+function market.isRegistered(bool)
+	market.clear(0x202020)
+	if not bool then
+		market.screen={'transfer_not_registered','cancel'}
+		return market.replace()
+	end
+	return market.transferValue()
+end
+--завершение трансфера. вывод уведомления
+function market.transferComplite()
+	market.screen={'transfer_complite'}
+	return market.replace()
+end
+--меню трансфера
+market.transfer=function()
+	market.clear(0x202020)
+	market.place({'transfer_name','newname','cancel'})
+	market.screen={'cancel'}
+	market.select = market.inputString()
+	local msg={name=market.player.name,name2=market.select,op='isRegistered',number=market.msgnum,value='0'}
+	return market.serverPost(msg)
+end
+market.transferValue=function()
+	market.clear(0x202020)
+	market.place({'transfer_value','newname','cancel'})
+	market.screen={'cancel'}
+	market.number ='not number'
+	while not tonumber(market.number) do
+		market.number = market.inputString()
+	end
+	if market.player.balance >= market.number then
+		local msg={name=market.player.name,name2=market.select,op='transfer',number=market.msgnum,value=market.number}
+		return market.serverPost(msg)   --market.inShopMenu()
+	else
+		market.screen = {'transfer_tooBig','cancel'}
+		return market.replace()
+	end
+end
 --==================================================================
 --pim & chest - components contains inventory
 --inventoryList - itemlist of csanning inventory
@@ -491,6 +545,7 @@ market.inShopMenu=function()
 	market.isPlayerInventoryFull()
 	--обновляем список товаров в магазине
 	market.itemListReplace()
+	--убираем из списка то, что не хотим показывать в списке товаров
 	for n in pairs (market.inumList) do
 		if market.itemlist[market.inumList[n]].display_name=='gt.blockmetal4.12.name' then table.remove(market.inumList, n) end
  		if market.itemlist[market.inumList[n]].display_name=='Money' then table.remove(market.inumList, n) end
@@ -554,11 +609,8 @@ function market.pimWho(e)
 	market.button.mode.text='trade'
 	market.button.status.text=market.player.status
 	market.button.player.text=market.player.name
-	if who == 'Taoshi' or who == 'Velem77' then
-    	market.money = 'gt.metaitem.02.18061'--test
-	else
-		market.money = market.pimmoney	
-	end
+	market.money = market.pimmoney
+
 	--здороваемся
 	market.button.name.text=who
 	market.button.name.xs=#who+4
@@ -744,7 +796,7 @@ end
 --замена кнопок экрана: вызов очистки и прорисовки
 function market.replace()
 	market.clear(0x111111)
-	market.place(market.screen)
+	return market.place(market.screen)
 end
 
 --Очистка экрана ничего особенного. Обычный велосипед
@@ -755,6 +807,7 @@ market.clear=function(background)
 	gpu.setBackground(background)
 	gpu.fill(1,1,x,y,' ')
 	gpu.setActiveBuffer(one)
+	return true
 end
 --размещает текущие одноцветные кнопки на экране
 market.place=function(buttons)
@@ -767,6 +820,7 @@ market.place=function(buttons)
 		gpu.set((b.x)+(b.tx),(b.y)+(b.ty),b.text)
 	end
 	gpu.setActiveBuffer(one)
+	return true
 end
 
 function market.screenInit()
@@ -795,7 +849,8 @@ market.serverResponse=function(e)
 	if msg.sender ~= modem.address then return true 
 	end
 		--msg.number,msg.name,msg.value
-		--msg.op = enter|buy|sell|balanceIn|balanceOut|getOwners
+		--msg.op = {enter|buy|sell|balanceIn|balanceOut|
+		--getOwners|transfer|isRegistered}
 	modem.close(port)
 	market.events.modem_message=nil
 		--процедура регистрации терминала завершена. сохраняем адрес сервера
@@ -809,6 +864,7 @@ market.serverResponse=function(e)
 		market.player.balance = msg.balance
 		market.msgnum = market.msgnum + 1
 	end
+	--переход по коду совершённой операции
 	return market.modem[msg.op](msg)
 end
 market.modem={}
@@ -817,8 +873,21 @@ function market.modem.getOwners(msg)
 	market.events.player_on='pimWho'
 	return market.screenInit()
 end
+--запрашиваемый игрок не найден
+function market.modem.regFalse(_)
+	return market.isRegistered(false)
+end
+--запрашиваемый игрок найден
+function market.modem.regTrue(_)
+	return market.isRegistered(true)
+end
+--завершение перевода средств
+function market.modem.transfer(_)
+	return market.transferComplite()
+end
+--завершение покупки
 function market.modem.buy(_)
-	market.finalizeBuy()
+	return market.finalizeBuy()
 end
 function market.modem.sell(_)
 

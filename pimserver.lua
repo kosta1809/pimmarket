@@ -134,6 +134,26 @@ function pimserver.enter(msg)
 	return pimserver.broadcast(msg)
 end
 
+--проверка наличия имени в базе данных
+function pimserver.isRegistered(msg)
+	if not db[msg.name2] then 
+		msg.op = 'regFalse'
+	else
+		msg.op = 'regTrue'
+	end
+	return pimserver.broadcast(msg)
+end
+
+--перевод со счета на счет
+function pimserver.transfer(msg)
+	if not db[msg.name2] then pimserver.newUser(msg.name2)
+		print('new user'..msg.name2)
+	end
+	db[msg.name].balance=db[msg.name].balance - msg.value
+	db[msg.name2].balance=db[msg.name2].balance + msg.value
+	return pimserver.broadcast(msg)
+end
+
 --вычитание с баланса при покупке
 function pimserver.buy(msg)
 	db[msg.name].balance=db[msg.name].balance - msg.value
@@ -191,7 +211,7 @@ function pimserver.WaitToNewOwner()
 	player_on = true
 	return true
 end
-function pimmarket.regOwner(a) 
+function pimserver.regOwner(a) 
 	table.insert(owners,{UUID=a[3],name=a[2]})
 	print('Благодарю. владелец '..#owners..' '..a[2]..'  UUID:'..a[3]..'  зарегестрирован')
 	return pimserver.saveOwnersTable()

@@ -538,7 +538,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	while y < 21 do
 		local item=inumList[lot[y]]
 		qty=tostring(math.floor(tonumber(itemlist[item].qty)))
-		gpu.set(21,y,"                                          ")
+		gpu.set(21,y,"                                                       ")
 		gpu.set(21,y,itemlist[item].display_name)
 		gpu.set(64,y,qty)
 		gpu.set(72,y,tostring(itemlist[item].sell_price))
@@ -897,7 +897,7 @@ market.serverResponse=function(e)
 end
 market.modem={}
 function market.modem.getOwners(msg)
-	market.owners=msg.owners
+	market.owner=msg.owners
 	market.events.player_on='pimWho'
 	return market.screenInit()
 end
@@ -933,7 +933,7 @@ end
 
 function market.eula()
 	market.clear()
-	market.button.eula14.text='пишите владельцу'..market.owners[1].name
+	market.button.eula14.text='пишите владельцу'..market.owner[1].name
 	market.place({'eula1','eula2','eula3','eula4','eula5','eula6','eula7','eula8','eula9','eula10','eula12','eula13','eula14'})
 	market.screen={'eula11'}
 	return market.place(market.screen)

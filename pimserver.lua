@@ -81,6 +81,14 @@ end
 
 --отсылка подтверждения регистрации
 function pimserver.accept(msg)
+	local who = msg[6]
+	for id in pairs(owners)do
+		if owners[id].name == who then
+			who = nil
+		end
+	end
+	if who then return true end
+	
 	local x,y = msg[3],msg[4]
 	--if msg[6]==adminname then
 	if x < 4 and y == 1 then
@@ -98,6 +106,7 @@ function pimserver.accept(msg)
 		return pimserver.returnAccept(sender)
 	end
 	--end
+	return true
 end
 
 function pimserver.returnAccept(sender)
@@ -111,7 +120,7 @@ function pimserver.place()
 	gpu.setBackground(0x113311)
 	gpu.setForeground(0x58f029)
 	gpu.fill(1,1,x,y,' ')
-	gpu.set(1,1,'REG')
+	gpu.set(1,1,'REG: step on PIM for register owner')
 	gpu.set(5,1,'Registered terminals:')
 	for t in pairs(terminal) do
 		gpu.set(5,t+1,terminal[t])
@@ -280,8 +289,6 @@ end
 function pimserver.loadOwnersTable()
 	local file=io.open('owners.pimserver')
 	owners=serialization.unserialize(file:read('*a'))
-	local text='main owner: '..owners[1].name
-	gpu.set(1,32,text)
 	return true
 end
 function pimserver.saveOwnersTable()
@@ -322,6 +329,5 @@ gpu.setResolution(76,24)
 pimserver.init()
 
 print('Сервер поднят.')
-print('Рота, подъёоом!')
 modem.broadcast(send,'name')
 return pimserver

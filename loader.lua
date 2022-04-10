@@ -1,4 +1,3 @@
---local loader_v='0.9.5'--for check version
 local inet=require'internet'
 local c='component'
 local gpu=require(c).gpu
@@ -7,6 +6,7 @@ local fs=require(c).filesystem
 local branch="https://raw.githubusercontent.com/Zardar/pimmarket/master/"
 local computer=require'computer'
 local events={'touch'}
+local url,fd,bd='',0x68f029,0x303030
 pullSignal=computer.pullSignal	
 computer.pullSignal=function(...)
 	local e={pullSignal(...)}
@@ -19,14 +19,14 @@ computer.pullSignal=function(...)
 end
 
 local b={
-s={x=2,xs=20,y=2,ys=3,text='запустить сервер',tx=1,ty=1,bg=0x303030,fg=0x68f029,f='pimserver.lua'},
-c={x=2,xs=20,y=6,ys=3,text='запустить клиент',tx=1,ty=1,bg=0x303030,fg=0x68f029,f='pimmarket.lua'},
-us={x=2,xs=24,y=10,ys=3,text='скачать+запустить сервер',tx=1,ty=1,bg=0x303030,fg=0x68f029},
-uc={x=2,xs=24,y=14,ys=3,text='скачать+запустить клиент',tx=1,ty=1,bg=0x303030,fg=0x68f029},
-ul={x=2,xs=20,y=22,ys=3,text='апгрейд загрузчика',tx=1,ty=1,bg=0x303030,fg=0x68f029,f='loader.lua'},
-up={x=2,xs=28,y=18,ys=3,text='скачать и запустить Ме крафт',tx=1,ty=1,bg=0x303030,fg=0x68f029,f='pimmeprecraft.lua'}
+s={x=2,xs=21,y=2,ys=3,text='запустить сервер',tx=1,ty=1,bg=bd,fg=fd,f='pimserver.lua'},
+c={x=2,xs=21,y=6,ys=3,text='запустить клиент',tx=1,ty=1,bg=bd,fg=fd,f='pimmarket.lua'},
+us={x=2,xs=27,y=10,ys=3,text='скачать+запустить сервер',tx=1,ty=1,bg=bd,fg=fd},
+uc={x=2,xs=27,y=14,ys=3,text='скачать+запустить клиент',tx=1,ty=1,bg=bd,fg=fd},
+ul={x=2,xs=20,y=22,ys=3,text='апгрейд загрузчика',tx=1,ty=1,bg=bd,fg=fd,f='loader.lua'},
+up={x=2,xs=31,y=18,ys=3,text='скачать и запустить Ме крафт',tx=1,ty=1,bg=bd,fg=fd,f='pimmeprecraft.lua'}
 }
-local screen = {'s','c','us','uc','up'}
+local screen = {'s','c','us','uc'}
 
 local function wget(url,name)
 	local handle=inet.request(url)
@@ -43,9 +43,9 @@ end
 local sa={}
 sa.c=function()if fs.exists('/home/'..b.c.f)then return os.execute(b.c.f)end end
 sa.s=function()if fs.exists('/home/'..b.s.f)then return os.execute(b.s.f)end end
-sa.us=function() wget(branch..b.s.f,b.s.f)return sa.s()end
-sa.uc=function() wget(branch..b.c.f,b.c.f)return sa.c()end
-sa.up=function() wget(branch..b.up.f,b.up.f)return os.execute(b.up.f)end
+sa.us=function() url=branch..b.s.f,b.s.f  wget(url)return sa.s()end
+sa.uc=function() url=branch..b.c.f,b.c.f wget(url)return sa.c()end
+sa.up=function() url=branch..b.up.f,b.up.f wget(url)return os.execute(b.up.f)end
 
 local clear=function()
 	local x,y=gpu.getViewport()

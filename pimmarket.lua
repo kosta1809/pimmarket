@@ -508,7 +508,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	--поиск предметов с к-вом больше чем 1
 	while pos <= total do
 		local item=inumList[pos]
-		if tonumber(itemlist[item].qty) > 0 do
+		if tonumber(itemlist[item].qty) > 0 then
 			lot[y]=pos
 			y=y+1
 		end
@@ -526,7 +526,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 
 	y=2
 	while y < 21 do
-		item=inumList[lot[y]]
+		local item=inumList[lot[y]]
 		qty=tostring(math.floor(tonumber(itemlist[item].qty)))
 		gpu.set(21,y,itemlist[item].display_name)
 		gpu.set(64,y,qty)
@@ -537,7 +537,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	gpu.setBackground(0x252525)
 	y=3
 	while y < 21 do
-		item=inumList[lot[y]]
+		local item=inumList[lot[y]]
 		qty=tostring(math.floor(tonumber(itemlist[item].qty)))
 		gpu.set(21,y,itemlist[item].display_name)
 		gpu.set(64,y,qty)

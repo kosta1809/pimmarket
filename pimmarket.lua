@@ -513,7 +513,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 			y=y+1
 		end
 		pos=pos+1
-		if y > 21 then pos=total+1 end
+		if y > 23 then pos=total+1 end
 	end
 
 	gpu.setActiveBuffer(zero)
@@ -524,7 +524,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	gpu.fill(72,2,5,20,' ')
 
 	y=2
-	while y < 21 do
+	while y < 23 do
 		local item=inumList[lot[y]]
 		qty=tostring(math.floor(tonumber(itemlist[item].qty)))
 		gpu.set(21,y,itemlist[item].display_name)
@@ -535,7 +535,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 
 	gpu.setBackground(0x252525)
 	y=3
-	while y < 21 do
+	while y < 23 do
 		local item=inumList[lot[y]]
 		qty=tostring(math.floor(tonumber(itemlist[item].qty)))
 		gpu.set(21,y,"                                                       ")

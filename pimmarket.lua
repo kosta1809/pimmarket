@@ -920,7 +920,7 @@ end
 
 function market.eula()
 	market.clear()
-	market.button.eula14.text='пишите владельцу'..market.owner[1].name
+	market.button.eula14.text='пишите владельцу'..market.owners[1].name
 	market.place({'eula1','eula2','eula3','eula4','eula5','eula6','eula7','eula8','eula9','eula10','eula12','eula13','eula14'})
 	market.screen={'eula11'}
 	return market.place(market.screen)

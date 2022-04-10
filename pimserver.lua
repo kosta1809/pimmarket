@@ -280,6 +280,8 @@ end
 function pimserver.loadOwnersTable()
 	local file=io.open('owners.pimserver')
 	owners=serialization.unserialize(file:read('*a'))
+	local text='main owner: '..owners[1].name
+	gpu.set(1,32,text)
 	return true
 end
 function pimserver.saveOwnersTable()

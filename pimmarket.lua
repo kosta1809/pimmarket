@@ -503,6 +503,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	local y=2
 	local pos=market.shopLine
 	local total=#inumList
+	local qty=0
 
 	gpu.setActiveBuffer(zero)
 	gpu.setBackground(0x111111)
@@ -512,11 +513,14 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	gpu.fill(72,2,5,20,' ')
 	while pos <= total do
 		local item=inumList[pos]
-		gpu.set(21,y,itemlist[item].display_name)
-		gpu.set(64,y,tostring(math.floor(itemlist[item].qty-1)))
-		gpu.set(72,y,tostring(itemlist[item].sell_price))
-		y=y+2
-		pos=pos+2
+		qty=math.floor(itemlist[item].qty-1)
+		if qty>0 then
+			gpu.set(21,y,itemlist[item].display_name)
+			gpu.set(64,y,tostring(math.floor(qty)))
+			gpu.set(72,y,tostring(itemlist[item].sell_price))
+			y=y+2
+			pos=pos+2
+		end
 		if y > 21 then pos=total+1 end
 	end
 
@@ -525,12 +529,14 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	gpu.setBackground(0x252525)
 	while pos <= total do
 		local item=inumList[pos]
-		gpu.set(21,y,'                                          ')
-		gpu.set(21,y,itemlist[item].display_name)
-		gpu.set(64,y,tostring(math.floor(itemlist[item].qty-1)))
-		gpu.set(72,y,tostring(itemlist[item].sell_price))
-		y=y+2
-		pos=pos+2
+		qty=math.floor(itemlist[item].qty-1)
+		if qty>0 then
+			gpu.set(21,y,itemlist[item].display_name)
+			gpu.set(64,y,tostring(math.floor(qty)))
+			gpu.set(72,y,tostring(itemlist[item].sell_price))
+			y=y+2
+			pos=pos+2
+		end
 		if y > 21 then pos=total+1 end
 	end
 

@@ -504,39 +504,47 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	local pos=market.shopLine
 	local total=#inumList
 	local qty=0
+	local lot={}
+	--поиск предметов с к-вом больше чем 1
+	while pos <= total do
+		local item=inumList[pos]
+		if tonumber(itemlist[item].qty) > 0 do
+			lot[y]=itemlist[item]
+			y=y+1
+		end
+		pos=pos+1
+		if y > 21 then pos=total+1 end
+	end
 
+	pos=market.shopLine
 	gpu.setActiveBuffer(zero)
 	gpu.setBackground(0x111111)
 	gpu.setForeground(color.blackLime)
 	gpu.fill(21,2,42,20,' ')
 	gpu.fill(64,2,5,20,' ')
 	gpu.fill(72,2,5,20,' ')
-	while pos <= total do
-		local item=inumList[pos]
-		qty=math.floor(tonumber(itemlist[item].qty))
-		gpu.set(21,y,itemlist[item].display_name)
-		gpu.set(64,y,tostring(math.floor(qty)))
-		gpu.set(72,y,tostring(itemlist[item].sell_price))
+
+	y=2
+	while y < 21 do
+		qty=tostring(math.floor(tonumber(lot[y].qty)))
+		gpu.set(21,y,lot[y].display_name)
+		gpu.set(64,y,qty)
+		gpu.set(72,y,tostring(lot[y].sell_price))
 		y=y+2
-		pos=pos+2
-		if y > 21 then pos=total+1 end
 	end
 
-	y=3
-	pos=market.shopLine+1
 	gpu.setBackground(0x252525)
-	while pos <= total do
-		local item=inumList[pos]
-		qty=math.floor(tonumber(itemlist[item].qty))
-		gpu.set(21,y,itemlist[item].display_name)
-		gpu.set(64,y,tostring(math.floor(qty)))
-		gpu.set(72,y,tostring(itemlist[item].sell_price))
+	y=3
+	while y < 21 do
+		qty=tostring(math.floor(tonumber(lot[y].qty)))
+		gpu.set(21,y,lot[y].display_name)
+		gpu.set(64,y,qty)
+		gpu.set(72,y,tostring(lot[y].sell_price))
 		y=y+2
-		pos=pos+2
-		if y > 21 then pos=total+1 end
 	end
 
 	gpu.setActiveBuffer(one)
+	return true
 end
 
 market.isPlayerInventoryFull=function()
@@ -687,8 +695,10 @@ function market.merge()
 				market.itemlist.size=market.itemlist.size+1
 				market.itemlist[id].slots=market.chestList[id].slots
 			else
-				market.itemlist[id].qty=market.chestList[id].qty
-				market.itemlist[id].slots=market.chestList[id].slots
+				if market.chestList[id].qty > 1 then
+					market.itemlist[id].qty=market.chestList[id].qty-1
+					market.itemlist[id].slots=market.chestList[id].slots
+				end
 			end
 		end
 		index=index+1

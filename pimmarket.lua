@@ -629,7 +629,7 @@ function market.pimWho(e)
 	market.player.uid=uid
 	market.player.status = 'player'
 	for f=1, #market.owner do
-		if market.owner[f].uuid==uid and market.owner[f].name==who then 
+		if market.owner[f].UUID==uid and market.owner[f].name==who then 
 			market.player.status = 'owner'
 		end
 	end

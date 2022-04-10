@@ -19,12 +19,12 @@ computer.pullSignal=function(...)
 end
 
 local b={
-s={x=2,xs=21,y=2,ys=3,text='запустить сервер',tx=1,ty=1,bg=bd,fg=fd,f='pimserver.lua'},
-c={x=2,xs=21,y=6,ys=3,text='запустить клиент',tx=1,ty=1,bg=bd,fg=fd,f='pimmarket.lua'},
-us={x=2,xs=27,y=10,ys=3,text='скачать+запустить сервер',tx=1,ty=1,bg=bd,fg=fd},
-uc={x=2,xs=27,y=14,ys=3,text='скачать+запустить клиент',tx=1,ty=1,bg=bd,fg=fd},
-ul={x=2,xs=20,y=22,ys=3,text='апгрейд загрузчика',tx=1,ty=1,bg=bd,fg=fd,f='loader.lua'},
-up={x=2,xs=31,y=18,ys=3,text='скачать и запустить Ме крафт',tx=1,ty=1,bg=bd,fg=fd,f='pimmeprecraft.lua'}
+s={x=2,xs=21,y=2,ys=3,text='запустить сервер',tx=2,ty=1,bg=bd,fg=fd,f='pimserver.lua'},
+c={x=2,xs=21,y=6,ys=3,text='запустить клиент',tx=2,ty=1,bg=bd,fg=fd,f='pimmarket.lua'},
+us={x=2,xs=28,y=10,ys=3,text='скачать+запустить сервер',tx=2,ty=1,bg=bd,fg=fd},
+uc={x=2,xs=28,y=14,ys=3,text='скачать+запустить клиент',tx=2,ty=1,bg=bd,fg=fd},
+ul={x=2,xs=20,y=22,ys=3,text='апгрейд загрузчика',tx=2,ty=1,bg=bd,fg=fd,f='loader.lua'},
+up={x=2,xs=31,y=18,ys=3,text='скачать и запустить Ме крафт',tx=2,ty=1,bg=bd,fg=fd,f='pimmeprecraft.lua'}
 }
 local screen = {'s','c','us','uc'}
 

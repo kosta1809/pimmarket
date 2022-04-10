@@ -516,7 +516,6 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 		if y > 21 then pos=total+1 end
 	end
 
-	pos=market.shopLine
 	gpu.setActiveBuffer(zero)
 	gpu.setBackground(0x111111)
 	gpu.setForeground(color.blackLime)
@@ -687,7 +686,7 @@ function market.merge()
 		market.inumList[index]=id
 		if type (market.itemlist[id]) == 'number' then do end
 		else
-			if not market.itemlist[id] and market.chestList[id].qty > 1 then
+			if not market.itemlist[id] then
 				market.itemlist[id]={}
 				market.itemlist[id].sell_price = '9999'
 				market.itemlist[id].buy_price = '0'	
@@ -697,10 +696,8 @@ function market.merge()
 				market.itemlist.size=market.itemlist.size+1
 				market.itemlist[id].slots=market.chestList[id].slots
 			else
-				if market.chestList[id].qty > 1 then
 					market.itemlist[id].qty=market.chestList[id].qty-1
 					market.itemlist[id].slots=market.chestList[id].slots
-				end
 			end
 		end
 		index=index+1

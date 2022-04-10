@@ -515,10 +515,25 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 		gpu.set(21,y,itemlist[item].display_name)
 		gpu.set(64,y,tostring(math.floor(itemlist[item].qty-1)))
 		gpu.set(72,y,tostring(itemlist[item].sell_price))
-		y=y+1
-		pos=pos+1
+		y=y+2
+		pos=pos+2
 		if y > 21 then pos=total+1 end
 	end
+
+	y=3
+	pos=market.shopLine+1
+	gpu.setBackground(0x252525)
+	while pos <= total do
+		local item=inumList[pos]
+		gpu.set(21,y,'                                          ')
+		gpu.set(21,y,itemlist[item].display_name)
+		gpu.set(64,y,tostring(math.floor(itemlist[item].qty-1)))
+		gpu.set(72,y,tostring(itemlist[item].sell_price))
+		y=y+2
+		pos=pos+2
+		if y > 21 then pos=total+1 end
+	end
+
 	gpu.setActiveBuffer(one)
 end
 

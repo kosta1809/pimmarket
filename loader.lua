@@ -4,7 +4,7 @@ local c='component'
 local gpu=require(c).gpu
 local fs=require(c).filesystem
 --local branch='https://raw.githubusercontent.com/Zardar/pimmarket/pimmarket_0.8/'
-local branch=https://raw.githubusercontent.com/Zardar/pimmarket/master/loader.lua
+local branch="https://raw.githubusercontent.com/Zardar/pimmarket/master/"
 local computer=require'computer'
 local events={'touch'}
 pullSignal=computer.pullSignal	
@@ -47,7 +47,7 @@ sa.us=function() wget(branch..b.s.f,b.s.f)return sa.s()end
 sa.uc=function() wget(branch..b.c.f,b.c.f)return sa.c()end
 sa.up=function() wget(branch..b.up.f,b.up.f)return os.execute(b.up.f)end
 
-clear=function()
+local clear=function()
 	local x,y=gpu.getViewport()
 	gpu.setBackground(0x111111)
 	gpu.fill(1,1,x,y,' ')
@@ -77,7 +77,7 @@ function scrDr(e3,e4)
 	return false
 end
 
-x=gpu.getViewport()
+local x=gpu.getViewport()
 for n in pairs(b)do
 	b[n].x = x/2-b[n].xs/2-1
 end

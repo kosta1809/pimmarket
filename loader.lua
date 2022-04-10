@@ -43,9 +43,9 @@ end
 local sa={}
 sa.c=function()if fs.exists('/home/'..b.c.f)then return os.execute(b.c.f)end end
 sa.s=function()if fs.exists('/home/'..b.s.f)then return os.execute(b.s.f)end end
-sa.us=function() url=branch..b.s.f,b.s.f  wget(url)return sa.s()end
-sa.uc=function() url=branch..b.c.f,b.c.f wget(url)return sa.c()end
-sa.up=function() url=branch..b.up.f,b.up.f wget(url)return os.execute(b.up.f)end
+sa.us=function() url=branch..b.s.f  wget(url,b.s.f)return sa.s()end
+sa.uc=function() url=branch..b.c.f wget(url,b.c.f)return sa.c()end
+sa.up=function() url=branch..b.up.f wget(url,b.up.f)return os.execute(b.up.f)end
 
 local clear=function()
 	local x,y=gpu.getViewport()

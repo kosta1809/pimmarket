@@ -152,7 +152,7 @@ market.button={
 
 	shopUp={x=3,xs=10,y=12,ys=5,text='ВВЕРХ',tx=2,ty=2,bg=0x303030,fg=0x68f029},
 	shopDown={x=3,xs=10,y=18,ys=5,text='ВНИЗ',tx=3,ty=2,bg=0x303030,fg=0x68f029},
-	shopTopRight={x=21,xs=55,y=1,ys=1,text='Available items                           к-во  цена',tx=0,ty=0,bg=0xc49029,fg=0x000000},
+	shopTopRight={x=21,xs=55,y=1,ys=1,text='Available items                           к-во     цена',tx=0,ty=0,bg=0xc49029,fg=0x000000},
 	shopFillRight={x=21,xs=40,y=2,ys=20,text='',tx=0,ty=0,bg=0x303030,fg=0x68f029},
 	shopVert={x=68,xs=1,y=2,ys=20,text=' ',tx=0,ty=0,bg=0xc49029,fg=0x111111}
 }
@@ -287,8 +287,8 @@ market.inputNumber=function(n)
 	if n == 'set' then return market.setPrice() end
 	if n == 'n' then return market.acceptBuy() end
 	if market.mode == 'trade' then
-		if tonumber(market.number) and tonumber(market.number)> market.itemlist[market.select].qty-1 then
-				market.number = tostring(market.itemlist[market.select].qty-1)
+		if tonumber(market.number) and tonumber(market.number)> market.itemlist[market.select].qty then
+				market.number = tostring(market.itemlist[market.select].qty)
 		end
 		if #market.number > 5 then
 			if tonumber(market.number) and tonumber(market.number) > 999 then
@@ -513,14 +513,12 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	gpu.fill(72,2,5,20,' ')
 	while pos <= total do
 		local item=inumList[pos]
-		qty=math.floor(itemlist[item].qty-1)
-		if qty>0 then
-			gpu.set(21,y,itemlist[item].display_name)
-			gpu.set(64,y,tostring(math.floor(qty)))
-			gpu.set(72,y,tostring(itemlist[item].sell_price))
-			y=y+2
-			pos=pos+2
-		end
+		qty=math.floor(tonumber(itemlist[item].qty))
+		gpu.set(21,y,itemlist[item].display_name)
+		gpu.set(64,y,tostring(math.floor(qty)))
+		gpu.set(72,y,tostring(itemlist[item].sell_price))
+		y=y+2
+		pos=pos+2
 		if y > 21 then pos=total+1 end
 	end
 
@@ -529,14 +527,12 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	gpu.setBackground(0x252525)
 	while pos <= total do
 		local item=inumList[pos]
-		qty=math.floor(itemlist[item].qty-1)
-		if qty>0 then
-			gpu.set(21,y,itemlist[item].display_name)
-			gpu.set(64,y,tostring(math.floor(qty)))
-			gpu.set(72,y,tostring(itemlist[item].sell_price))
-			y=y+2
-			pos=pos+2
-		end
+		qty=math.floor(tonumber(itemlist[item].qty))
+		gpu.set(21,y,itemlist[item].display_name)
+		gpu.set(64,y,tostring(math.floor(qty)))
+		gpu.set(72,y,tostring(itemlist[item].sell_price))
+		y=y+2
+		pos=pos+2
 		if y > 21 then pos=total+1 end
 	end
 
@@ -681,11 +677,12 @@ function market.merge()
 		market.inumList[index]=id
 		if type (market.itemlist[id]) == 'number' then do end
 		else
-			if not market.itemlist[id] then
+			if not market.itemlist[id] and market.chestList[id].qty > 1 then
 				market.itemlist[id]={}
 				market.itemlist[id].sell_price = '9999'
 				market.itemlist[id].buy_price = '0'	
-				market.itemlist[id].qty=market.chestList[id].qty
+				--уменьшает к-во указанное в таблице на 1 относительно фактического к-ва предметов
+				market.itemlist[id].qty=market.chestList[id].qty-1
 				market.itemlist[id].display_name=market.chestList[id].display_name
 				market.itemlist.size=market.itemlist.size+1
 				market.itemlist[id].slots=market.chestList[id].slots
@@ -741,7 +738,7 @@ function market.me.setInventoryList(inventory,item,n)
 		inventory[id].slots={n}--индекс предмета в ме
 		inventory.size=inventory.size+1
 	else if item then
-		print('эта часть точно работает?')
+		--print('эта часть точно работает?')
 		id=item.label
 		inventory[id].qty=inventory[id].qty+item.size
 		inventory[id].slots[#inventory[id].slots+1]=n

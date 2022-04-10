@@ -142,13 +142,13 @@ market.button={
 	buy={x=30,xs=16,y=8,ys=3,text='Купить',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	sell={x=30,xs=16,y=12,ys=3,text='Продать',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	full={x=16,xs=39,y=10,ys=3,text='Ваш инвентарь полон. Доступ закрыт.',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	transfer={x=30,xs=30,y=16,ys=3,text='Перевод другому игроку',tx=4,ty=1,bg=0x303030,fg=0x68f029},
+	transfer={x=23,xs=30,y=16,ys=3,text='Перевод другому игроку',tx=4,ty=1,bg=0x303030,fg=0x68f029},
 
-	transfer_name={x=30,xs=28,y=10,ys=3,text='Введите имя для перевода',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	transfer_val={x=30,xs=26,y=10,ys=3,text='Введите сумму перевода',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	transfer_not_registered={x=30,xs=26,y=18,ys=3,text='Нет в базе данных',tx=5,ty=1,bg=0x303030,fg=0x68f029},
-	transfer_tooBig={x=30,xs=19,y=18,ys=3,text='У вас нет столько',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	transferComplite={x=30,xs=18,y=18,ys=3,text='Перевод завершён',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	transfer_name={x=24,xs=28,y=10,ys=3,text='Введите имя для перевода',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	transfer_value={x=25,xs=26,y=10,ys=3,text='Введите сумму перевода',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	transfer_not_registered={x=28,xs=26,y=18,ys=3,text='Нет в базе данных',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+	transfer_tooBig={x=28,xs=19,y=18,ys=3,text='У вас нет столько',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	transfer_complite={x=29,xs=20,y=18,ys=3,text='Перевод завершён',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 
 	shopUp={x=3,xs=10,y=12,ys=5,text='ВВЕРХ',tx=2,ty=2,bg=0x303030,fg=0x68f029},
 	shopDown={x=3,xs=10,y=18,ys=5,text='ВНИЗ',tx=3,ty=2,bg=0x303030,fg=0x68f029},
@@ -168,7 +168,7 @@ market.screenActions.buy=function()return market.inShopMenu()end
 market.screenActions.transfer=function()return market.transfer()end
 market.screenActions.transfer_not_registered=function()return market.transfer()end
 market.screenActions.transfer_tooBig=function()return market.transferValue()end
-market.screenActions.transferComplite=function()return market.mainMenu()end
+market.screenActions.transfer_complite=function()return market.mainMenu()end
 market.screenActions.one=function()market.number=market.number..'1' return market.inputNumber(1) end
 market.screenActions.two=function()market.number=market.number..'2' return market.inputNumber(2) end
 market.screenActions.free=function()market.number=market.number..'3' return market.inputNumber(3) end
@@ -406,7 +406,7 @@ market.transferValue=function()
 	while not tonumber(market.number) do
 		market.number = market.inputString()
 	end
-	if market.player.balance >= market.number then
+	if tonumber(market.player.balance) >= tonumber(market.number) then
 		local msg={name=market.player.name,name2=market.select,op='transfer',number=market.msgnum,value=market.number}
 		return market.serverPost(msg)   --market.inShopMenu()
 	else
@@ -538,6 +538,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	while y < 21 do
 		local item=inumList[lot[y]]
 		qty=tostring(math.floor(tonumber(itemlist[item].qty)))
+		gpu.set(21,y,"                                          ")
 		gpu.set(21,y,itemlist[item].display_name)
 		gpu.set(64,y,qty)
 		gpu.set(72,y,tostring(itemlist[item].sell_price))

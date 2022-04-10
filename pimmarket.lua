@@ -142,13 +142,13 @@ market.button={
 	buy={x=30,xs=16,y=8,ys=3,text='Купить',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	sell={x=30,xs=16,y=12,ys=3,text='Продать',tx=5,ty=1,bg=0x303030,fg=0x68f029},
 	full={x=16,xs=39,y=10,ys=3,text='Ваш инвентарь полон. Доступ закрыт.',tx=2,ty=1,bg=0x303030,fg=0x68f029},
-	transfer={x=30,xs=16,y=16,ys=3,text='Перевод другому игроку',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+	transfer={x=30,xs=30,y=16,ys=3,text='Перевод другому игроку',tx=4,ty=1,bg=0x303030,fg=0x68f029},
 
-	transfer_name={x=30,xs=16,y=10,ys=3,text='Введите имя  для перевода',tx=5,ty=1,bg=0x303030,fg=0x68f029},
-	transfer_val={x=30,xs=16,y=10,ys=3,text='Введите сумму перевода',tx=5,ty=1,bg=0x303030,fg=0x68f029},
-	transfer_not_registered={x=30,xs=16,y=18,ys=3,text='Нет в базе данных',tx=5,ty=1,bg=0x303030,fg=0x68f029},
-	transfer_tooBig={x=30,xs=16,y=18,ys=3,text='У вас нет столько',tx=5,ty=1,bg=0x303030,fg=0x68f029},
-	transferComplite={x=30,xs=16,y=18,ys=3,text='Перевод завершён',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+	transfer_name={x=30,xs=28,y=10,ys=3,text='Введите имя для перевода',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	transfer_val={x=30,xs=26,y=10,ys=3,text='Введите сумму перевода',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	transfer_not_registered={x=30,xs=26,y=18,ys=3,text='Нет в базе данных',tx=5,ty=1,bg=0x303030,fg=0x68f029},
+	transfer_tooBig={x=30,xs=19,y=18,ys=3,text='У вас нет столько',tx=2,ty=1,bg=0x303030,fg=0x68f029},
+	transferComplite={x=30,xs=18,y=18,ys=3,text='Перевод завершён',tx=2,ty=1,bg=0x303030,fg=0x68f029},
 
 	shopUp={x=3,xs=10,y=12,ys=5,text='ВВЕРХ',tx=2,ty=2,bg=0x303030,fg=0x68f029},
 	shopDown={x=3,xs=10,y=18,ys=5,text='ВНИЗ',tx=3,ty=2,bg=0x303030,fg=0x68f029},
@@ -509,7 +509,7 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 	while pos <= total do
 		local item=inumList[pos]
 		if tonumber(itemlist[item].qty) > 0 do
-			lot[y]=itemlist[item]
+			lot[y]=pos
 			y=y+1
 		end
 		pos=pos+1
@@ -526,20 +526,22 @@ function market.showMeYourCandyesBaby(itemlist,inumList)
 
 	y=2
 	while y < 21 do
-		qty=tostring(math.floor(tonumber(lot[y].qty)))
-		gpu.set(21,y,lot[y].display_name)
+		item=inumList[lot[y]]
+		qty=tostring(math.floor(tonumber(itemlist[item].qty)))
+		gpu.set(21,y,itemlist[item].display_name)
 		gpu.set(64,y,qty)
-		gpu.set(72,y,tostring(lot[y].sell_price))
+		gpu.set(72,y,tostring(itemlist[item].sell_price))
 		y=y+2
 	end
 
 	gpu.setBackground(0x252525)
 	y=3
 	while y < 21 do
-		qty=tostring(math.floor(tonumber(lot[y].qty)))
-		gpu.set(21,y,lot[y].display_name)
+		item=inumList[lot[y]]
+		qty=tostring(math.floor(tonumber(itemlist[item].qty)))
+		gpu.set(21,y,itemlist[item].display_name)
 		gpu.set(64,y,qty)
-		gpu.set(72,y,tostring(lot[y].sell_price))
+		gpu.set(72,y,tostring(itemlist[item].sell_price))
 		y=y+2
 	end
 
